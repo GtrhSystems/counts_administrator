@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Crear Usuario
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Formulario de inscripción</h4>
+        <p class="card-description">Digite los datos del nuevo usuario</p>
+        <form  method="post" class="forms-sample" >
+          	{% csrf_token %}
+          <div class="form-group">
+            <label for="exampleInputName1">Nombres</label>
+            {{ form.name|add_class:'form-control' }}
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPassword4">Telefono</label>
+             {{ form.phone|add_class:'form-control' }}
+          </div>
+          <button type="submit" class="btn btn-primary mr-2">Crear</button>
+        </form>
+        {{ form.errors }}
+      </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Formulario de venta
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Vender perfil a {{ customer.name }}</h4>
+        <p class="card-description">Digite los datos de la venta</p>
+        <form  method="post" class="forms-sample" >
+          	{% csrf_token %}
+          <div class="form-group">
+            <label for="platform">{{ form.platform.label }}</label>
+            {{ form.platform|add_class:'form-control' }}
+          </div>
+
+          <div class="form-group">
+            <label for="months">{{ form.months.label }}</label>
+             {{ form.months|add_class:'form-control' }}
+          </div>
+          <button type="submit" class="btn btn-primary mr-2 sale">Vender</button>
+        </form>
+        {{ form.errors }}
+      </div>
+    </div>
+</div>
+<script>
+
+
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

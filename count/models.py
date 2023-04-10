@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from count.libraries import CalculateDateLimit
+from datetime import datetime , timedelta
 
 class Platform(models.Model):
 
@@ -75,6 +76,19 @@ class Sale(models.Model):
     months = models.PositiveIntegerField(default=1)
     date_limit = models.DateTimeField(verbose_name="Fecha de vencimiento", blank=True, null=True, auto_now_add=False)
     saler = models.ForeignKey(User, verbose_name="Vendedor", on_delete=models.CASCADE)
+
+    @classmethod
+    def GetInterdatesSales(cls, user, initial_date, final_date):
+
+        initial_date = datetime.strptime(initial_date, '%Y-%m-%d')
+        final_date = datetime.strptime(final_date, '%Y-%m-%d')
+        initial_date = initial_date + timedelta(hours=5)
+        final_date = final_date + timedelta(hours=29)
+        sales = cls.objects.filter(saler=user, date__range=[initial_date, final_date]).order_by(
+                '-date')
+        return sales
+
+
 
 
 

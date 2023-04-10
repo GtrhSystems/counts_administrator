@@ -3,11 +3,12 @@ from django.views import View  # PARA VISTAS GENERICAS
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, ListView
-from .forms import SaleForm
+from .forms import SaleForm, GetInterDatesForm
 from .models import Profile, Sale, Count
 from user.models import Customer
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
+from django.conf import settings
 
 @method_decorator(login_required, name='dispatch')
 class DashboardView(View):
@@ -42,7 +43,7 @@ class AddSaleView(View):
         return render(request, self.template_name, {'form': self.form_class, 'customer': customer})
 
 @method_decorator(login_required, name='dispatch')
-class SalerListView(ListView):
+class SalesListView(ListView):
 
     model = Sale
     template_name = "sale/list.html"
@@ -52,3 +53,25 @@ class SalerListView(ListView):
         sales = self.model.objects.filter(saler=self.request.user)
         return sales
 
+@method_decorator(login_required, name='dispatch')
+class InterdatesSalesView(ListView):
+
+    model = Sale
+    template_name = "sale/list-no-layout.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        sales = self.model.GetInterdatesSales(self.request.user, self.kwargs['initial_date'], self.kwargs['final_date'] )
+        return sales
+
+class CronWhatsappView(ListView):
+    pass
+
+
+@method_decorator(login_required, name='dispatch')
+class InterDatesView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        form = GetInterDatesForm()
+        return render(request, 'inter-dates.html', {'form': form, 'titles': settings.TITLES_INTER_DATES[kwargs['model']] })

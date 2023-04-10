@@ -17,14 +17,14 @@
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+            <a class="nav-link" data-toggle="collapse" href="#clients" aria-expanded="false" aria-controls="clients">
               <span class="menu-icon">
                 <i class="mdi mdi-account-card-details"></i>
               </span>
               <span class="menu-title">Clientes</span>
               <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="ui-basic">
+            <div class="collapse" id="clients">
               <ul class="nav flex-column sub-menu">
 
                 <li class="nav-item"> <a class="nav-link" href="{% url 'add-user' %}">Nuevo cliente</a></li>
@@ -42,12 +42,21 @@
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'sale-list' %}">
+            <a class="nav-link" data-toggle="collapse" href="#sales" aria-expanded="false" aria-controls="sales">
               <span class="menu-icon">
                 <i class="mdi mdi-table-large"></i>
               </span>
               <span class="menu-title">Ventas</span>
+               <i class="menu-arrow"></i>
             </a>
+            <div class="collapse" id="sales">
+              <ul class="nav flex-column sub-menu">
+
+                <li class="nav-item"> <a class="nav-link" href="{% url 'inter-dates' 'sales' %}">Por fechas</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'sale-list' %}">Historico</a></li>
+
+              </ul>
+            </div>
           </li>
           <li class="nav-item menu-items">
             <a class="nav-link" href="../../pages/charts/chartjs.html">

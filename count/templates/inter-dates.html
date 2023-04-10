@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block page_header %}
+ {{ titles.title }}
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">{{ titles.lead }}</h4>
+        <p class="card-description">{{ titles.message }}</p>
+			 <form method="post">
+                            {% csrf_token %}
+                               <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form.init_date|add_class:'form-control' }}
+                                    </div>
+                                    <small >Fecha Inicial.</small>
+                                  </div>
+
+                                  <div class="form-group">
+                                     <div class="form-line">
+                                        {{ form.final_date|add_class:'form-control' }}
+                                    </div>
+                                    <small >Fecha final.</small>
+                                  </div>
+
+
+                            <div class="form-group">
+                                 <div class="form-line">
+                                    <button id="search_inter_dates" class="btn btn-primary btn-lg waves-effect btn-block" type="submit">Consultar</button>
+                                 </div>
+                            </div>
+
+                           </form>
+			   {{ form.errors }}
+      </div>
+    </div>
+</div>
+
+<div class="col-lg-12 grid-margin stretch-card" id="sales-list"></div>
+<script>
+$(document).ready( function () {
+     get_charges_{{ titles.model }}()
+
+})
+
+
+</script>
+
+{% endblock %}

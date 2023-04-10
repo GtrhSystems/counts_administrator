@@ -21,11 +21,10 @@ class AddView(CreateView):
     form_class = CustomerForm
     template_name = "user/add.html"
 
-
     def form_valid(self, form):
 
-        form.save()
-        return redirect('index')
+        user = form.save()
+        return redirect('sale-count', user.id)
 
 
 @method_decorator(login_required, name='dispatch')

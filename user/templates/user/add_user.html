@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Crear Usuario
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Formulario de inscripción</h4>
+        <p class="card-description">Digite los datos del nuevo usuario</p>
+        <form  method="post" class="forms-sample" >
+        {% csrf_token %}
+            <div class="form-group">
+            <label for="exampleInputName1">Usuario</label>
+            {{ form.username|add_class:'form-control' }}
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Nombres</label>
+            {{ form.first_name|add_class:'form-control' }}
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPassword4">Apellidos</label>
+             {{ form.last_name|add_class:'form-control' }}
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPassword4">Correo</label>
+             {{ form.email|add_class:'form-control' }}
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPassword4">Contraseña</label>
+             {{ form.password1|add_class:'form-control' }}
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPassword4">Confirme contraseña</label>
+             {{ form.password2|add_class:'form-control' }}
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword4">Es staff</label>
+             {{ form.is_staff }}
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword4">Activar</label>
+             {{ form.is_active }}
+          </div>
+          <button type="submit" class="btn btn-primary mr-2">Crear</button>
+        </form>
+        {{ form.errors }}
+      </div>
+    </div>
+</div>
+{% endblock %}

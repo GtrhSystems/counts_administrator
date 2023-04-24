@@ -4,6 +4,7 @@
 {% endblock %}
 {% load widget_tweaks %}
 {% block content %}
+{{ username }}
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
@@ -41,7 +42,7 @@
 <div class="col-lg-12 grid-margin stretch-card" id="sales-list"></div>
 <script>
 $(document).ready( function () {
-     get_charges_{{ titles.model }}()
+     get_charges_{{ titles.model }}('{{ username }}')
 
 })
 

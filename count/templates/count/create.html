@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Crear cuentas
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Crear una cuenta</h4>
+        <p class="card-description">Digite los datos de la nueva cuenta</p>
+        <form  method="post" class="forms-sample platforms" >
+          	{% csrf_token %}
+          <div class="form-group">
+            <label for="platform">{{ form.platform.label }}</label>
+            {{ form.platform|add_class:'form-control' }}
+          </div>
+          <div class="form-group">
+            <label for="email">{{ form.email.label }}</label>
+             {{ form.email|add_class:'form-control' }}
+          </div>
+          <div class="form-group">
+            <label for="password">{{ form.password.label }}</label>
+             {{ form.password|add_class:'form-control' }}
+          </div>
+
+          <div id="profiles">
+
+          </div>
+           <button type="submit" class="btn btn-primary mr-2 sale">Crear cuenta</button>
+        </form>
+        {{ form.errors }}
+      </div>
+    </div>
+</div>
+<script>
+
+
+  $('.platforms').on("change", "#id_platform" , function(){
+      platform_id = $(this).val()
+      $.get('/count/create-pins-profiles/'+platform_id)
+       .done(function( data ) {
+           $('#profiles').html(data)
+      });
+
+  })
+
+</script>
+
+{% endblock %}

@@ -49,17 +49,114 @@ function convertFormToJSON(form) {
 }
 
 
-function get_charges_sales(){
+function get_charges_sales(username){
 
     $('#search_inter_dates').click(function(event){
 		event.preventDefault()
 		initial_date = $('#id_init_date').val()
 		final_date = $('#id_final_date').val()
-		$.get('/count/sales/'+initial_date+'/'+final_date, function(data){
-			$('#sales-list').html(data)
-		})
+
+		if (username != ""){
+            $.get('/count/sales/'+username+'/'+initial_date+'/'+final_date, function(data){
+                $('#sales-list').html(data)
+            })
+		}else{
+		    $.get('/count/sales/'+initial_date+'/'+final_date, function(data){
+			    $('#sales-list').html(data)
+		    })
+		}
+
 	})
 }
 
 
 
+$( function() {
+
+    // There's the gallery and the trash
+    var $gallery = $( "#gallery" ),
+      $trash = $( "#trash" );
+
+    // Let the gallery items be draggable
+    $( "li", $gallery ).draggable({
+      cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+      revert: "invalid", // when not dropped, the item will revert back to its initial position
+      containment: "document",
+      helper: "clone",
+      cursor: "move"
+    });
+
+    // Let the trash be droppable, accepting the gallery items
+    $trash.droppable({
+      accept: "#gallery > li",
+      classes: {
+        "ui-droppable-active": "ui-state-highlight"
+      },
+      drop: function( event, ui ) {
+        Add_platform( ui.draggable );
+      }
+    });
+
+    // Let the gallery be droppable as well, accepting items from the trash
+    $gallery.droppable({
+      accept: "#trash li",
+      classes: {
+        "ui-droppable-active": "custom-state-active"
+      },
+      drop: function( event, ui ) {
+        recycleImage( ui.draggable );
+      }
+    });
+
+    // Image deletion function
+    var recycle_icon = "<a href='link/to/recycle/script/when/we/have/js/off' title='Recycle this image' class='ui-icon ui-icon-refresh'>Recycle image</a>";
+
+    function Add_platform( $item ) {
+      $item.fadeOut(function() {
+        var $list = $( "ul", $trash ).length ?
+        $( "ul", $trash ) :
+        $( "<ul class='gallery ui-helper-reset'/>" ).appendTo( $trash );
+
+        $item.find( "a.ui-icon-trash" ).remove();
+        $item.append( recycle_icon ).appendTo( $list ).fadeIn(function() {
+          $item.animate({ width: "165px" })
+          platform_name = $item.attr('platform_name')
+          $("input[name='platforms'][value='"+platform_name+"']").prop("checked", true);
+        });
+      });
+    }
+
+    // Image recycle function
+    var trash_icon = "<a href='link/to/trash/script/when/we/have/js/off' title='Delete this image' class='ui-icon ui-icon-trash'>Delete image</a>";
+    function recycleImage( $item ) {
+      $item.fadeOut(function() {
+        $item
+          .find( "a.ui-icon-refresh" )
+            .remove()
+          .end()
+          .css( "width", "165px")
+          .find( "img" )
+            .css( "height", "150px" )
+          .end()
+          .appendTo( $gallery )
+          .fadeIn();
+         platform_name = $item.attr('platform_name')
+         $("input[name='platforms'][value='"+platform_name+"']").prop("checked", false);
+
+      });
+    }
+
+    // Image preview function, demonstrating the ui.dialog used as a modal window
+
+    // Resolve the icons behavior with event delegation
+    $( "ul.gallery > li" ).on( "click", function( event ) {
+      var $item = $( this ),
+        $target = $( event.target );
+      if ( $target.is( "a.ui-icon-trash" ) ) {
+        Add_platform( $item );
+      } else if ( $target.is( "a.ui-icon-refresh" ) ) {
+        recycleImage( $item );
+      }
+      return false;
+    });
+} );

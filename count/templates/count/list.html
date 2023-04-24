@@ -16,27 +16,19 @@ Listado de ventas
             <tr>
               <th>#</th>
               <th> Fecha </th>
-              <th> Cliente </th>
               <th> Plataforma </th>
               <th> Correo </th>
-              <th> Pin </th>
-              <th> Precio U. </th>
-              <th> Meses </th>
-              <th> Precio </th>
+              <th> Contraseña </th>
             </tr>
           </thead>
           <tbody>
-           {% for sale in object_list %}
+           {% for count in object_list %}
             <tr>
               <td>{{forloop.counter}}</td>
-              <td>{{ sale.date }}</td>
-              <td>{{ sale.customer.name }}</td>
-              <td>{{ sale.profile.count.platform }}</td>
-              <td>{{ sale.profile.count.email }}</td>
-               <td>{{ sale.profile.pin }}</td>
-              <td>${{ sale.profile.count.platform.price }}</td>
-              <td>{{ sale.months }}</td>
-              <td>${{ sale.price }}</td>
+              <td>{{ count.date }}</td>
+              <td>{{ count.platform.name }}</td>
+              <td>{{ count.email }}</td>
+              <td>{{ count.password }}</td>
             </tr>
           {% endfor %}
           </tbody>

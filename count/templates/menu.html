@@ -27,12 +27,68 @@
             <div class="collapse" id="clients">
               <ul class="nav flex-column sub-menu">
 
-                <li class="nav-item"> <a class="nav-link" href="{% url 'add-user' %}">Nuevo cliente</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'list-user' %}">Listado</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'add-customer' %}">Nuevo cliente</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'list-customer' %}">Listado</a></li>
 
               </ul>
             </div>
           </li>
+          {% if user_type == "superuser"%}
+          <li class="nav-item menu-items">
+            <a class="nav-link" data-toggle="collapse" href="#users" aria-expanded="false" aria-controls="users">
+              <span class="menu-icon">
+                <i class="mdi mdi-account-plus"></i>
+              </span>
+              <span class="menu-title">Colaboradores</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="users">
+              <ul class="nav flex-column sub-menu">
+
+                <li class="nav-item"> <a class="nav-link" href="{% url 'add-user' %}">Nuevo usuario</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'add-user' %}">Listado</a></li>
+
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+          {% if user_type == "superuser" or user_type == "staff"%}
+          <li class="nav-item menu-items">
+            <a class="nav-link" data-toggle="collapse" href="#counts" aria-expanded="false" aria-controls="counts">
+              <span class="menu-icon">
+                <i class="mdi mdi-ticket"></i>
+              </span>
+              <span class="menu-title">Cuentas</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="counts">
+              <ul class="nav flex-column sub-menu">
+
+                <li class="nav-item"> <a class="nav-link" href="{% url 'create-count' %}">Crear cuenta</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'count-list' %}">Listado</a></li>
+
+              </ul>
+            </div>
+          </li>
+           <li class="nav-item menu-items">
+            <a class="nav-link" data-toggle="collapse" href="#promotions" aria-expanded="false" aria-controls="promotions">
+              <span class="menu-icon">
+                <i class="mdi mdi-package-variant"></i>
+              </span>
+              <span class="menu-title">Promociones</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="promotions">
+              <ul class="nav flex-column sub-menu">
+
+                <li class="nav-item"> <a class="nav-link" href="{% url 'create-promotion' %}">Crear promocion</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'count-list' %}">Listado</a></li>
+
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+
           <li class="nav-item menu-items">
             <a class="nav-link" href="../../pages/forms/basic_elements.html">
               <span class="menu-icon">

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Sale, Platform
+from .models import Sale, Platform, Count, Promotion
 import datetime
 
 class SaleForm(forms.Form):
@@ -25,3 +25,35 @@ class GetInterDatesForm(forms.Form):
 
     class Meta:
         fields = ('init_date', 'final_date')
+
+class CountForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(CountForm, self).__init__(*args, **kwargs)
+        platforms = Platform.objects.filter(active=True)
+        self.fields['platform'] = forms.ModelChoiceField(queryset=platforms, help_text='Selecciones la plataforma',
+                                                      label="Plataforma")
+
+    email = forms.EmailField(required=True)
+    password = forms.CharField(required=True, label="Contraseña")
+
+    def save(self, commit=True):
+
+        instance = super().save(commit=False)
+
+
+        super(CountForm, self).save(*args, **kwargs)
+
+class CreatePromotionForm(forms.ModelForm):
+
+    class Meta:
+        model = Promotion
+        fields = ["name", "price", "date_init", "date_finish", "active", "image"]
+
+
+class PlatformForm(forms.Form):
+
+    platforms = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+
+    class Meta:
+        fields = ["platforms"]

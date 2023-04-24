@@ -1,0 +1,8 @@
+{% block content %}
+{% for profile in profiles %}
+    <div class="form-group">
+        <label for="pin_{{forloop.counter}}">pin {{forloop.counter}}</label>
+        <input type="text" name="{{forloop.counter}}" class="form-control" required="">
+    </div>
+{% endfor %}
+{% endblock %}

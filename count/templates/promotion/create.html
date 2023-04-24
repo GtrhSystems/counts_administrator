@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Crear cuentas
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+  <style>
+  #gallery { float: left; width: 65%; min-height: 12em; }
+  .gallery.custom-state-active { background: #eee; }
+  .gallery li { float: left; padding: 0.4em; margin: 0 0.4em 0.4em 0; text-align: center; }
+  .gallery li h5 { margin: 0 0 0.4em; cursor: move; }
+  .gallery li img { cursor: move; }
+
+  #trash { float: right; width: 32%; min-height: 18em; padding: 1%; }
+  #trash h4 { line-height: 16px; margin: 0 0 0.4em; }
+  #trash h4 .ui-icon { float: left; }
+  #trash .gallery h5 { display: none; }
+  </style>
+
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Crear una cuenta</h4>
+        <p class="card-description">Digite los datos de la nueva cuenta</p>
+        <form  method="post" class="forms-sample platforms" enctype="multipart/form-data">
+          	{% csrf_token %}
+          <div class="form-group">
+            <label for="name">{{ form.name.label }}</label>
+            {{ form.name|add_class:'form-control' }}
+          </div>
+           <div class="form-group">
+            <label for="price">{{ form.price.label }}</label>
+            {{ form.price|add_class:'form-control' }}
+          </div>
+          <div class="form-group">
+            <label for="date_init">{{ form.date_init.label }}</label>
+             {{ form.date_init|add_class:'form-control'|attr:"type:date" }}
+          </div>
+          <div class="form-group">
+            <label for="date_finish">{{ form.date_finish.label }}</label>
+             {{ form.date_finish|add_class:'form-control'|attr:"type:date" }}
+          </div>
+            <div class="form-group">
+            <label for="image">{{ form_platform.image.label }}</label>
+             {{ form.image }}
+          </div>
+          <div class="form-group">
+            <label for="active">{{ form.active.label }}</label>
+             {{ form.active }}
+          </div>
+           <div class="form-group" style="display:none;">
+            <label for="platforms">{{ form_platform.platforms.label }}</label>
+             {{ form_platform.platforms }}
+          </div>
+         <div class="row  ">
+            <div class="col-sm-6 ui-widget ui-helper-clearfix">
+                <ul id="gallery" class="gallery ui-helper-reset ui-helper-clearfix">
+                  {% for platform in platforms %}
+                    {% for profile in platform.list %}
+                      <li class="ui-widget-content ui-corner-tr"  platform_name="{{ platform.name }}_{{ profile }}">
+                        <h5 class="ui-widget-header">{{ platform.name }}</h5>
+                        <img id="draggable" class="ui-widget-content" src="/{{ platform.logo }}" alt="{{ platform.name }}" width="150" height="150">
+                      </li>
+                    {% endfor %}
+                  {% endfor %}
+                </ul>
+              </div>
+             <div id="trash" class="col-sm-6 ui-widget-content ui-state-default">
+                  <h4 class="ui-widget-header"><i class="mdi mdi-package-variant"></i> Combo</h4>
+             </div>
+         </div>
+             <button type="submit" class="btn btn-primary mr-2 sale">Crear promoción</button>
+        </form>
+        {{ form.errors }}
+      </div>
+    </div>
+</div>
+
+{% endblock %}

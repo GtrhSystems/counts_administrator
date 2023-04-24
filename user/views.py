@@ -5,7 +5,20 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, ListView
 from .models import Customer
 from .forms import CustomerForm, UserForm
+from count.decorators import usertype_in_view, check_user_type
+from django.contrib.auth.models import User
 
+def context_app(request):
+
+    context = {}
+    user_type = check_user_type(request)
+
+    if request.user.is_authenticated:
+
+            context['user_type'] = user_type
+
+
+    return context
 
 @method_decorator(login_required, name='dispatch')
 class IndexView(View):
@@ -16,7 +29,7 @@ class IndexView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class AddView(CreateView):
+class AddCustomerView(CreateView):
 
     form_class = CustomerForm
     template_name = "user/add.html"
@@ -28,7 +41,7 @@ class AddView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class UserListView(ListView):
+class CustomerListView(ListView):
 
     model = Customer
     template_name = "user/list.html"
@@ -39,3 +52,33 @@ class UserListView(ListView):
         return customers
         
 
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class AddUserView(CreateView):
+
+    form_class = UserForm
+    template_name = 'user/add_user.html'
+
+    def form_valid(self, form):
+
+        form.save()
+        return redirect('list-user')
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super(AddUserView, self).get_context_data(**kwargs)
+        ctx['form'] = self.form_class(self.request.POST or None)
+        return ctx
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class UserListView(ListView):
+
+    model = User
+    template_name = "user/user_list.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        users = self.model.objects.all()
+        return users

@@ -23,9 +23,9 @@ class Platform(models.Model):
         verbose_name_plural = 'Plataformas'
 
     @classmethod
-    def get_my_platforms_whit_counts(self):
+    def get_my_platforms_whit_counts(cls):
 
-        platforms = self.objects.all()
+        platforms = cls.objects.all()
 
         for platform in platforms:
             have_counts = True if Profile.objects.filter(count__platform=platform, saled=0) else False
@@ -33,27 +33,57 @@ class Platform(models.Model):
                 platforms = platforms.exclude(id=platform.id)
         return platforms
 
+    @classmethod
+    def get_num_of_profiles(cls, platform_id):
+
+        platform = Platform.objects.filter(id=platform_id).first()
+        return platform.num_profiles
+
+
 
 class Count(models.Model):
 
     platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
     email = models.CharField(max_length=100, verbose_name="Email")
     password = models.CharField(max_length=50, default="")
-    pin = models.CharField(max_length=4, verbose_name="Pin", default="0")
+    date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Cuenta'
         verbose_name_plural = 'Cuentas'
 
 
+class Promotion(models.Model):
+
+    name = models.CharField(max_length=150, default="", verbose_name="Nombre")
+    price = models.FloatField(max_length=10, verbose_name="Precio")
+    date_init = models.DateTimeField(verbose_name="Fecha de Inicio",  auto_now_add=False)
+    date_finish = models.DateTimeField(verbose_name="Fecha de Finalización", auto_now_add=False)
+    active = models.BooleanField(default=1, verbose_name="Activo?:")
+    creater = models.ForeignKey(User, verbose_name="Creador", on_delete=models.CASCADE)
+    image = models.FileField(default="", upload_to='promotions', validators=[valid_image_extension])
+
+    class Meta:
+        verbose_name = 'Promoción'
+        verbose_name_plural = 'Promociones'
+
+
+
+class PromotionPlatform(models.Model):
+
+    promotion = models.ForeignKey(Promotion, verbose_name="Promoción", on_delete=models.CASCADE)
+    platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
+
 
 class Profile(models.Model):
 
     count = models.ForeignKey(Count, verbose_name="Plataforma", on_delete=models.CASCADE)
     profile = models.CharField(max_length=100, verbose_name="Perfil")
+    pin = models.CharField(max_length=4, verbose_name="Pin", default="0")
     saled = models.BooleanField(default=0, verbose_name="Vendida?:")
 
-    @receiver(post_save, sender=Count, dispatch_uid="creaction_of_profiles_by_count")
+    #mixin
+    #@receiver(post_save, sender=Count, dispatch_uid="creaction_of_profiles_by_count")
     def create_profiles(sender, instance, **kwargs):
 
         num_profiles = instance.platform.num_profiles

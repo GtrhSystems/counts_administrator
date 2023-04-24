@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block page_header %}
-Crear Usuario
+Crear Cliente
 {% endblock %}
 {% load widget_tweaks %}
 {% block content %}
@@ -8,18 +8,22 @@ Crear Usuario
     <div class="card">
       <div class="card-body">
         <h4 class="card-title">Formulario de inscripción</h4>
-        <p class="card-description">Digite los datos del nuevo usuario</p>
+        <p class="card-description">Digite los datos del nuevo cliente</p>
         <form  method="post" class="forms-sample" >
           	{% csrf_token %}
           <div class="form-group">
-            <label for="exampleInputName1">Nombres</label>
-            {{ form.name|add_class:'form-control' }}
+              <label  class="text-label">{{ form.first_name.label_tag }}</label>
+              {{ form.first_name|add_class:'form-control' }}
+              <p class="help-block">{{ form.first_name.help_text }}</p>
           </div>
 
-          <div class="form-group">
-            <label for="exampleInputPassword4">Telefono</label>
-             {{ form.phone|add_class:'form-control' }}
-          </div>
+         <div class="col-lg-6 mb-4">
+                 <div class="form-group">
+                    <label  class="text-label">{{ form.last_name.label_tag }}</label>
+                    {{ form.last_name|add_class:'form-control' }}
+                    <p class="help-block">{{ form.last_name.help_text }}</p>
+                </div>
+            </div>
           <button type="submit" class="btn btn-primary mr-2">Crear</button>
         </form>
         {{ form.errors }}

@@ -15,7 +15,7 @@ class UserForm(UserCreationForm):
 class CustomerForm(forms.ModelForm):
 
     name = forms.CharField(max_length=140, required=True)
-    name = forms.CharField( required=True)
+    phone = forms.CharField( required=True)
 
     class Meta:
         model = Customer

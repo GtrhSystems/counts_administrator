@@ -12,18 +12,18 @@ Crear Cliente
         <form  method="post" class="forms-sample" >
           	{% csrf_token %}
           <div class="form-group">
-              <label  class="text-label">{{ form.first_name.label_tag }}</label>
-              {{ form.first_name|add_class:'form-control' }}
-              <p class="help-block">{{ form.first_name.help_text }}</p>
+              <label  class="text-label">{{ form.name.label_tag }}</label>
+              {{ form.name|add_class:'form-control' }}
+              <p class="help-block">{{ form.name.help_text }}</p>
           </div>
 
-         <div class="col-lg-6 mb-4">
+
                  <div class="form-group">
-                    <label  class="text-label">{{ form.last_name.label_tag }}</label>
-                    {{ form.last_name|add_class:'form-control' }}
-                    <p class="help-block">{{ form.last_name.help_text }}</p>
+                    <label  class="text-label">{{ form.phone.label_tag }}</label>
+                    {{ form.phone|add_class:'form-control' }}
+                    <p class="help-block">{{ form.phone.help_text }}</p>
                 </div>
-            </div>
+
           <button type="submit" class="btn btn-primary mr-2">Crear</button>
         </form>
         {{ form.errors }}

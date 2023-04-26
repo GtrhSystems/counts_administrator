@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Crear Plataforma
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Formulario de nueva plataforma</h4>
+        <p class="card-description">Digite los datos requeridos</p>
+        <form  method="post" class="forms-sample"  enctype="multipart/form-data" >
+          	{% csrf_token %}
+          <div class="form-group">
+              <label  class="text-label">{{ form.name.label_tag }}</label>
+              {{ form.name|add_class:'form-control' }}
+              <p class="help-block">{{ form.name.help_text }}</p>
+          </div>
+
+
+          <div class="form-group">
+            <label  class="text-label">{{ form.logo.label_tag }}</label>
+            {{ form.logo|add_class:'form-control' }}
+            <p class="help-block">{{ form.logo.help_text }}</p>
+          </div>
+          <div class="form-group">
+            <label  class="text-label">{{ form.num_profiles.label_tag }}</label>
+            {{ form.num_profiles|add_class:'form-control' }}
+            <p class="help-block">{{ form.num_profiles.help_text }}</p>
+          </div>
+          <div class="form-group">
+            <label  class="text-label">{{ form.price.label_tag }}</label>
+            {{ form.price|add_class:'form-control' }}
+            <p class="help-block">{{ form.price.help_text }}</p>
+          </div>
+           <div class="form-group">
+            <label  class="text-label">{{ form.active.label_tag }}</label>
+            {{ form.active }}
+            <p class="help-block">{{ form.active.help_text }}</p>
+          </div>
+          <button type="submit" class="btn btn-primary mr-2">Crear</button>
+        </form>
+        {{ form.errors }}
+      </div>
+    </div>
+</div>
+{% endblock %}

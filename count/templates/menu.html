@@ -16,6 +16,23 @@
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
+           <li class="nav-item menu-items">
+            <a class="nav-link" data-toggle="collapse" href="#platforms" aria-expanded="false" aria-controls="platforms">
+              <span class="menu-icon">
+                <i class="mdi mdi-youtube"></i>
+              </span>
+              <span class="menu-title">Plataformas</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="platforms">
+              <ul class="nav flex-column sub-menu">
+
+                <li class="nav-item"> <a class="nav-link" href="{% url 'create-platform' %}">Nueva plataforma</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'platform-list' %}">Listado</a></li>
+
+              </ul>
+            </div>
+          </li>
           <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#clients" aria-expanded="false" aria-controls="clients">
               <span class="menu-icon">

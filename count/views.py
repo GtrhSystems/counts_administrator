@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .decorators import usertype_in_view
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm
+from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm
 from .models import Profile, Sale, Count, Platform, Promotion, PromotionPlatform
 from user.models import Customer
 from django.http import HttpResponse, JsonResponse
@@ -40,6 +40,40 @@ class CreateCount(View):
             if item.isnumeric():
                 Profile.objects.create(count=new_count, profile = item, pin=request.POST[item], saled=0)
         return redirect("count-list")
+
+
+@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class AddPlatformView(CreateView):
+    form_class = CreatePlatformForm
+    template_name = "platform/add.html"
+
+    def form_valid(self, form):
+        form = CreatePlatformForm(self.request.POST, self.request.FILES)
+        form.save()
+        return redirect('platform-list')
+
+
+@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class UpdatePlatformView(UpdateView):
+
+    model = Platform
+    fields = ["name", "logo", "price", "active"]
+    template_name = "platform/update.html"
+    success_url = "/count/platform/list"
+
+
+
+@method_decorator(login_required, name='dispatch')
+class PlatformListView(ListView):
+    model = Platform
+    template_name = "platform/list.html"
+
+    def get_queryset(self, *args, **kwargs):
+        platforms = self.model.objects.filter(active=True)
+        return platforms
+
 
 @method_decorator(usertype_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')

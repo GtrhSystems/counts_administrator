@@ -12,8 +12,8 @@ class Platform(models.Model):
     name = models.CharField(max_length=150, verbose_name="Nombre", default="")
     active = models.BooleanField(default=1, verbose_name="Activo?:")
     logo =  models.FileField(default="", upload_to='logos', validators=[valid_image_extension])
-    num_profiles = models.IntegerField(default=1)
-    price = models.FloatField(default=0)
+    num_profiles = models.IntegerField(default=1, verbose_name="Número de perfiles")
+    price = models.FloatField(default=0, verbose_name="Precio")
 
     def __str__(self):
         return str(self.name)

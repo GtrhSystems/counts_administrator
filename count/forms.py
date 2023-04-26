@@ -51,6 +51,13 @@ class CreatePromotionForm(forms.ModelForm):
         fields = ["name", "price", "date_init", "date_finish", "active", "image"]
 
 
+class CreatePlatformForm(forms.ModelForm):
+
+    class Meta:
+        model = Platform
+        fields = ["name", "active", "logo", "num_profiles", "price"]
+
+
 class PlatformForm(forms.Form):
 
     platforms = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())

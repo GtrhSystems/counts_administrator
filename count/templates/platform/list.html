@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 {% block page_header %}
-Listado de clientes
+Listado de plataformas
 {% endblock %}
 {% load widget_tweaks %}
 {% block content %}
 <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Tabla de clientes</h4>
-                    <p class="card-description"><code>Seleccione el cliente para registrar una venta</code>
+                    <h4 class="card-title">Tabla de plataformas</h4>
+
                     </p>
                     <div class="table-responsive">
                       <table class="table table-dark table-normal">
@@ -16,24 +16,24 @@ Listado de clientes
                           <tr>
                             <th>#</th>
                             <th> Nombres </th>
-                            <th> Teléfono </th>
-                            <th> </th>
+                            <th> logo </th>
+                            <th> # perfiles </th>
+                            <th> Precio </th>
+                            <th> Activo </th>
                             <th>  </th>
                           </tr>
                         </thead>
                         <tbody>
-                         {% for customer in object_list %}
+                         {% for platform in object_list %}
                           <tr>
                             <td>{{forloop.counter}}</td>
-                            <td>{{ customer.name }}</td>
-                            <td>{{ customer.phone }}</td>
+                            <td>{{ platform.name }}</td>
+                            <td><img src="/{{ platform.logo }}" alt="Girl in a jacket" width="50" height="60"></td>
+                            <td>{{ platform.num_profiles }}</td>
+                            <td>{{ platform.price }}</td>
+                            <td>{{ platform.active }}</td>
                             <td>
-                              <a href="{% url 'sale-count' customer.id %}"
-                              <button type="button" class="btn btn-primary btn-icon-text">
-                              <i class="mdi mdi-square-inc-cash"></i>Vender</button>
-                            </td>
-                            <td>
-                              <a href="{% url 'update-customer' customer.id %}">
+                              <a href="{% url 'update-platform' platform.id %}" >
                               <button type="button" class="btn btn-info  btn-icon-text">
                               <i class="mdi mdi-information"></i>Editar</button></a>
                             </td>

@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Editar Cliente
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Formulario de edición</h4>
+        <p class="card-description">Digite los nuevos datos del cliente</p>
+        <form  method="post" class="forms-sample" >
+          	{% csrf_token %}
+          <div class="form-group">
+              <label  class="text-label">{{ form.name.label_tag }}</label>
+              {{ form.name|add_class:'form-control' }}
+              <p class="help-block">{{ form.name.help_text }}</p>
+          </div>
+
+          <div class="form-group">
+            <label  class="text-label">{{ form.phone.label_tag }}</label>
+            {{ form.phone|add_class:'form-control' }}
+            <p class="help-block">{{ form.phone.help_text }}</p>
+          </div>
+          <div class="form-group">
+            <label  class="text-label">{{ form.active.label_tag }}</label>
+            {{ form.active }}
+            <p class="help-block">{{ form.active.help_text }}</p>
+         </div>
+
+
+          <button type="submit" class="btn btn-primary mr-2">Crear</button>
+        </form>
+        {{ form.errors }}
+      </div>
+    </div>
+</div>
+{% endblock %}

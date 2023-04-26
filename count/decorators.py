@@ -22,7 +22,11 @@ def usertype_in_view(function):
                      'create-count',
                      'create-pins-profiles',
                      'count-list',
-                     'create-promotion'
+                     'create-promotion',
+                     'create-platform',
+                     'update-platform',
+                     'platform-list',
+                     'update-customer'
                      ]
 
         staff = ['add-user',

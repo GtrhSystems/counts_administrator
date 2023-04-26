@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View #PARA VISTAS GENERICAS
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from .models import Customer
 from .forms import CustomerForm, UserForm
 from count.decorators import usertype_in_view, check_user_type
@@ -40,6 +40,17 @@ class AddCustomerView(CreateView):
         return redirect('sale-count', user.id)
 
 
+@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class UpdateCustomerView(UpdateView):
+
+    model = Customer
+    fields = ["name", "phone",  "active"]
+    template_name = "user/update_customer.html"
+    success_url = "/user/list-customer"
+
+
+
 @method_decorator(login_required, name='dispatch')
 class CustomerListView(ListView):
 
@@ -50,7 +61,7 @@ class CustomerListView(ListView):
 
         customers = self.model.objects.filter(active=True)
         return customers
-        
+
 
 
 @method_decorator(login_required, name='dispatch')
@@ -70,6 +81,8 @@ class AddUserView(CreateView):
         ctx = super(AddUserView, self).get_context_data(**kwargs)
         ctx['form'] = self.form_class(self.request.POST or None)
         return ctx
+
+
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(usertype_in_view, name='dispatch')

@@ -16,6 +16,11 @@ urlpatterns = [
         path('list', views.CountsListView.as_view(), name='count-list'),
         path('promotion/create', views.CreatePromotionView.as_view(), name='create-promotion'),
 
+        path('platform/create', views.AddPlatformView.as_view(), name='create-platform'),
+        path('platform/update/<int:pk>', views.UpdatePlatformView.as_view(), name='update-platform'),
+        path('platform/list', views.PlatformListView.as_view(), name='platform-list'),
+
+
 
 
 

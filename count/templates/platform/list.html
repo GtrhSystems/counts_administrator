@@ -18,7 +18,6 @@ Listado de plataformas
                             <th> Nombres </th>
                             <th> logo </th>
                             <th> # perfiles </th>
-                            <th> Precio </th>
                             <th> Activo </th>
                             <th>  </th>
                           </tr>
@@ -30,7 +29,6 @@ Listado de plataformas
                             <td>{{ platform.name }}</td>
                             <td><img src="/{{ platform.logo }}" alt="Girl in a jacket" width="50" height="60"></td>
                             <td>{{ platform.num_profiles }}</td>
-                            <td>{{ platform.price }}</td>
                             <td>{{ platform.active }}</td>
                             <td>
                               <a href="{% url 'update-platform' platform.id %}" >

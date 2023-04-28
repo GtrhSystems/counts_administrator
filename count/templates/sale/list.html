@@ -23,13 +23,15 @@ Listado de ventas
               <th> Precio U. </th>
               <th> Meses </th>
               <th> Precio </th>
+              <th> Vencimiento
+              <th> Dias restantes </th>
             </tr>
           </thead>
           <tbody>
            {% for sale in object_list %}
             <tr>
               <td>{{forloop.counter}}</td>
-              <td>{{ sale.date }}</td>
+              <td>{{ sale.date|date:"d/M/Y" }}</td>
               <td>{{ sale.customer.name }}</td>
               <td>{{ sale.profile.count.platform }}</td>
               <td>{{ sale.profile.count.email }}</td>
@@ -37,6 +39,14 @@ Listado de ventas
               <td>${{ sale.profile.count.platform.price }}</td>
               <td>{{ sale.months }}</td>
               <td>${{ sale.price }}</td>
+              <td>{{ sale.date_limit|date:"d/M/Y" }}</td>
+              <td>{{ sale.rest_days }}</td>
+              <td>
+                <a href="{% url 'add-renovation' sale.id %}" >
+                <button type="button" class="btn btn-info  btn-icon-text">
+                <i class="mdi mdi-information"></i>Renovar</button></a>
+              </td>
+
             </tr>
           {% endfor %}
           </tbody>

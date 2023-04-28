@@ -28,7 +28,7 @@ __pycache__/*
 .pydevproject
 count_admin_project/settings.py
 logs/
-static/
+static/ss
 static/media
 
 

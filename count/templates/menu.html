@@ -1,7 +1,23 @@
+<style>
+
+
+
+.sidebar .sidebar-brand-wrapper .brand-logo img {
+    width: 100%;
+}
+.sidebar .sidebar-brand-wrapper .brand-logo-mini img {
+    width: 100% !important;
+    height: 56px !important;
+}
+
+</style>
+
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-          <a class="sidebar-brand brand-logo" href="../../index.html"><img src="../../assets/images/logo.svg" alt="logo" /></a>
-          <a class="sidebar-brand brand-logo-mini" href="../../index.html"><img src="../../assets/images/logo-mini.svg" alt="logo" /></a>
+          <a class="sidebar-brand brand-logo" href="{% url 'index' %}" >
+            <img src="/static/assets/images/logo.png" alt="logo" alt="logo"  /></a>
+          <a class="sidebar-brand brand-logo-mini" href="{% url 'index' %}">
+            <img src="/static/assets/images/logo_small.png" alt="logo"   /></a>
         </div>
         <ul class="nav">
 

@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .decorators import usertype_in_view
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm
+from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm
 from .models import Profile, Sale, Count, Platform, Promotion, PromotionPlatform
 from user.models import Customer
 from django.http import HttpResponse, JsonResponse
@@ -12,7 +12,13 @@ from django.core import serializers
 from django.conf import settings
 from django.contrib.auth.models import User
 from count.decorators import usertype_in_view, check_user_type
+from .libraries import getDifference
+import datetime, pytz
+from django.contrib import messages
 
+utc = pytz.UTC
+now = datetime.datetime.now()
+now = now.replace(tzinfo=utc)
 
 @method_decorator(login_required, name='dispatch')
 class DashboardView(View):
@@ -67,6 +73,7 @@ class UpdatePlatformView(UpdateView):
 
 @method_decorator(login_required, name='dispatch')
 class PlatformListView(ListView):
+
     model = Platform
     template_name = "platform/list.html"
 
@@ -125,9 +132,33 @@ class AddSaleView(View):
         customer = Customer.objects.filter(id= kwargs['id']).first()
         if customer and form.is_valid():
             profile = Profile.search_profile_no_saled(request.POST['platform'])
-            count = request.user.sale_profile(customer, profile, int(request.POST['months']))
+            request.user.sale_profile(customer, profile, int(request.POST['months']))
             return render(request, 'sale/sale_post.html', { 'profile':profile })
         return render(request, self.template_name, {'form': self.form_class, 'customer': customer})
+
+@method_decorator(login_required, name='dispatch')
+class AddRenovationView(View):
+
+    form_class = RenovationForm
+    template_name = "sale/renovation.html"
+
+    def get(self, request, *args, **kwargs):
+
+        sale = Sale.objects.filter(id=kwargs['pk']).first()
+        if sale:
+            return render(request, self.template_name, {'form': self.form_class, 'customer': sale.customer})
+        else:
+            return redirect('index')
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.form_class(request.POST)
+        sale = Sale.objects.filter(id=kwargs['pk']).first()
+        if sale and form.is_valid():
+            sale.set_renovation(request.user, int(request.POST['months']))
+            messages.info(request, 'Renovacion hecha satisfactoriamente')
+
+        return render(request, self.template_name, {'form': self.form_class, 'customer': sale.customer})
 
 @method_decorator(login_required, name='dispatch')
 class SalesListView(ListView):
@@ -137,7 +168,11 @@ class SalesListView(ListView):
 
     def get_queryset(self,  *args, **kwargs):
 
+
         sales = self.model.objects.filter(saler=self.request.user)
+        for sale in sales:
+            rest_days = getDifference(sale.date_limit, now, 'days')
+            sale.rest_days = abs(rest_days)
         return sales
 
 @method_decorator(usertype_in_view, name='dispatch')
@@ -184,7 +219,7 @@ class InterdatesSalesView(ListView):
     template_name = "sale/list-no-layout.html"
 
     def get_queryset(self, *args, **kwargs):
-        print(kwargs)
+
         if 'user' in kwargs:
             user = User.objects.filter(username = kwargs['user'])
         else:

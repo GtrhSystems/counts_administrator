@@ -118,13 +118,23 @@ class Sale(models.Model):
                 '-date')
         return sales
 
+    def set_renovation(self, saler, months):
+
+        date_limit = CalculateDateLimit(self.date_limit, months)
+        Sale.objects.create(customer=self.customer,
+                            profile=self.profile,
+                            price= self.profile.count.platform.price * months,
+                            months=months,
+                            date_limit=date_limit,
+                            saler=saler)
 
 
 
 
 def sale_profile(self, customer, profile, months):
 
-    date_limit = CalculateDateLimit(months)
+    now = datetime.now()
+    date_limit = CalculateDateLimit(now, months)
     Sale.objects.create(customer = customer,
                         profile = profile,
                         price = profile.count.platform.price * months,

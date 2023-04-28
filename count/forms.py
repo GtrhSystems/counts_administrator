@@ -11,6 +11,12 @@ class SaleForm(forms.Form):
         self.fields['months'] = forms.IntegerField(label="Meses", required=True,)
 
 
+class RenovationForm(forms.Form):
+
+
+    months = forms.IntegerField(label="Meses", required=True,)
+
+
 class GetInterDatesForm(forms.Form):
 
     def __init__(self, *args, **kwargs):

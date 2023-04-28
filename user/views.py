@@ -1,12 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, JsonResponse
 from django.views import View #PARA VISTAS GENERICAS
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from .models import Customer
+from count.models import Sale
 from .forms import CustomerForm, UserForm
 from count.decorators import usertype_in_view, check_user_type
 from django.contrib.auth.models import User
+from .whatsapp_api import send_message
+import datetime, pytz
+from django.contrib import messages
+
+utc = pytz.UTC
+now = datetime.datetime.now()
+now = now.replace(tzinfo=utc)
+
 
 def context_app(request):
 
@@ -95,3 +105,18 @@ class UserListView(ListView):
 
         users = self.model.objects.all()
         return users
+
+class SendMessagesWhatsappApi(View) :
+
+    def get(self, request, *args, **kwargs):
+
+        date_ago = now - datetime.timedelta(days=3)
+        payload = Customer.get_phones_for_messages( Sale, now, date_ago)
+        for data in payload:
+            message = f"Hola, tu servicio  \n" \
+                      f" 👤USUARIO: {data['email']} \n" \
+                      f"🔐CONTRASEÑA: {data['password']}  \n" \
+                      f" Se vence dentro de: {data['remaining_days']} día (s) \n" \
+                      f" Avísame si lo vas a renovar. Muchas gracias 🙂"
+            data['response'] = send_message(data['phone'], message)
+        return HttpResponse(payload)

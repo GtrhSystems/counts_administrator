@@ -20,6 +20,8 @@ urlpatterns = [
         path('platform/update/<int:pk>', views.UpdatePlatformView.as_view(), name='update-platform'),
         path('platform/list', views.PlatformListView.as_view(), name='platform-list'),
 
+        path('sale/add-renovation/<int:pk>', views.AddRenovationView.as_view(), name='add-renovation'),
+
 
 
 

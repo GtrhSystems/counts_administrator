@@ -9,4 +9,7 @@ urlpatterns = [
         path('list-customer', views.CustomerListView.as_view(), name='list-customer'),
         path('add-user', views.AddUserView.as_view(), name='add-user'),
         path('list-user', views.UserListView.as_view(), name='list-user'),
+        path('send-message', views.SendMessagesWhatsappApi.as_view(), name='send-message'),
+
+
 ]

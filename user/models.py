@@ -1,5 +1,7 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField# pip install "django-phonenumber-field[phonenumberslite]"
+from count.libraries import getDifference
+
 
 class Customer(models.Model):
 
@@ -14,6 +16,16 @@ class Customer(models.Model):
         exist = True if cls.objects.filter(id=id).first() else False
         return exist
 
+    @classmethod
+    def get_phones_for_messages(cls, Sale, now, date_ago):
 
-
+        payload = []
+        sales = Sale.objects.filter(date_limit__range=[date_ago, now]).order_by('-date')
+        for sale in sales:
+            remaining_days = getDifference(sale.date_limit, now, "days")
+            payload.append({ "email": sale.profile.count.email,
+                             "password": sale.profile.count.password,
+                             "phone":sale.customer.phone.as_e164,
+                             "remaining_days":  remaining_days })
+        return payload
 

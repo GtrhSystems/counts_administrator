@@ -20,12 +20,12 @@ class Customer(models.Model):
     def get_phones_for_messages(cls, Sale, now, date_ago):
 
         payload = []
-        sales = Sale.objects.filter(date_limit__range=[date_ago, now]).order_by('-date')
+        sales = Sale.objects.filter(date_limit__range=[now, date_ago ]).order_by('-date')
         for sale in sales:
             remaining_days = getDifference(sale.date_limit, now, "days")
             payload.append({ "email": sale.profile.count.email,
                              "password": sale.profile.count.password,
                              "phone":sale.customer.phone.as_e164,
-                             "remaining_days":  remaining_days })
+                             "remaining_days":  abs(remaining_days) })
         return payload
 

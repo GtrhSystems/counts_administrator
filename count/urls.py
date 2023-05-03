@@ -21,6 +21,8 @@ urlpatterns = [
         path('platform/list', views.PlatformListView.as_view(), name='platform-list'),
 
         path('sale/add-renovation/<int:pk>', views.AddRenovationView.as_view(), name='add-renovation'),
+        path('get-profile-available/<str:platform>', views.GetProfileAvailableView.as_view(), name='get-profile-available'),
+
 
 
 

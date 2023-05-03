@@ -110,7 +110,7 @@ class SendMessagesWhatsappApi(View) :
 
     def get(self, request, *args, **kwargs):
 
-        date_ago = now - datetime.timedelta(days=3)
+        date_ago = now + datetime.timedelta(days=3)
         payload = Customer.get_phones_for_messages( Sale, now, date_ago)
         for data in payload:
             message = f"Hola, tu servicio  \n" \

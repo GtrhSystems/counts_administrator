@@ -16,6 +16,7 @@ from .libraries import getDifference
 import datetime, pytz
 from django.contrib import messages
 
+
 utc = pytz.UTC
 now = datetime.datetime.now()
 now = now.replace(tzinfo=utc)
@@ -120,6 +121,7 @@ class AddSaleView(View):
     def get(self, request, *args, **kwargs):
 
         customer = Customer.objects.filter(id= kwargs['id']).first()
+
         if customer:
             return render(request, self.template_name, { 'form': self.form_class, 'customer':customer })
         else:
@@ -130,11 +132,38 @@ class AddSaleView(View):
 
         form = self.form_class (request.POST)
         customer = Customer.objects.filter(id= kwargs['id']).first()
+        print(request.POST)
         if customer and form.is_valid():
-            profile = Profile.search_profile_no_saled(request.POST['platform'])
-            request.user.sale_profile(customer, profile, int(request.POST['months']))
-            return render(request, 'sale/sale_post.html', { 'profile':profile })
+            for item in request.POST:
+                if item.isnumeric():
+                    profile = Profile.objects.filter(id = item).first()
+                    profile.pin = request.POST['pin_'+item]
+                    profile.profile = request.POST[item]
+                    profile.save()
+                    request.user.sale_profile(customer, profile, int(request.POST['months']))
+                    return render(request, 'sale/sale_post.html', { 'profile':profile })
         return render(request, self.template_name, {'form': self.form_class, 'customer': customer})
+
+@method_decorator(login_required, name='dispatch')
+class GetProfileAvailableView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        profile = Profile.search_profile_no_saled(kwargs['platform'])
+
+        html = '<div class="form-group"><label for="pin_' + str(profile.id) + '">Pin</label> \n' \
+               '<input type="number" name="pin_' + str(profile.id) + '" value = "' + str(profile.pin) + '" class ="form-control" required="true" id="pin_' + str(profile.id)+'" > \n' \
+                '</div>'
+        html_2 = '<div class="form-group"><label for="profile_' + str(profile.id) + '">Perfil</label> \n' \
+               '<input type="text" name="'+ str(profile.id) + '" value = "' + str(profile.profile) + '" class ="form-control" required="true" id="profile_' + str(profile.id) + '" > \n' \
+               '</div>'
+
+        return HttpResponse(html+ html_2)
+
+
+
+
+
 
 @method_decorator(login_required, name='dispatch')
 class AddRenovationView(View):

@@ -20,6 +20,7 @@ Formulario de venta
             <label for="months">{{ form.months.label }}</label>
              {{ form.months|add_class:'form-control' }}
           </div>
+          <div id="pin-content"></div>
           <button type="submit" class="btn btn-primary mr-2 sale">Vender</button>
         </form>
         {{ form.errors }}
@@ -48,6 +49,15 @@ Formulario de venta
       });
 
   })
+
+$("#id_platform").on("change", function() {
+
+      platform= $(this).val();
+      $.get('/count/get-profile-available/'+platform )
+       .done(function( data ) {
+           $('#pin-content').html(data)
+       });
+})
 
 </script>
 

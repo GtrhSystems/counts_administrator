@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from count.libraries import CalculateDateLimit
 from datetime import datetime , timedelta
+from user.whatsapp_api import message_sale
 
 class Platform(models.Model):
 
@@ -94,7 +95,7 @@ class Profile(models.Model):
     @classmethod
     def search_profile_no_saled(cls, platform):
 
-        profile = cls.objects.filter(saled=0, count__platform=platform).first()
+        profile = cls.objects.filter(saled=0, count__platform_id=platform).first()
         return profile
 
 class Sale(models.Model):
@@ -135,12 +136,14 @@ def sale_profile(self, customer, profile, months):
 
     now = datetime.now()
     date_limit = CalculateDateLimit(now, months)
-    Sale.objects.create(customer = customer,
+    sale= Sale.objects.create(customer = customer,
                         profile = profile,
                         price = profile.count.platform.price * months,
                         months = months,
                         date_limit = date_limit,
                         saler = self)
+    message_sale(profile, customer, date_limit)
+
     profile.saled = True
     profile.save()
     return profile.count

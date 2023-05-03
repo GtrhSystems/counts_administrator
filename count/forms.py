@@ -8,7 +8,7 @@ class SaleForm(forms.Form):
 
         super(SaleForm, self).__init__(*args, **kwargs)
         self.fields['platform'] = forms.ModelChoiceField(queryset=Platform.get_my_platforms_whit_counts(), required=True, label="Plataforma")
-        self.fields['months'] = forms.IntegerField(label="Meses", required=True,)
+        self.fields['months'] = forms.IntegerField(label="Meses", required=True)
 
 
 class RenovationForm(forms.Form):

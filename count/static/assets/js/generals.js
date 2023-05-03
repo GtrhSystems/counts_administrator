@@ -160,3 +160,13 @@ $( function() {
       return false;
     });
 } );
+
+
+$("#id_platform").on("change", function() {
+
+      platform= $(this).val();
+      $.get('/count/get-profile-available/'+platform )
+       .done(function( data ) {
+           $('#pin-content').html(data)
+       });
+})

@@ -165,8 +165,9 @@ $( function() {
 $("#id_platform").on("change", function() {
 
       platform= $(this).val();
-      $.get('/count/get-profile-available/'+platform )
+      $.get('/count/get-profiles-available/'+platform )
        .done(function( data ) {
-           $('#pin-content').html(data)
+           $('#profiles-content').html(data)
        });
 })
+

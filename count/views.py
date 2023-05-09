@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .decorators import usertype_in_view
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm
-from .models import Profile, Sale, Count, Platform, Promotion, PromotionPlatform
+from .models import Profile, Count, Platform, Promotion, PromotionPlatform, Price, Bill, Sale
 from user.models import Customer
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
@@ -15,6 +15,8 @@ from count.decorators import usertype_in_view, check_user_type
 from .libraries import getDifference
 import datetime, pytz
 from django.contrib import messages
+from count.libraries import CalculateDateLimit
+from user.whatsapp_api import message_sale, message_renew
 
 
 utc = pytz.UTC
@@ -56,8 +58,13 @@ class AddPlatformView(CreateView):
     template_name = "platform/add.html"
 
     def form_valid(self, form):
+
         form = CreatePlatformForm(self.request.POST, self.request.FILES)
-        form.save()
+        platform = form.save()
+        for item in self.request.POST:
+            if item.isnumeric():
+               Price.objects.create(platform=platform, num_profiles= item, price= self.request.POST[item])
+
         return redirect('platform-list')
 
 
@@ -69,6 +76,20 @@ class UpdatePlatformView(UpdateView):
     fields = ["name", "logo", "price", "active"]
     template_name = "platform/update.html"
     success_url = "/count/platform/list"
+
+
+@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class SetPricesOfQuantityProfilesView(View):
+
+
+    template_name = "profiles/set_prices.html"
+
+    def get(self, request, *args, **kwargs):
+
+        num_profiles = list(range(1, int(kwargs['quantity'])+1))
+        return render(request, self.template_name, {'num_profiles': num_profiles})
+
 
 
 
@@ -130,79 +151,92 @@ class AddSaleView(View):
 
     def post(self, request, *args, **kwargs):
 
+        profiles = []
         form = self.form_class (request.POST)
         customer = Customer.objects.filter(id= kwargs['id']).first()
-        print(request.POST)
         if customer and form.is_valid():
+            num_profiles = list(request.POST.values()).count("on")
+            total = Price.objects.filter(platform_id = request.POST['platform'], num_profiles= num_profiles).first()
+            bill = Bill.objects.create(customer=customer, saler= request.user, total=total)
             for item in request.POST:
                 if item.isnumeric():
-                    profile = Profile.objects.filter(id = item).first()
-                    profile.pin = request.POST['pin_'+item]
-                    profile.profile = request.POST[item]
-                    profile.save()
-                    request.user.sale_profile(customer, profile, int(request.POST['months']))
-                    return render(request, 'sale/sale_post.html', { 'profile':profile })
+                    if request.POST[item] == 'on':
+                        date_limit = CalculateDateLimit(now, int(request.POST['months']))
+                        profile = Profile.objects.filter(id = item).first()
+                        profile.pin = request.POST['pin_'+item]
+                        profile.profile = request.POST['profile_'+item]
+                        profile.save()
+                        profiles.append(profile)
+                        profile_saled = request.user.sale_profile( profile, int(request.POST['months']), date_limit, bill)
+                        #Sale.objects.create(sale_profile=profile_saled,)
+                        message_sale(profile, customer, date_limit)
+            return render(request, 'sale/sale_post.html', { 'profiles':profiles })
+
         return render(request, self.template_name, {'form': self.form_class, 'customer': customer})
 
 @method_decorator(login_required, name='dispatch')
-class GetProfileAvailableView(View):
+class GetProfilesAvailableView(ListView):
 
-    def get(self, request, *args, **kwargs):
-
-        profile = Profile.search_profile_no_saled(kwargs['platform'])
-
-        html = '<div class="form-group"><label for="pin_' + str(profile.id) + '">Pin</label> \n' \
-               '<input type="number" name="pin_' + str(profile.id) + '" value = "' + str(profile.pin) + '" class ="form-control" required="true" id="pin_' + str(profile.id)+'" > \n' \
-                '</div>'
-        html_2 = '<div class="form-group"><label for="profile_' + str(profile.id) + '">Perfil</label> \n' \
-               '<input type="text" name="'+ str(profile.id) + '" value = "' + str(profile.profile) + '" class ="form-control" required="true" id="profile_' + str(profile.id) + '" > \n' \
-               '</div>'
-
-        return HttpResponse(html+ html_2)
-
-
-
-
-
-
-@method_decorator(login_required, name='dispatch')
-class AddRenovationView(View):
-
-    form_class = RenovationForm
-    template_name = "sale/renovation.html"
-
-    def get(self, request, *args, **kwargs):
-
-        sale = Sale.objects.filter(id=kwargs['pk']).first()
-        if sale:
-            return render(request, self.template_name, {'form': self.form_class, 'customer': sale.customer})
-        else:
-            return redirect('index')
-
-    def post(self, request, *args, **kwargs):
-
-        form = self.form_class(request.POST)
-        sale = Sale.objects.filter(id=kwargs['pk']).first()
-        if sale and form.is_valid():
-            sale.set_renovation(request.user, int(request.POST['months']))
-            messages.info(request, 'Renovacion hecha satisfactoriamente')
-
-        return render(request, self.template_name, {'form': self.form_class, 'customer': sale.customer})
-
-@method_decorator(login_required, name='dispatch')
-class SalesListView(ListView):
-
-    model = Sale
-    template_name = "sale/list.html"
+    model = Profile
+    template_name = "profiles/list_avaliables.html"
 
     def get_queryset(self,  *args, **kwargs):
 
+        profiles = self.model.search_profiles_no_saled(self.kwargs['platform'])
+        return profiles
 
-        sales = self.model.objects.filter(saler=self.request.user)
+
+
+
+
+@method_decorator(login_required, name='dispatch')
+class BillListView(ListView):
+
+    model = Bill
+    template_name = "bill/list.html"
+
+    def get_queryset(self,  *args, **kwargs):
+
+        bills = self.model.objects.filter(saler=self.request.user).order_by('-date')
+        return bills
+
+
+@method_decorator(login_required, name='dispatch')
+class SalesListView(ListView):
+    model = Sale
+    template_name = "sale/list.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        sales = self.model.objects.filter(bill=self.kwargs['id'], bill__saler=self.request.user)
         for sale in sales:
-            rest_days = getDifference(sale.date_limit, now, 'days')
-            sale.rest_days = abs(rest_days)
+            rest_days = getDifference( now, sale.date_limit, 'days')
+            if rest_days < 0:
+                sale.rest_days = "Vencida"
+            else:
+                sale.rest_days = rest_days
         return sales
+
+    def post(self, request, *args, **kwargs):
+
+        num_profiles = list(request.POST.values()).count("on")
+        for item in request.POST:
+            if item.isnumeric():
+                profile = Profile.objects.filter(id=item).first()
+                sale = Sale.objects.filter(profile=item).last()
+                continue
+        total = Price.objects.filter(platform=profile.count.platform, num_profiles=num_profiles).first()
+        bill = Bill.objects.create(customer=sale.bill.customer, saler=request.user, total=total.price)
+        for item in request.POST:
+            if item.isnumeric():
+                if request.POST[item] == 'on':
+                    profile = Profile.objects.filter(id=item).first()
+                    date_limit = CalculateDateLimit(now, int(request.POST['months']))
+                    profile_saled = request.user.sale_profile(profile, int(request.POST['months']), date_limit, bill)
+                    message_renew(profile, sale.bill.customer, date_limit)
+
+        return redirect('bill-list')
+
 
 @method_decorator(usertype_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')

@@ -16,8 +16,6 @@ Crear Plataforma
               {{ form.name|add_class:'form-control' }}
               <p class="help-block">{{ form.name.help_text }}</p>
           </div>
-
-
           <div class="form-group">
             <label  class="text-label">{{ form.logo.label_tag }}</label>
             {{ form.logo|add_class:'form-control' }}
@@ -38,10 +36,24 @@ Crear Plataforma
             {{ form.active }}
             <p class="help-block">{{ form.active.help_text }}</p>
           </div>
-          <button type="submit" class="btn btn-primary mr-2">Crear</button>
+           <div id="profiles-content"></div>
+          <button type="submit" class="btn btn-primary mr-2 create-platform" disabled>Crear</button>
         </form>
         {{ form.errors }}
       </div>
     </div>
 </div>
+<script>
+
+$("#id_num_profiles").on("keyup", function() {
+
+      num_profiles = $(this).val();
+      $.get('/count/platform/set-prices_by-profiles/'+num_profiles )
+       .done(function( data ) {
+           $('#profiles-content').html(data)
+           $('.create-platform').removeAttr("disabled");
+       });
+})
+
+</script>
 {% endblock %}

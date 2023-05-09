@@ -4,17 +4,17 @@ from user.models import Customer
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from count.libraries import CalculateDateLimit
-from datetime import datetime , timedelta
-from user.whatsapp_api import message_sale
+
+
+
 
 class Platform(models.Model):
 
     name = models.CharField(max_length=150, verbose_name="Nombre", default="")
     active = models.BooleanField(default=1, verbose_name="Activo?:")
     logo =  models.FileField(default="", upload_to='logos', validators=[valid_image_extension])
-    num_profiles = models.IntegerField(default=1, verbose_name="Número de perfiles")
-    price = models.FloatField(default=0, verbose_name="Precio")
+    num_profiles = models.IntegerField(default=0, verbose_name="Número de perfiles")
+    #price = models.FloatField(default=0, verbose_name="Precio")
 
     def __str__(self):
         return str(self.name)
@@ -24,7 +24,7 @@ class Platform(models.Model):
         verbose_name_plural = 'Plataformas'
 
     @classmethod
-    def get_my_platforms_whit_counts(cls):
+    def get_my_platforms_with_counts(cls):
 
         platforms = cls.objects.all()
 
@@ -40,6 +40,11 @@ class Platform(models.Model):
         platform = Platform.objects.filter(id=platform_id).first()
         return platform.num_profiles
 
+class Price(models.Model):
+
+    platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
+    num_profiles = models.PositiveIntegerField( verbose_name="Número de perfiles")
+    price = models.FloatField(default=0, verbose_name="Precio")
 
 
 class Count(models.Model):
@@ -93,20 +98,26 @@ class Profile(models.Model):
         return None
 
     @classmethod
-    def search_profile_no_saled(cls, platform):
+    def search_profiles_no_saled(cls, platform):
 
-        profile = cls.objects.filter(saled=0, count__platform_id=platform).first()
-        return profile
+        profiles = cls.objects.filter(saled=0, count__platform_id=platform)
+        return profiles[:19]
+
+
+class Bill(models.Model):
+
+    date = models.DateTimeField(auto_now_add=True)
+    customer = models.ForeignKey(Customer, verbose_name="Cliente", on_delete=models.CASCADE)
+    saler = models.ForeignKey(User, verbose_name="Vendedor", on_delete=models.CASCADE)
+    total = models.FloatField(default=0, verbose_name="Precio")
 
 class Sale(models.Model):
 
     date = models.DateTimeField(auto_now_add=True)
-    customer = models.ForeignKey(Customer, verbose_name="Cliente", on_delete=models.CASCADE)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name="Perfil")
-    price = models.FloatField(default=0)
     months = models.PositiveIntegerField(default=1)
     date_limit = models.DateTimeField(verbose_name="Fecha de vencimiento", blank=True, null=True, auto_now_add=False)
-    saler = models.ForeignKey(User, verbose_name="Vendedor", on_delete=models.CASCADE)
+    bill = models.ForeignKey(Bill, verbose_name="Factura", on_delete=models.CASCADE)
 
     @classmethod
     def GetInterdatesSales(cls, user, initial_date, final_date):
@@ -119,33 +130,32 @@ class Sale(models.Model):
                 '-date')
         return sales
 
-    def set_renovation(self, saler, months):
+    def set_renovation(self, saler, months,  CalculateDateLimit):
 
         date_limit = CalculateDateLimit(self.date_limit, months)
-        Sale.objects.create(customer=self.customer,
-                            profile=self.profile,
-                            price= self.profile.count.platform.price * months,
+        print(self.bill.customer.name)
+        post
+        bill = Bill.objects.create(customer=self.bill.customer, saler=saler, total=total)
+        self.objects.create(
                             months=months,
                             date_limit=date_limit,
-                            saler=saler)
+                            bill=saler)
+
+#facturas
 
 
 
 
-def sale_profile(self, customer, profile, months):
+def sale_profile(self, profile, months, date_limit, bill):
 
-    now = datetime.now()
-    date_limit = CalculateDateLimit(now, months)
-    sale= Sale.objects.create(customer = customer,
+    profile_saled = Sale.objects.create(
                         profile = profile,
-                        price = profile.count.platform.price * months,
                         months = months,
                         date_limit = date_limit,
-                        saler = self)
-    message_sale(profile, customer, date_limit)
-
+                        bill=bill
+                        )
     profile.saled = True
     profile.save()
-    return profile.count
+    return profile_saled
 
 User.add_to_class("sale_profile", sale_profile)

@@ -31,7 +31,7 @@ function logout(){
   var opcion = confirm("Confirma que desea cerra sesion?");
     if (opcion == true) {
         $.get( "/accounts/logout", function() {
-            window.location = '/users/accounts/login'
+            window.location = '/user/accounts/login'
         });
     }
 }

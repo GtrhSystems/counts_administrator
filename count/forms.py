@@ -5,10 +5,10 @@ import datetime
 class SaleForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
-
         super(SaleForm, self).__init__(*args, **kwargs)
-        self.fields['platform'] = forms.ModelChoiceField(queryset=Platform.get_my_platforms_whit_counts(), required=True, label="Plataforma")
-        self.fields['months'] = forms.IntegerField(label="Meses", required=True)
+        self.fields['platform'] = forms.ModelChoiceField(queryset=Platform.get_my_platforms_with_counts(), required=True, label="Plataforma")
+        self.fields['months'] = forms.IntegerField(min_value=1 ,label="Meses", required=True)
+
 
 
 class RenovationForm(forms.Form):
@@ -61,7 +61,7 @@ class CreatePlatformForm(forms.ModelForm):
 
     class Meta:
         model = Platform
-        fields = ["name", "active", "logo", "num_profiles", "price"]
+        fields = ["name", "active", "logo", "num_profiles"]
 
 
 class PlatformForm(forms.Form):

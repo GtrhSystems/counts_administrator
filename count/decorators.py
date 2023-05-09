@@ -26,7 +26,8 @@ def usertype_in_view(function):
                      'create-platform',
                      'update-platform',
                      'platform-list',
-                     'update-customer'
+                     'update-customer',
+                     'set-prices_by-profiles',
                      ]
 
         staff = ['add-user',

@@ -1,7 +1,7 @@
 
 {% load widget_tweaks %}
 {% block content %}
-
+{% load humanize %}
   <div class="card">
     <div class="card-body">
       <h4 class="card-title">Tus ventas</h4>
@@ -11,25 +11,25 @@
         <table class="table table-dark table-normal">
           <thead>
             <tr>
-              <th>#</th>
+                <th> # Factura </th>
               <th> Fecha </th>
               <th> Cliente </th>
-              <th> Plataforma </th>
-              <th> Precio U. </th>
-              <th> Meses </th>
-              <th> Precio </th>
+              <th> Total </th>
+              <th> </th>
             </tr>
           </thead>
           <tbody>
-           {% for sale in object_list %}
+           {% for bill in object_list %}
             <tr>
-              <td>{{forloop.counter}}</td>
-              <td>{{ sale.date }}</td>
-              <td>{{ sale.customer.name }}</td>
-              <td>{{ sale.profile.count.platform }}</td>
-              <td>${{ sale.profile.count.platform.price }}</td>
-              <td>{{ sale.months }}</td>
-              <td>${{ sale.price }}</td>
+              <td>{{ bill.id }}</td>
+              <td>{{ bill.date|date:"d/M/Y" }}</td>
+              <td>{{ bill.customer.name }}</td>
+              <td>$ {{ bill.total|intcomma  }}</td>
+               <td>
+                  <a href="{% url 'sale-list' bill.id %}" >
+                  <button type="button" class="btn btn-info  btn-icon-text">
+                  <i class="mdi mdi-information"></i>Ver</button></a>
+              </td>
             </tr>
           {% endfor %}
           </tbody>

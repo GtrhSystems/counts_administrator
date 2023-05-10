@@ -4,7 +4,7 @@ from user.models import Customer
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-
+import datetime
 
 
 
@@ -111,6 +111,16 @@ class Bill(models.Model):
     saler = models.ForeignKey(User, verbose_name="Vendedor", on_delete=models.CASCADE)
     total = models.FloatField(default=0, verbose_name="Precio")
 
+    @classmethod
+    def GetInterdatesBills(cls, user, initial_date, final_date):
+
+        initial_date = datetime.datetime.strptime(initial_date, '%Y-%m-%d')
+        final_date = datetime.datetime.strptime(final_date, '%Y-%m-%d')
+        initial_date = initial_date + datetime.timedelta(hours=5)
+        final_date = final_date + datetime.timedelta(hours=29)
+        bills = cls.objects.filter(saler=user, date__range=[initial_date, final_date]).order_by('-date')
+        return bills
+
 class Sale(models.Model):
 
     date = models.DateTimeField(auto_now_add=True)
@@ -122,13 +132,14 @@ class Sale(models.Model):
     @classmethod
     def GetInterdatesSales(cls, user, initial_date, final_date):
 
-        initial_date = datetime.strptime(initial_date, '%Y-%m-%d')
-        final_date = datetime.strptime(final_date, '%Y-%m-%d')
-        initial_date = initial_date + timedelta(hours=5)
-        final_date = final_date + timedelta(hours=29)
-        sales = cls.objects.filter(saler=user, date__range=[initial_date, final_date]).order_by(
-                '-date')
+        initial_date = datetime.datetime.strptime(initial_date, '%Y-%m-%d')
+        final_date = datetime.datetime.strptime(final_date, '%Y-%m-%d')
+        initial_date = initial_date + datetime.timedelta(hours=5)
+        final_date = final_date + datetime.timedelta(hours=29)
+        sales = cls.objects.filter(bill__saler=user, date__range=[initial_date, final_date]).order_by('-date')
         return sales
+
+
 
     def set_renovation(self, saler, months,  CalculateDateLimit):
 

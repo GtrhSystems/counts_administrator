@@ -238,6 +238,24 @@ class SalesListView(ListView):
         return redirect('bill-list')
 
 
+@method_decorator(login_required, name='dispatch')
+class InterdatesSalesView(ListView):
+
+    model = Bill
+    template_name = "sale/list-no-layout.html"
+
+    def get_queryset(self, *args, **kwargs):
+
+        if 'user' in kwargs:
+            user = User.objects.filter(username = kwargs['user'])
+        else:
+            user = self.request.user
+
+        bills = self.model.GetInterdatesBills(user, self.kwargs['initial_date'],
+                                                  self.kwargs['final_date'] )
+        return bills
+
+
 @method_decorator(usertype_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class CreatePromotionView(View):
@@ -275,22 +293,7 @@ class CreatePromotionView(View):
             return redirect('index')
         return render(request, self.template_name, {'form': form})
 
-@method_decorator(login_required, name='dispatch')
-class InterdatesSalesView(ListView):
 
-    model = Sale
-    template_name = "sale/list-no-layout.html"
-
-    def get_queryset(self, *args, **kwargs):
-
-        if 'user' in kwargs:
-            user = User.objects.filter(username = kwargs['user'])
-        else:
-            user = self.request.user
-
-        sales = self.model.GetInterdatesSales(user, self.kwargs['initial_date'],
-                                                  self.kwargs['final_date'] )
-        return sales
 
 class CronWhatsappView(ListView):
     pass

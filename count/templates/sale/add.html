@@ -32,22 +32,27 @@ Formulario de venta
 
   $(".sale").on("click", function() {
 
-      event.preventDefault()
-      form = $('form')
-      const json = convertFormToJSON(form);
-      $.post('/count/sale/{{ customer.id }}',json)
-       .done(function( data ) {
+      if ($('#id_months').val() ==""){
+        alert("Tienes que digitar los meses de compra")
+      }else{
+        event.preventDefault()
+        form = $('form')
+        const json = convertFormToJSON(form);
+        $('.modal-title').html("Procesando compra")
+        $('#modal-body').append('<img style= "margin-left: 80px;" src="/static/assets/images/loading.gif" alt="Loading" width="300" height="300">')
+        $("#myModal").modal({show: true})
+        $.post('/count/sale/{{ customer.id }}',json)
+         .done(function( data ) {
+            if (data != "{}"){
+                 $('.modal-title').html("Compra Exitosa")
+                 $('#modal-body').html(data)
+                 $('.modal-footer').html('<button type="button" class="close-modal btn btn-lg btn-secondary btn-block" data-dismiss="modal">Aceptar</button>')
+            }else{
+                alert("Datos de conexión inválidos")
 
-          if (data != "{}"){
-               $('.modal-title').html("Compra Exitosa")
-               $('#modal-body').html(data)
-               $('.modal-footer').html('<button type="button" class="close-modal btn btn-lg btn-secondary btn-block" data-dismiss="modal">Aceptar</button>')
-               $("#myModal").modal({show: true})
-          }else{
-              alert("Datos de conexión inválidos")
-
-          }
-      });
+            }
+        });
+      }
 
   })
 

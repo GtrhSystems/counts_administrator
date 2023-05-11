@@ -129,7 +129,10 @@ class CountsListView(ListView):
 
     def get_queryset(self,  *args, **kwargs):
 
-        counts = self.model.objects.all().order_by('-date')
+        counts = self.model.objects.prefetch_related('profile_set').all().order_by('-date')
+        
+
+
         return counts
 
 
@@ -167,8 +170,7 @@ class AddSaleView(View):
                         profile.profile = request.POST['profile_'+item]
                         profile.save()
                         profiles.append(profile)
-                        profile_saled = request.user.sale_profile( profile, int(request.POST['months']), date_limit, bill)
-                        #Sale.objects.create(sale_profile=profile_saled,)
+                        request.user.sale_profile( profile, int(request.POST['months']), date_limit, bill)
                         message_sale(profile, customer, date_limit)
             return render(request, 'sale/sale_post.html', { 'profiles':profiles })
 

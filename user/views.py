@@ -5,12 +5,13 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from .models import Customer
-from count.models import Sale
+from count.models import Sale, Bill
 from .forms import CustomerForm, UserForm
 from count.decorators import usertype_in_view, check_user_type
 from django.contrib.auth.models import User
 from .whatsapp_api import send_message
 import datetime, pytz
+from count.libraries import getDifference
 from django.contrib import messages
 
 utc = pytz.UTC
@@ -59,6 +60,21 @@ class UpdateCustomerView(UpdateView):
     template_name = "user/update_customer.html"
     success_url = "/user/list-customer"
 
+    def get_context_data(self, **kwargs):
+
+        buys = []
+        ctx = super(UpdateCustomerView, self).get_context_data(**kwargs)
+
+        sales = Sale.objects.filter(bill__customer=self.kwargs['pk'])
+        for sale in sales:
+            rest_days = getDifference(now, sale.date_limit, 'days')
+            if rest_days < 0:
+                sale.rest_days = "Vencida"
+            else:
+                sale.rest_days = rest_days
+        ctx['sales'] = sales
+        ctx['pk'] = self.kwargs['pk']
+        return ctx
 
 
 @method_decorator(login_required, name='dispatch')

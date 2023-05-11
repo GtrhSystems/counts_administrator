@@ -12,7 +12,7 @@ def message_sale(profile, customer, date_limit):
                 f"🔐CONTRASEÑA: {profile.count.password} \n" \
                 f"📺: PERFIL {profile.profile}  \n" \
                 f"🔒 PIN: {profile.pin} \n" \
-                f"📅 Fecha de corte: {date_limit.strftime('%d/%M/%Y')} \n" \
+                f"📅 Fecha de corte: {date_limit.strftime('%d/%m/%Y')} \n" \
                 f"Condiciones del servicio:  \n" \
                 f"1.-No modifique ninguna información de la cuenta \n" \
                 f"2.-No puede estar en 2 o más dispositivos simultáneamente  \n" \
@@ -21,17 +21,19 @@ def message_sale(profile, customer, date_limit):
                 f"hacer ningún reembolso. Solo garantía de reemplazo. \n" \
                 f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
                 f"Muchas gracias 😊 "
+    print(message)
+
     send_message(str(customer.phone), message)
 
 
 def message_renew(profile, customer, date_limit):
 
-    message =  f"Hola, tu servicio {profile.count.platform.name} ha sido renovado y se enccuentra activo, \n" \
+    message =  f"Hola, tu servicio {profile.count.platform.name} ha sido renovado y se encuentra activo, \n" \
                 f"👤USUARIO:  {profile.count.email}   \n" \
                 f"🔐CONTRASEÑA: {profile.count.password} \n" \
                 f"📺: PERFIL {profile.profile}  \n" \
                 f"🔒 PIN: {profile.pin} \n" \
-                f"📅 Fecha de corte: {date_limit.strftime('%d/%M/%Y')} \n" \
+                f"📅 Fecha de corte: {date_limit.strftime('%d/%m/%Y')} \n" \
                 f"Condiciones del servicio:  \n" \
                 f"1.-No modifique ninguna información de la cuenta \n" \
                 f"2.-No puede estar en 2 o más dispositivos simultáneamente  \n" \

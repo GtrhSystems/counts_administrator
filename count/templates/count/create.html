@@ -23,7 +23,12 @@ Crear cuentas
             <label for="password">{{ form.password.label }}</label>
              {{ form.password|add_class:'form-control' }}
           </div>
-
+            <div class="form-group">
+                 <div class="form-line">
+                    {{ form.date_limit|add_class:'form-control' }}
+                </div>
+                <small >Fecha de vencimiento.</small>
+            </div>
           <div id="profiles">
 
           </div>

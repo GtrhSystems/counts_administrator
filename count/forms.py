@@ -1,6 +1,7 @@
 from django import forms
 from .models import Sale, Platform, Count, Promotion
-import datetime
+
+from datetime import date
 
 class SaleForm(forms.Form):
 
@@ -20,7 +21,7 @@ class RenovationForm(forms.Form):
 class GetInterDatesForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
-        from datetime import date
+
         super(GetInterDatesForm, self).__init__(*args, **kwargs)
         self.fields['init_date'] = forms.DateField(widget=forms.DateInput(
             attrs={'type': 'date', 'placeholder': 'Digite la fecha inicial', 'data-date-format': 'YYYY/MMMM/DD',
@@ -39,6 +40,9 @@ class CountForm(forms.Form):
         platforms = Platform.objects.filter(active=True)
         self.fields['platform'] = forms.ModelChoiceField(queryset=platforms, help_text='Selecciones la plataforma',
                                                       label="Plataforma")
+        self.fields['date_limit'] = forms.DateField(widget=forms.DateInput(
+            attrs={'type': 'date', 'placeholder': 'Digite la fecha de vencimiento', 'data-date-format': 'YYYY/MMMM/DD',
+                   'value': date.today()}))
 
     email = forms.EmailField(required=True)
     password = forms.CharField(required=True, label="Contraseña")
@@ -46,9 +50,9 @@ class CountForm(forms.Form):
     def save(self, commit=True):
 
         instance = super().save(commit=False)
-
-
         super(CountForm, self).save(*args, **kwargs)
+
+
 
 class CreatePromotionForm(forms.ModelForm):
 

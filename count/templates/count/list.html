@@ -19,6 +19,7 @@ Listado de ventas
               <th> Plataforma </th>
               <th> Correo </th>
               <th> Contraseña </th>
+              <th> Vence </th>
             </tr>
           </thead>
           <tbody>
@@ -29,6 +30,7 @@ Listado de ventas
               <td>{{ count.platform.name }}</td>
               <td>{{ count.email }}</td>
               <td>{{ count.password }}</td>
+              <td>{{ count.rest_days }} </td>
             </tr>
           {% endfor %}
           </tbody>

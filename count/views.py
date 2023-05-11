@@ -44,7 +44,9 @@ class CreateCount(View):
 
         new_count = Count.objects.create(platform_id = request.POST['platform'],
                                          email = request.POST['email'],
-                                         password = request.POST['password'])
+                                         password = request.POST['password'],
+                                         date_limit = request.POST['date_limit']
+                                         )
         for item in request.POST:
             if item.isnumeric():
                 Profile.objects.create(count=new_count, profile = item, pin=request.POST[item], saled=0)
@@ -130,9 +132,12 @@ class CountsListView(ListView):
     def get_queryset(self,  *args, **kwargs):
 
         counts = self.model.objects.prefetch_related('profile_set').all().order_by('-date')
-        
-
-
+        for count in counts:
+            rest_days = getDifference(now, count.date_limit, 'days')
+            if rest_days < 0:
+                count.rest_days = "Vencida"
+            else:
+                count.rest_days = str(rest_days) + " dia(s)"
         return counts
 
 
@@ -294,7 +299,6 @@ class CreatePromotionView(View):
                 PromotionPlatform.objects.create(promotion=promotion, platform= platform)
             return redirect('index')
         return render(request, self.template_name, {'form': form})
-
 
 
 class CronWhatsappView(ListView):

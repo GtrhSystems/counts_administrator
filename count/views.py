@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .decorators import usertype_in_view
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm
-from .models import Profile, Count, Platform, Promotion, PromotionPlatform, Price, Bill, Sale
+from .models import Profile, Count, Platform, Promotion, PromotionPlatform, Price, Bill, Sale, PromotionSale
 from user.models import Customer
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
@@ -17,7 +17,7 @@ import datetime, pytz
 from django.contrib import messages
 from count.libraries import CalculateDateLimit
 from user.whatsapp_api import message_sale, message_renew
-
+from django.views.decorators.csrf import csrf_exempt
 
 utc = pytz.UTC
 now = datetime.datetime.now()
@@ -150,9 +150,9 @@ class AddSaleView(View):
     def get(self, request, *args, **kwargs):
 
         customer = Customer.objects.filter(id= kwargs['id']).first()
-
         if customer:
-            return render(request, self.template_name, { 'form': self.form_class, 'customer':customer })
+            promotions = Promotion.get_promotions_actives()
+            return render(request, self.template_name, { 'form': self.form_class,  'customer':customer, 'promotions':promotions })
         else:
             return redirect('index')
 
@@ -300,6 +300,32 @@ class CreatePromotionView(View):
             return redirect('index')
         return render(request, self.template_name, {'form': form})
 
+
+
+
+class SalePromotionView(View):
+
+
+    model = Promotion
+    template_name = "promotion/sale.html"
+
+    def post(self, request, *args, **kwargs):
+
+        profiles = []
+        customer = Customer.objects.filter(id=kwargs['user_id']).first()
+        promotion = Promotion.objects.filter(id=kwargs['promotion_id']).first()
+        promotion_platforms = PromotionPlatform.objects.filter(promotion_id=kwargs['promotion_id'])
+        bill = Bill.objects.create(customer=customer, saler=request.user, total=promotion.price)
+        for promotion_platform in promotion_platforms:
+            profile = Profile.search_profiles_no_saled(promotion_platform.id)[0]
+            date_limit = CalculateDateLimit(now, int(request.POST['months_promo']))
+            profiles.append(profile)
+            request.user.sale_profile(profile, int(request.POST['months_promo']), date_limit, bill)
+            message_sale(profile, customer, date_limit)
+        PromotionSale.objects.create(promotion=promotion, customer=customer )
+
+        return render(request, 'sale/sale_post.html', {'profiles': profiles})
+        return HttpResponse('que marik')
 
 class CronWhatsappView(ListView):
     pass

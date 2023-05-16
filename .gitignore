@@ -30,5 +30,6 @@ count_admin_project/settings.py
 logs/
 static/ss
 static/media
+promotions/
 
 

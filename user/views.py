@@ -36,7 +36,7 @@ class IndexView(View):
 
     def get(self, request, *args, **kwargs):
 
-        return render(request, 'index.html' )
+        return redirect('list-customer')
 
 
 @method_decorator(login_required, name='dispatch')

@@ -171,3 +171,5 @@ $("#id_platform").on("change", function() {
        });
 })
 
+
+

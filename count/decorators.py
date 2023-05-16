@@ -27,7 +27,8 @@ def usertype_in_view(function):
                      'update-platform',
                      'platform-list',
                      'update-customer',
-                     'set-prices_by-profiles',
+                     'set-prices_by-profiles'
+
                      ]
 
         staff = ['add-user',
@@ -37,7 +38,8 @@ def usertype_in_view(function):
                  'create-promotion'
                  ]
 
-        saler = ['add-user',
+        saler = ['add-user'
+
                  ]
 
         request_url = request.__dict__['path_info'] #captura todo el request en un dict

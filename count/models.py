@@ -74,6 +74,22 @@ class Promotion(models.Model):
         verbose_name = 'Promoción'
         verbose_name_plural = 'Promociones'
 
+    @classmethod
+    def get_promotions_actives(cls):
+
+        promotions_with_profiles = []
+        now = datetime.datetime.now()
+        promotions = cls.objects.filter(active=True, date_init__lt = now , date_finish__gt = now )
+        for promotion in promotions:
+            len_profiles = []
+            promotion_platforms = PromotionPlatform.objects.filter(promotion=promotion)
+            for promotion_platform in promotion_platforms:
+                profiles = Profile.search_profiles_no_saled(promotion_platform.id)
+                len_profiles.append(len(profiles))
+            if not 0 in len_profiles:
+                promotions_with_profiles.append(promotion)
+        return promotions_with_profiles
+
 
 
 class PromotionPlatform(models.Model):
@@ -81,6 +97,12 @@ class PromotionPlatform(models.Model):
     promotion = models.ForeignKey(Promotion, verbose_name="Promoción", on_delete=models.CASCADE)
     platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
 
+
+class PromotionSale(models.Model):
+
+    date = models.DateTimeField(verbose_name="Fecha", auto_now_add=True)
+    promotion = models.ForeignKey(Promotion, verbose_name="Promoción", on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, verbose_name="Plataforma", on_delete=models.CASCADE)
 
 class Profile(models.Model):
 
@@ -145,8 +167,6 @@ class Sale(models.Model):
     def set_renovation(self, saler, months,  CalculateDateLimit):
 
         date_limit = CalculateDateLimit(self.date_limit, months)
-        print(self.bill.customer.name)
-        post
         bill = Bill.objects.create(customer=self.bill.customer, saler=saler, total=total)
         self.objects.create(
                             months=months,

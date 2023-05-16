@@ -15,7 +15,9 @@ urlpatterns = [
         path('create', views.CreateCount.as_view(), name='create-count'),
         path('create-pins-profiles/<str:platform>', views.CreatePinsProfiles.as_view(), name='create-pins-profiles'),
         path('list', views.CountsListView.as_view(), name='count-list'),
+        #promotions
         path('promotion/create', views.CreatePromotionView.as_view(), name='create-promotion'),
+        path('promotion/sale/<int:user_id>/<int:promotion_id>', views.SalePromotionView.as_view(), name='sale-promotion'),
 
         path('platform/create', views.AddPlatformView.as_view(), name='create-platform'),
         path('platform/update/<int:pk>', views.UpdatePlatformView.as_view(), name='update-platform'),
@@ -25,6 +27,7 @@ urlpatterns = [
 
         #path('sale/add-renovation/<int:pk>', views.AddRenovationView.as_view(), name='add-renovation'),
         path('get-profiles-available/<str:platform>', views.GetProfilesAvailableView.as_view(), name='get-profiles-available'),
+
 
 
 

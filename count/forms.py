@@ -15,7 +15,7 @@ class SaleForm(forms.Form):
 class RenovationForm(forms.Form):
 
 
-    months = forms.IntegerField(label="Meses", required=True,)
+    months = forms.IntegerField(label="Meses", required=True, widget= forms.NumberInput(attrs={'placeholder':'Ingrese los meses', 'min':'1'}))
 
 
 class GetInterDatesForm(forms.Form):

@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
+from user import views
 
 urlpatterns = [
+    path('', views.IndexView.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('count/', include('count.urls')),
     path('user/', include('user.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
 
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+ static(settings.LOGOS_URL, document_root=settings.LOGOS_ROOT)
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+ static(settings.LOGOS_URL, document_root=settings.LOGOS_ROOT)+ static(settings.PROMOTIONS_URL, document_root=settings.PROMOTIONS_ROOT)

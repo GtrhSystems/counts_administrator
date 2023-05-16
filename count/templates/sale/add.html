@@ -3,13 +3,22 @@
 Formulario de venta
 {% endblock %}
 {% load widget_tweaks %}
+{% load humanize %}
 {% block content %}
+<style>
+   .title_promotion{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        word-break:break-all;
+   }
+</style>
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
         <h4 class="card-title">Vender perfil a {{ customer.name }}</h4>
         <p class="card-description">Digite los datos de la venta</p>
-        <form  method="post" class="forms-sample" >
+        <form  method="post" id="form_sale" class="forms-sample" >
           	{% csrf_token %}
           <div class="form-group">
             <label for="platform">{{ form.platform.label }}</label>
@@ -28,34 +37,84 @@ Formulario de venta
       </div>
     </div>
 </div>
+
+{% for promotion in promotions %}
+ <div class="col-2" style="height: 304px;">
+        <div class="card" style="background-image: url('/{{ promotion.image }}');background-repeat: no-repeat;background-size: cover; height: 140%;">
+            <div class="card-header" style="height: 100%;">
+            </div>
+            <div class="card-body">
+                <div class="media align-items-center mb-4">
+
+                    <div class="media-body">
+                        <h3 class="mb-0">{{ price_plan.plan.platform.name }}</h3>
+                        <!--<p class="text-muted mb-0">Canada</p>-->
+                    </div>
+                </div>
+
+                <div class="row mb-5">
+                    <form  method="post" id="promo_form_{{ promotion.id }}" action="" style="width: 100%;">
+                        {% csrf_token %}
+                        <div class="col">
+                            <div class="card-profile border-0 text-center">
+                                <input type="number" name="months_promo" min="1" class="form-control" required="" id="months_promo_{{ promotion.id }}" placeholder="Meses">
+                            </div>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button type="submit" class="sale_multiplatform btn btn-danger px-5 promotion" id="{{ promotion.id }}" >Vender Promoción</button>
+                        </div>
+                     </form>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endfor %}
+
 <script>
 
-  $(".sale").on("click", function() {
+$(".sale").on("click", function() {
 
-      if ($('#id_months').val() ==""){
-        alert("Tienes que digitar los meses de compra")
-      }else{
-        event.preventDefault()
-        form = $('form')
-        const json = convertFormToJSON(form);
-        $('.modal-title').html("Procesando compra")
-        $('#modal-body').append('<img style= "margin-left: 80px;" src="/static/assets/images/loading.gif" alt="Loading" width="300" height="300">')
-        $("#myModal").modal({show: true})
-        $.post('/count/sale/{{ customer.id }}',json)
-         .done(function( data ) {
-            if (data != "{}"){
-                 $('.modal-title').html("Compra Exitosa")
-                 $('#modal-body').html(data)
-                 $('.modal-footer').html('<button type="button" class="close-modal btn btn-lg btn-secondary btn-block" data-dismiss="modal">Aceptar</button>')
-            }else{
-                alert("Datos de conexión inválidos")
+  if ($('#id_months').val() ==""){
+    alert("Tienes que digitar los meses de compra")
+  }else{
+    event.preventDefault()
+    form = $('#form_sale')
+    const json = convertFormToJSON(form);
+    $('.modal-title').html("Procesando compra")
+    $('#modal-body').append('<img style= "margin-left: 80px;" src="/static/assets/images/loading.gif" alt="Loading" width="300" height="300">')
+    $("#myModal").modal({show: true})
+    $.post('/count/sale/{{ customer.id }}',json)
+     .done(function( data ) {
+        if (data != "{}"){
+             $('.modal-title').html("Compra Exitosa")
+             $('#modal-body').html(data)
+             $('.modal-footer').html('<button type="button" class="close-modal btn btn-lg btn-secondary btn-block" data-dismiss="modal">Aceptar</button>')
+        }else{
+            alert("Datos de conexión inválidos")
 
-            }
-        });
-      }
+        }
+    });
+  }
 
-  })
+})
 
+$(".promotion").on("click", function(e) {
+    e.preventDefault()
+    promotion_id = $(this).attr('id')
+    form = $('#promo_form_' + promotion_id )
+    const json = convertFormToJSON(form);
+    $('.modal-title').html("Procesando compra")
+    $('#modal-body').append('<img style= "margin-left: 80px;" src="/static/assets/images/loading.gif" alt="Loading" width="300" height="300">')
+    $("#myModal").modal({show: true})
+    $.post('/count/promotion/sale/{{ customer.id }}/'+promotion_id, json) .done(function( data ) {
+
+         $('.modal-title').html("Compra Exitosa")
+         $('#modal-body').html(data)
+         $('.modal-footer').html('<button type="button" class="close-modal btn btn-lg btn-secondary btn-block" data-dismiss="modal">Aceptar</button>')
+    })
+})
 
 
 </script>

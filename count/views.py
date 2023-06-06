@@ -75,7 +75,7 @@ class AddPlatformView(CreateView):
 class UpdatePlatformView(UpdateView):
 
     model = Platform
-    fields = ["name", "logo", "price", "active"]
+    fields = ["name", "logo", "num_profiles", "active"]
     template_name = "platform/update.html"
     success_url = "/count/platform/list"
 
@@ -126,19 +126,26 @@ class CreatePinsProfiles(View):
 @method_decorator(usertype_in_view, name='dispatch')
 class CountsListView(ListView):
 
-    model = Count
+    model = Bill
     template_name = "count/list.html"
 
     def get_queryset(self,  *args, **kwargs):
 
-        counts = self.model.objects.prefetch_related('profile_set').all().order_by('-date')
-        for count in counts:
-            rest_days = getDifference(now, count.date_limit, 'days')
+        bills = self.model.objects.all().order_by('date')
+        bills_list = []
+        for bill in bills:
+            sales = Sale.objects.filter(bill=bill)
+            bill.sale = sales.first()
+            bill.len= len(sales)
+            if len(sales) == 0:
+                continue
+            rest_days =  getDifference(now, sales.first().date_limit, 'days')
             if rest_days < 0:
-                count.rest_days = "Vencida"
+                bill.rest_days = "Vencida"
             else:
-                count.rest_days = str(rest_days) + " dia(s)"
-        return counts
+                bill.rest_days = str(rest_days) + " dia(s)"
+            bills_list.append(bill)
+        return bills_list
 
 
 @method_decorator(login_required, name='dispatch')
@@ -300,7 +307,15 @@ class CreatePromotionView(View):
             return redirect('index')
         return render(request, self.template_name, {'form': form})
 
+@method_decorator(login_required, name='dispatch')
+class ListPromotionView(ListView):
 
+    model = Promotion
+    template_name = "promotion/list.html"
+
+    def get_queryset(self, *args, **kwargs):
+        promotions = self.model.objects.filter(active=True).order_by('-date_finish')
+        return promotions
 
 
 class SalePromotionView(View):

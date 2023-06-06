@@ -5,7 +5,7 @@ from count.libraries import getDifference
 
 class Customer(models.Model):
 
-    name =  models.CharField( max_length=20, verbose_name="Nombres")
+    name =  models.CharField( max_length=100, verbose_name="Nombres")
     #devices = models.PositiveIntegerField(default=0, verbose_name="Dispositivos")
     phone = PhoneNumberField(null=False, blank=False, unique=True, verbose_name="Telefono")
     active = models.BooleanField( default=1, verbose_name="Activado")

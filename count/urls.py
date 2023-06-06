@@ -17,6 +17,7 @@ urlpatterns = [
         path('list', views.CountsListView.as_view(), name='count-list'),
         #promotions
         path('promotion/create', views.CreatePromotionView.as_view(), name='create-promotion'),
+        path('promotion/list', views.ListPromotionView.as_view(), name='list-promotion'),
         path('promotion/sale/<int:user_id>/<int:promotion_id>', views.SalePromotionView.as_view(), name='sale-promotion'),
 
         path('platform/create', views.AddPlatformView.as_view(), name='create-platform'),

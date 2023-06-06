@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Listado de promociones
+{% endblock %}
+{% load widget_tweaks %}
+{% load humanize %}
+{% block content %}
+<div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Tabla de promociones</h4>
+
+                    </p>
+                    <div class="table-responsive">
+                      <table class="table table-dark table-normal">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th> Promoción </th>
+                            <th> Precio </th>
+                            <th> Fecha de inicio </th>
+                            <th> Fecha final </th>
+                            <th> Imagen </th>
+                            <th> Creador </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                         {% for promo in object_list %}
+                          <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{ promo.name }}</td>
+                            <td>${{ promo.price|intcomma }}</td>
+                            <td>{{ promo.date_init|date:"d/M/Y" }}</td>
+                            <td>{{ promo.date_finish |date:"d/M/Y"}}</td>
+                            <td><img src="/{{ promo.image }}" alt="{{ promo.name }}" width="50" height="60"></td>
+                            <td>{{ promo.creater.username }}</td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+{% endblock %}

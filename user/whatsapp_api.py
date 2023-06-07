@@ -21,7 +21,7 @@ def message_sale(profile, customer, date_limit):
                 f"hacer ningún reembolso. Solo garantía de reemplazo. \n" \
                 f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
                 f"Muchas gracias 😊 "
-    print(message)
+    #print(message)
 
     send_message(str(customer.phone), message)
 

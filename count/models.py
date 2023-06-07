@@ -84,7 +84,8 @@ class Promotion(models.Model):
             len_profiles = []
             promotion_platforms = PromotionPlatform.objects.filter(promotion=promotion)
             for promotion_platform in promotion_platforms:
-                profiles = Profile.search_profiles_no_saled(promotion_platform.id)
+                profiles = Profile.search_profiles_no_saled(promotion_platform.platform_id)
+
                 len_profiles.append(len(profiles))
             if not 0 in len_profiles:
                 promotions_with_profiles.append(promotion)
@@ -121,9 +122,9 @@ class Profile(models.Model):
         return None
 
     @classmethod
-    def search_profiles_no_saled(cls, platform):
+    def search_profiles_no_saled(cls, platform_id):
 
-        profiles = cls.objects.filter(saled=0, count__platform_id=platform)
+        profiles = cls.objects.filter(saled=0, count__platform_id=platform_id)
         return profiles[:19]
 
 

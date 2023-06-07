@@ -332,7 +332,7 @@ class SalePromotionView(View):
         promotion_platforms = PromotionPlatform.objects.filter(promotion_id=kwargs['promotion_id'])
         bill = Bill.objects.create(customer=customer, saler=request.user, total=promotion.price)
         for promotion_platform in promotion_platforms:
-            profile = Profile.search_profiles_no_saled(promotion_platform.id)[0]
+            profile = Profile.search_profiles_no_saled(promotion_platform.platform_id)[0]
             date_limit = CalculateDateLimit(now, int(request.POST['months_promo']))
             profiles.append(profile)
             request.user.sale_profile(profile, int(request.POST['months_promo']), date_limit, bill)

@@ -1,5 +1,3 @@
-
-
 $('select').select2();
 $('.select2-selection').css('height','43px')
 
@@ -170,6 +168,17 @@ $("#id_platform").on("change", function() {
            $('#profiles-content').html(data)
        });
 })
+
+$(".cut-profile").on("click", function() {
+
+      id_profile = $(this).attr('id_profile');
+      $.get('/count/reactivate-profile/'+id_profile )
+       .done(function( data ) {
+           alert(data)
+           location.reload();
+       });
+})
+
 
 
 

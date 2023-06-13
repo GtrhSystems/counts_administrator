@@ -15,6 +15,9 @@ urlpatterns = [
         path('create', views.CreateCount.as_view(), name='create-count'),
         path('create-pins-profiles/<str:platform>', views.CreatePinsProfiles.as_view(), name='create-pins-profiles'),
         path('list', views.CountsListView.as_view(), name='count-list'),
+        path('list-to-expire', views.ProfileExpiredView.as_view(), name='list-to-expire'),
+        path('reactivate-profile/<int:id>', views.ReactivateProfileView.as_view(), name='reactivate-profile'),
+
         #promotions
         path('promotion/create', views.CreatePromotionView.as_view(), name='create-promotion'),
         path('promotion/list', views.ListPromotionView.as_view(), name='list-promotion'),

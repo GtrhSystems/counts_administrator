@@ -149,6 +149,43 @@ class CountsListView(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class ProfileExpiredView(ListView):
+
+    model = Sale
+    template_name = "count/list-to-expire.html"
+
+    def get_queryset(self,  *args, **kwargs):
+
+        date_init = datetime.datetime.now() - datetime.timedelta(days=2)
+        date_finish = datetime.datetime.now() + datetime.timedelta(days=3)
+        count_to_expires = self.model.objects.filter(profile__saled=True, date_limit__range=[date_init , date_finish ]).order_by('date')
+        for sale in count_to_expires:
+            rest_days = getDifference(now, sale.date_limit, 'days')
+            if rest_days < 0:
+                sale.rest_days = "Vencida"
+            else:
+                sale.rest_days = str(rest_days) + " dia(s)"
+        return count_to_expires
+
+
+@method_decorator(login_required, name='dispatch')
+class ReactivateProfileView(View):
+
+    def get(self, request, *args, **kwargs):
+
+        try:
+            print(kwargs['id'])
+            profile = Profile.objects.filter(id = kwargs['id']).first()
+            profile.saled=False
+            profile.save()
+            return HttpResponse("El perfil se activo para venta")
+        except:
+            return HttpResponse('Hubo un error, contacte al administrador del sistema')
+
+
+
+@method_decorator(login_required, name='dispatch')
 class AddSaleView(View):
 
     form_class = SaleForm
@@ -340,7 +377,7 @@ class SalePromotionView(View):
         PromotionSale.objects.create(promotion=promotion, customer=customer )
 
         return render(request, 'sale/sale_post.html', {'profiles': profiles})
-        return HttpResponse('que marik')
+
 
 class CronWhatsappView(ListView):
     pass

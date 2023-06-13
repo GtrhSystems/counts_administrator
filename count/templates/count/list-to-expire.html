@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Listado de Cuentas Proximas a Expirar
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Cuentas</h4>
+      <p class="card-description"><code></code>
+      </p>
+      <div class="table-responsive">
+        <table class="table table-dark table-normal">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th> Plataforma </th>
+              <th> Cliente </th>
+              <th> Correo </th>
+              <th> Contraseña </th>
+              <th> Perfil </th>
+              <th> Pin </th>
+              <th> Vence </th>
+              <th> </th>
+            </tr>
+          </thead>
+          <tbody>
+           {% for sale in object_list %}
+            <tr>
+              <td>{{forloop.counter}}</td>
+              <td>{{ sale.bill.customer.name }}</td>
+              <td>{{ sale.profile.count.platform.name }}</td>
+              <td>{{ sale.profile.count.email }}</td>
+              <td>{{ sale.profile.count.password }}</td>
+              <td>{{ sale.profile.profile }}</td>
+              <td>{{ sale.profile.pin }}</td>
+              <td>{{ sale.date_limit|date:"d/M/Y" }} / {{ sale.rest_days }} </td>
+               <td>
+                 <button type="button" id_profile="{{ sale.profile.id }}" class="btn btn-primary btn-icon-text cut-profile">
+                     <i class="mdi mdi-content-cut"></i> Cortar </button>
+               </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

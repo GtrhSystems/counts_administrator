@@ -46,6 +46,10 @@ class Price(models.Model):
     num_profiles = models.PositiveIntegerField( verbose_name="Número de perfiles")
     price = models.FloatField(default=0, verbose_name="Precio")
 
+    class Meta:
+        verbose_name = 'Precio'
+        verbose_name_plural = 'Precios'
+
 
 class Count(models.Model):
 

@@ -28,7 +28,8 @@ def usertype_in_view(function):
                      'platform-list',
                      'update-customer',
                      'set-prices_by-profiles',
-                     'list-to-expire'
+                     'list-to-expire',
+                     'reactivate-profile',
 
                      ]
 
@@ -37,7 +38,8 @@ def usertype_in_view(function):
                  'create-pins-profiles',
                  'count-list',
                  'create-promotion',
-                 'list-to-expire'
+                 'list-to-expire',
+                 'reactivate-profile',
                  ]
 
         saler = ['add-user'

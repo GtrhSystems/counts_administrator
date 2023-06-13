@@ -170,6 +170,7 @@ class ProfileExpiredView(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
 class ReactivateProfileView(View):
 
     def get(self, request, *args, **kwargs):

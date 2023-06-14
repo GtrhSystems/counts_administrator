@@ -53,6 +53,11 @@ class CountForm(forms.Form):
         super(CountForm, self).save(*args, **kwargs)
 
 
+class ChangePaswordForm(forms.ModelForm):
+
+    class Meta:
+        model = Count
+        fields = ["password"]
 
 class CreatePromotionForm(forms.ModelForm):
 

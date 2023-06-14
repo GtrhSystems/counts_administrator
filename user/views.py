@@ -36,6 +36,8 @@ class IndexView(View):
 
     def get(self, request, *args, **kwargs):
 
+        if request.user.is_superuser:
+            return redirect('admin:index')
         return redirect('list-customer')
 
 

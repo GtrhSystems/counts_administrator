@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .decorators import usertype_in_view
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm
+from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm, ChangePaswordForm
 from .models import Profile, Count, Platform, Promotion, PromotionPlatform, Price, Bill, Sale, PromotionSale
 from user.models import Customer
 from django.http import HttpResponse, JsonResponse
@@ -18,6 +18,8 @@ from django.contrib import messages
 from count.libraries import CalculateDateLimit
 from user.whatsapp_api import message_sale, message_renew
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
 
 utc = pytz.UTC
 now = datetime.datetime.now()
@@ -146,6 +148,27 @@ class CountsListView(ListView):
                 bill.rest_days = str(rest_days) + " dia(s)"
             bills_list.append(bill)
         return bills_list
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class ChangePasswordView(PermissionRequiredMixin, View):
+
+    model = Count
+    form_class = ChangePaswordForm
+    template_name = 'count/change_password.html'
+    permission_required = 'count.change_count'
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, self.template_name,  {'form': self.form_class, 'id':kwargs['id'] })
+    def post(self, request, *args, **kwargs):
+
+        if self.request.user.has_perms(['count.change_count']):
+            count = self.model.objects.filter(id=kwargs['id']).first()
+            count.password = request.POST['password']
+            count.save()
+            return HttpResponse("Contraseña cambiada con éxito")
 
 
 @method_decorator(login_required, name='dispatch')

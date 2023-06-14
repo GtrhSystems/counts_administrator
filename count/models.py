@@ -63,6 +63,9 @@ class Count(models.Model):
         verbose_name = 'Cuenta'
         verbose_name_plural = 'Cuentas'
 
+    def __str__(self):
+        return str(self.email)
+
 
 class Promotion(models.Model):
 

@@ -30,6 +30,7 @@ def usertype_in_view(function):
                      'set-prices_by-profiles',
                      'list-to-expire',
                      'reactivate-profile',
+                     'change-password'
 
                      ]
 
@@ -40,6 +41,7 @@ def usertype_in_view(function):
                  'create-promotion',
                  'list-to-expire',
                  'reactivate-profile',
+                 'change-password'
                  ]
 
         saler = ['add-user'

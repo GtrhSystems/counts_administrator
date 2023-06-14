@@ -18,6 +18,6 @@ class PriceAdmin(admin.ModelAdmin):
 @admin.register(Count)
 class CountAdmin(admin.ModelAdmin):
    list_display = ( 'email','platform','password' )
-   fields  = ['platform','email', 'password' ]
+   fields  = [ 'password' ]
    list_filter = ('platform','email')
 

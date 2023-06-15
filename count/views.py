@@ -128,26 +128,24 @@ class CreatePinsProfiles(View):
 @method_decorator(usertype_in_view, name='dispatch')
 class CountsListView(ListView):
 
-    model = Bill
+    model = Count
     template_name = "count/list.html"
 
     def get_queryset(self,  *args, **kwargs):
 
-        bills = self.model.objects.all().order_by('date')
-        bills_list = []
-        for bill in bills:
-            sales = Sale.objects.filter(bill=bill)
-            bill.sale = sales.first()
-            bill.len= len(sales)
-            if len(sales) == 0:
-                continue
-            rest_days =  getDifference(now, sales.first().date_limit, 'days')
+        counts = self.model.objects.all().order_by('-date')
+        counts_list = []
+        for count in counts:
+            profiles = Profile.objects.filter(count=count)
+            count.profiles = len(profiles)
+            count.profiles_available = len(profiles.filter(saled=False))
+            rest_days =  getDifference(now, count.date_limit, 'days')
             if rest_days < 0:
-                bill.rest_days = "Vencida"
+                count.rest_days = "Vencida"
             else:
-                bill.rest_days = str(rest_days) + " dia(s)"
-            bills_list.append(bill)
-        return bills_list
+                count.rest_days = str(rest_days) + " dia(s)"
+            counts_list.append(count)
+        return counts_list
 
 
 @method_decorator(login_required, name='dispatch')

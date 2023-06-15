@@ -16,27 +16,26 @@ Listado de Cuentas
             <tr>
               <th>#</th>
               <th> Plataforma </th>
-              <th> Cliente </th>
               <th> Correo </th>
-              <th> Perfiles </th>
+              <th> Disponibles </th>
               <th> Contraseña </th>
               <th> Vence </th>
               <th>  </th>
             </tr>
           </thead>
           <tbody>
-           {% for bill in object_list %}
+           {% for count in object_list %}
             <tr>
               <td>{{forloop.counter}}</td>
-              <td>{{ bill.customer.name }}</td>
-              <td>{{ bill.sale.profile.count.platform.name }}</td>
-              <td>{{ bill.sale.profile.count.email }}</td>
-              <td>{{ bill.len }}</td>
-              <td>{{ bill.sale.profile.count.password }}</td>
-              <td>{{ bill.sale.date_limit|date:"d/M/Y" }} ({{ bill.rest_days }}) </td>
+
+              <td>{{ count.platform.name }}</td>
+              <td>{{ count.email }}</td>
+              <td> {{  count.profiles_available }} de {{ count.profiles }}</td>
+              <td>{{ count.password }}</td>
+              <td>{{ count.date_limit|date:"d/M/Y" }} ({{ count.rest_days }}) </td>
               <td>
               {% if perms.count.change_count %}
-                <button type="button" id_count="{{ bill.sale.profile.count.id }}" class="btn btn-primary btn-fw change-password">Cambiar contraseña</button>
+                <button type="button" id_count="{{ count.id }}" class="btn btn-primary btn-fw change-password">Cambiar contraseña</button>
               {% endif %}
               </td>
             </tr>

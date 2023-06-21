@@ -12,7 +12,7 @@ class Platform(models.Model):
 
     name = models.CharField(max_length=150, verbose_name="Nombre", default="")
     active = models.BooleanField(default=1, verbose_name="Activo?:")
-    logo =  models.FileField(default="", upload_to='logos', validators=[valid_image_extension])
+    logo =  models.FileField(default="", upload_to='logos/', validators=[valid_image_extension])
     num_profiles = models.IntegerField(default=0, verbose_name="Número de perfiles")
     #price = models.FloatField(default=0, verbose_name="Precio")
 
@@ -75,7 +75,7 @@ class Promotion(models.Model):
     date_finish = models.DateTimeField(verbose_name="Fecha de Finalización", auto_now_add=False)
     active = models.BooleanField(default=1, verbose_name="Activo?:")
     creater = models.ForeignKey(User, verbose_name="Creador", on_delete=models.CASCADE)
-    image = models.FileField(default="", upload_to='promotions', validators=[valid_image_extension])
+    image = models.FileField(default="", upload_to='promotions/', validators=[valid_image_extension])
 
     class Meta:
         verbose_name = 'Promoción'

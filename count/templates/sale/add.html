@@ -83,13 +83,17 @@ $(".sale").on("click", function() {
     const json = convertFormToJSON(form);
     $('.modal-title').html("Procesando compra")
     $('#modal-body').append('<img style= "margin-left: 80px;" src="/static/assets/images/loading.gif" alt="Loading" width="300" height="300">')
-    $("#myModal").modal({show: true})
+    $("#myModal").modal({
+                show: true,
+                backdrop: 'static',
+                keyboard: false
+    })
     $.post('/count/sale/{{ customer.id }}',json)
      .done(function( data ) {
         if (data != "{}"){
              $('.modal-title').html("Compra Exitosa")
              $('#modal-body').html(data)
-             $('.modal-footer').html('<button type="button" class="btn btn-success btn-lg btn-secondary btn-block btn-icon-text send-message"> <i class="mdi mdi-whatsapp btn-icon-prepend"></i> Enviar mensaje </button>')
+             $('.modal-footer').html('<button type="button" class="btn btn-success btn-lg btn-secondary btn-block btn-icon-text send-message close-modal"> <i class="mdi mdi-whatsapp btn-icon-prepend"></i> Enviar mensaje </button>')
         }else{
             alert("Datos de conexión inválidos")
 

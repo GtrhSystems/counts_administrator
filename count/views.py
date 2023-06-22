@@ -253,6 +253,7 @@ class AddSaleView(View):
                         profiles.append(profile)
                         i+=1
                         request.user.sale_profile( profile, int(request.POST['months']), date_limit, bill)
+                        #message_sale(profile, customer, date_limit)
 
             return render(request, 'sale/sale_post.html', { 'profiles':profiles,  'profiles_json': json.dumps(profiles_json) })
 

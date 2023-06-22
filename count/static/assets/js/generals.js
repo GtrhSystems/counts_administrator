@@ -186,7 +186,11 @@ $(".table-list_count").on("click", ".change-password" , function(){
             $('.modal-body').html(data)
             $('.modal-title').text("Respuesta de la solicitud")
             $('.modal-footer').hide()
-            $("#myModal").modal({show: true})
+            $("#myModal").modal({
+                show: true,
+                escapeClose: false,
+                clickClose: false
+                })
             $('.change-pass').click(function(e){
               e.preventDefault()
               json = convertFormToJSON($('.change-password-form'))

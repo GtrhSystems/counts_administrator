@@ -20,6 +20,10 @@ urlpatterns = [
 
         #counts
         path('change-password/<int:id>', views.ChangePasswordView.as_view(), name='change-password'),
+        path('<pk>/delete/', views.CountDeleteView.as_view(), name='delete-count'),
+        path('send-whatsapp-message', views.SendMessageWhatsapp.as_view(), name='send-whatsapp-message'),
+
+
 
         #promotions
         path('promotion/create', views.CreatePromotionView.as_view(), name='create-promotion'),

@@ -37,6 +37,9 @@ Listado de Cuentas
               {% if perms.count.change_count %}
                 <button type="button" id_count="{{ count.id }}" class="btn btn-primary btn-fw change-password">Cambiar contraseña</button>
               {% endif %}
+              {% if perms.count.delete_count %}
+                <a href="{% url 'delete-count'  count.id %}"  type="button" class="btn btn-danger btn-fw delete-count">Eliminar</a>
+              {% endif %}
               </td>
             </tr>
           {% endfor %}
@@ -46,28 +49,5 @@ Listado de Cuentas
     </div>
   </div>
 </div>
-<script>
-$(".table-list_count").on("click", ".change-password" , function(){
-    count_id = $(this).attr('id_count')
-    $.get('/count/change-password/'+count_id)
-      .done(function( data ) {
-            $('.modal-body').html(data)
-            $('.modal-title').text("Respuesta de la solicitud")
-            $('.modal-footer').hide()
-            $("#myModal").modal({show: true})
-            $('.change-pass').click(function(e){
-              e.preventDefault()
-              json = convertFormToJSON($('.change-password-form'))
-              $.post('/count/change-password/'+count_id, json)
-                .done(function( data ) {
-                  $('.modal-body').html(data)
-              })
-            })
-            $("#myModal").on('hide.bs.modal', function (e) {
-              location.reload();
-            });
-        });
 
-})
-</script>
 {% endblock %}

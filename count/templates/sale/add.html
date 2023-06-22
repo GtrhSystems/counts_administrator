@@ -75,7 +75,6 @@ Formulario de venta
 <script>
 
 $(".sale").on("click", function() {
-
   if ($('#id_months').val() ==""){
     alert("Tienes que digitar los meses de compra")
   }else{
@@ -90,7 +89,7 @@ $(".sale").on("click", function() {
         if (data != "{}"){
              $('.modal-title').html("Compra Exitosa")
              $('#modal-body').html(data)
-             $('.modal-footer').html('<button type="button" class="close-modal btn btn-lg btn-secondary btn-block" data-dismiss="modal">Aceptar</button>')
+             $('.modal-footer').html('<button type="button" class="btn btn-success btn-lg btn-secondary btn-block btn-icon-text send-message"> <i class="mdi mdi-whatsapp btn-icon-prepend"></i> Enviar mensaje </button>')
         }else{
             alert("Datos de conexión inválidos")
 

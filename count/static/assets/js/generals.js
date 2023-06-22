@@ -179,6 +179,45 @@ $(".cut-profile").on("click", function() {
        });
 })
 
+$(".table-list_count").on("click", ".change-password" , function(){
+    count_id = $(this).attr('id_count')
+    $.get('/count/change-password/'+count_id)
+      .done(function( data ) {
+            $('.modal-body').html(data)
+            $('.modal-title').text("Respuesta de la solicitud")
+            $('.modal-footer').hide()
+            $("#myModal").modal({show: true})
+            $('.change-pass').click(function(e){
+              e.preventDefault()
+              json = convertFormToJSON($('.change-password-form'))
+              $.post('/count/change-password/'+count_id, json)
+                .done(function( data ) {
+                  $('.modal-body').html(data)
+              })
+            })
+            $("#myModal").on('hide.bs.modal', function (e) {
+              location.reload();
+            });
+        });
+
+})
+
+function send_message(data){
+
+    $('body').on("click", ".send-message" , function(){
+
+        $.ajax({
+            url: '/count/send-whatsapp-message',
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function (response) {
+                alert(response)
+                window.location.href = "/user/list-customer";
+            }
+        });
+    });
 
 
-
+}

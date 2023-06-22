@@ -13,7 +13,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from count.decorators import usertype_in_view, check_user_type
 from .libraries import getDifference
-import datetime, pytz
+import datetime, pytz, json
 from django.contrib import messages
 from count.libraries import CalculateDateLimit
 from user.whatsapp_api import message_sale, message_renew
@@ -226,12 +226,14 @@ class AddSaleView(View):
     def post(self, request, *args, **kwargs):
 
         profiles = []
+        profiles_json = {}
         form = self.form_class (request.POST)
         customer = Customer.objects.filter(id= kwargs['id']).first()
         if customer and form.is_valid():
             num_profiles = list(request.POST.values()).count("on")
             total = Price.objects.filter(platform_id = request.POST['platform'], num_profiles= num_profiles).first()
-            bill = Bill.objects.create(customer=customer, saler= request.user, total=total.price)
+            Bill.objects.create(customer=customer, saler= request.user, total=total.price)
+            i=0
             for item in request.POST:
                 if item.isnumeric():
                     if request.POST[item] == 'on':
@@ -239,13 +241,34 @@ class AddSaleView(View):
                         profile = Profile.objects.filter(id = item).first()
                         profile.pin = request.POST['pin_'+item]
                         profile.profile = request.POST['profile_'+item]
+                        profile_json = {"platform": profile.count.platform.name,
+                                        "email":profile.count.email,
+                                        "password":profile.count.password,
+                                        "phone":str(customer.phone),
+                                        "date_limit":str(date_limit.strftime('%d/%m/%Y')),
+                                        "profile":profile.profile,
+                                        "pin":profile.pin}
+                        profiles_json[i] = profile_json
                         profile.save()
                         profiles.append(profile)
+                        i+=1
                         request.user.sale_profile( profile, int(request.POST['months']), date_limit, bill)
-                        message_sale(profile, customer, date_limit)
-            return render(request, 'sale/sale_post.html', { 'profiles':profiles })
 
-        return render(request, self.template_name, {'form': self.form_class, 'customer': customer})
+            return render(request, 'sale/sale_post.html', { 'profiles':profiles,  'profiles_json': json.dumps(profiles_json) })
+
+        return render(request, self.template_name, {'form': self.form_class })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class SendMessageWhatsapp(View):
+    def post(self, request, *args, **kwargs):
+
+        json_data = json.loads(request.body)
+        data = json.loads(json_data)
+        for item in  data:
+            message_sale(data[item])
+        return HttpResponse("Mensaje enviado")
 
 @method_decorator(login_required, name='dispatch')
 class GetProfilesAvailableView(ListView):
@@ -418,3 +441,12 @@ class InterDatesView(View):
             ctx['username'] = kwargs['user']
 
         return render(request, 'inter-dates.html', ctx)
+
+
+@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class CountDeleteView(DeleteView):
+
+    model = Count
+    success_url = '/count/list'
+    template_name = "count/confirm_delete.html"

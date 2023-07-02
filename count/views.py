@@ -265,10 +265,16 @@ class SendMessageWhatsapp(View):
     def post(self, request, *args, **kwargs):
 
         json_data = json.loads(request.body)
-        data = json.loads(json_data)
-        for item in  data:
-            message_sale(data[item])
+        try:
+            data = json.loads(json_data)
+            for item in data:
+                message_sale(data[item])
+        except:
+            message_sale(json_data)
         return HttpResponse("Mensaje enviado")
+
+
+
 
 @method_decorator(login_required, name='dispatch')
 class GetProfilesAvailableView(ListView):

@@ -225,3 +225,20 @@ function send_message(data){
 
 
 }
+
+function send_message_individual(data){
+
+    $.ajax({
+        url: '/count/send-whatsapp-message',
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (response) {
+            alert(response)
+        }
+    });
+
+
+
+}

@@ -124,6 +124,7 @@ class UserListView(ListView):
         users = self.model.objects.all()
         return users
 
+@method_decorator(login_required, name='dispatch')
 class SendMessagesWhatsappApi(View) :
 
     def get(self, request, *args, **kwargs):

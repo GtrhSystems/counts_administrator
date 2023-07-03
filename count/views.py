@@ -232,7 +232,7 @@ class AddSaleView(View):
         if customer and form.is_valid():
             num_profiles = list(request.POST.values()).count("on")
             total = Price.objects.filter(platform_id = request.POST['platform'], num_profiles= num_profiles).first()
-            Bill.objects.create(customer=customer, saler= request.user, total=total.price)
+            bill = Bill.objects.create(customer=customer, saler= request.user, total=total.price)
             i=0
             for item in request.POST:
                 if item.isnumeric():

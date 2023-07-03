@@ -27,7 +27,6 @@ class Platform(models.Model):
     def get_my_platforms_with_counts(cls):
 
         platforms = cls.objects.all()
-
         for platform in platforms:
             have_counts = True if Profile.objects.filter(count__platform=platform, saled=0) else False
             if not have_counts:

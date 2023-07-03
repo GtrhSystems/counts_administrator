@@ -217,9 +217,13 @@ function send_message(data){
             data: JSON.stringify(data),
             contentType: "application/json",
             success: function (response) {
+            console.log(response)
                 alert(response)
                 window.location.href = "/user/list-customer";
             }
+        });
+        $("#myModal").on('hide.bs.modal', function (e) {
+          location.reload();
         });
     });
 

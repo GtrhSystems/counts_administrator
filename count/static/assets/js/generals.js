@@ -226,9 +226,32 @@ function send_message(data){
           location.reload();
         });
     });
-
-
 }
+
+function cancel_sale(){
+
+     $('body').on("click", ".calcel-sale" , function(){
+
+         sale_id= $(this).attr('sale');
+         $.get('/count/sale/cancel-sale/'+sale_id)
+            .done(function( data ) {
+            alert(data)
+            location.reload();
+         });
+      });
+
+     $(".renew").click(function(e){
+        e.preventDefault()
+        $(".sales").submit()
+
+     })
+     $(".update").click(function(e){
+        e.preventDefault()
+        $(".customer").submit()
+     })
+}
+
+
 
 function send_message_individual(data){
 

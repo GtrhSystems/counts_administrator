@@ -43,6 +43,9 @@ Editar Cliente
     {% csrf_token %}
     <div class="card-body">
       <h4 class="card-title">Perfiles vendidos</h4>
+        <a href="/count/sale/{{ pk }}" <button="" type="button" class="btn btn-primary btn-icon-text">
+                              <i class="mdi mdi-square-inc-cash"></i>Vender
+                            </a>
       <p class="card-description"><code></code>
       </p>
       <div class="form-group table-responsive">
@@ -57,11 +60,13 @@ Editar Cliente
                   <th> Correo </th>
                   <th> Contraseña </th>
                   <th> Pin </th>
+                  <th> Perfil </th>
                   <th> Meses </th>
                   <th> Vencimiento
                   <th> Dias restantes </th>
                   <th> Renovar </th>
                   <th></th>
+                    <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -74,11 +79,16 @@ Editar Cliente
                   <td>{{ sale.profile.count.email }}</td>
                   <td>{{ sale.profile.count.password }}</td>
                   <td>{{ sale.profile.pin }}</td>
+                  <td>{{ sale.profile.profile }}</td>
                   <td>{{ sale.months }}</td>
                   <td>{{ sale.date_limit|date:"d/M/Y" }}</td>
                   <td>{{ sale.rest_days }}</td>
                   <td>
                      <input type="checkbox" name="{{ sale.profile.id }}" class="form-check-input" data-toggle="toggle" data-onstyle="primary"  >
+                  </td>
+                   <td>
+                      <button type="button" sale="{{ sale.id }}" class="btn btn-danger calcel-sale">Cancelar</button>
+
                   </td>
                   <td>
                      <button type="button" onclick='send_message_individual({"platform":"{{ sale.profile.count.platform }}",
@@ -106,14 +116,9 @@ Editar Cliente
   </div>
 </div>
 <script>
-    $(".renew").click(function(e){
-        e.preventDefault()
-        $(".sales").submit()
 
-    })
-     $(".update").click(function(e){
-        e.preventDefault()
-        $(".customer").submit()
+    $('document').ready(function(){
+         cancel_sale()
     })
 
 </script>

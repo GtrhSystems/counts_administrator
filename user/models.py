@@ -1,7 +1,7 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField# pip install "django-phonenumber-field[phonenumberslite]"
 from count.libraries import getDifference
-
+from django.contrib.auth.models import User
 
 class Customer(models.Model):
 
@@ -29,3 +29,16 @@ class Customer(models.Model):
                              "remaining_days":  abs(remaining_days) })
         return payload
 
+
+class Action(models.Model):
+
+    user = models.ForeignKey(User, verbose_name="Vendedor", on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    action = models.CharField( max_length=250, verbose_name="Accion")
+
+    @classmethod
+    def action_register(cls, user, action):
+        print(user)
+        print(action)
+
+        cls.objects.create(user=user, action=action)

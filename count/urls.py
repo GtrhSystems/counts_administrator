@@ -11,6 +11,9 @@ urlpatterns = [
         path('<str:user>/inter-dates/<str:model>', views.InterDatesView.as_view(), name='inter-dates-saler'),
         path('sales/<str:initial_date>/<str:final_date>', views.InterdatesSalesView.as_view(), name='interdates-sales-list'),
         path('sales/<str:user>/<str:initial_date>/<str:final_date>', views.InterdatesSalesView.as_view(), name='interdates-sales-saler-list'),
+        path('sale/cancel-sale/<int:id>', views.CancelSaleView.as_view(), name='cancel-sale'),
+
+
         path('services/cron-whatsapp', views.CronWhatsappView.as_view(), name='cron-whatsapp'),
         path('create', views.CreateCount.as_view(), name='create-count'),
         path('create-pins-profiles/<str:platform>', views.CreatePinsProfiles.as_view(), name='create-pins-profiles'),

@@ -66,7 +66,6 @@ class UpdateCustomerView(UpdateView):
 
         buys = []
         ctx = super(UpdateCustomerView, self).get_context_data(**kwargs)
-
         sales = Sale.objects.filter(bill__customer=self.kwargs['pk'])
         for sale in sales:
             rest_days = getDifference(now, sale.date_limit, 'days')

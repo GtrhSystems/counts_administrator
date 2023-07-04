@@ -6,7 +6,7 @@ from .decorators import usertype_in_view
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm, ChangePaswordForm
 from .models import Profile, Count, Platform, Promotion, PromotionPlatform, Price, Bill, Sale, PromotionSale
-from user.models import Customer
+from user.models import Customer, Action
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.conf import settings
@@ -287,6 +287,18 @@ class GetProfilesAvailableView(ListView):
         profiles = self.model.search_profiles_no_saled(self.kwargs['platform'])
         return profiles
 
+@method_decorator(login_required, name='dispatch')
+class CancelSaleView(View):
+
+    model = Sale
+    def get(self, request, *args, **kwargs):
+
+        sale = self.model.objects.filter(id=self.kwargs['id']).first()
+        Action.action_register(request.user, "Cancelación de la venta id = "+ str(sale.id) + " del dia " + str(sale.date) + " factura :" + str(sale.bill.id) + " cuenta :" + str(sale.profile.count.email))
+        sale.cancel_sale()
+
+
+        return HttpResponse("Venta cancelada")
 
 
 

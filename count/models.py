@@ -134,6 +134,8 @@ class Profile(models.Model):
         return profiles[:19]
 
 
+
+
 class Bill(models.Model):
 
     date = models.DateTimeField(auto_now_add=True)
@@ -179,6 +181,11 @@ class Sale(models.Model):
                             months=months,
                             date_limit=date_limit,
                             bill=saler)
+
+    def cancel_sale(self):
+        self.profile.saled = 0
+        self.profile.save()
+        self.delete()
 
 #facturas
 

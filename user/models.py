@@ -7,7 +7,7 @@ class Customer(models.Model):
 
     name =  models.CharField( max_length=100, verbose_name="Nombres")
     #devices = models.PositiveIntegerField(default=0, verbose_name="Dispositivos")
-    phone = PhoneNumberField(null=False, blank=False, unique=False, verbose_name="Telefono")
+    phone = PhoneNumberField(null=False, blank=False, unique=False, verbose_name="Telfono")
     active = models.BooleanField( default=1, verbose_name="Activado")
 
     @classmethod

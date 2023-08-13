@@ -171,7 +171,7 @@ class ChangePasswordView(PermissionRequiredMixin, View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(usertype_in_view, name='dispatch')
-class ProfileExpiredView(ListView):
+class ProfileNextExpiredView(ListView):
 
     model = Sale
     template_name = "count/list-to-expire.html"
@@ -188,6 +188,19 @@ class ProfileExpiredView(ListView):
             else:
                 sale.rest_days = str(rest_days) + " dia(s)"
         return count_to_expires
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class ProfileExpiredView(ListView):
+
+    model = Sale
+    template_name = "count/list-expired.html"
+
+    def get_queryset(self,  *args, **kwargs):
+        date_init = datetime.datetime.now() - datetime.timedelta(days=1)
+        count_expired = self.model.objects.filter(profile__saled=True, date_limit__range=[date_init , datetime.datetime.now() ]).order_by('date')
+
+        return count_expired
 
 
 @method_decorator(login_required, name='dispatch')

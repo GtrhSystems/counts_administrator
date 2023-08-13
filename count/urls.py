@@ -18,7 +18,8 @@ urlpatterns = [
         path('create', views.CreateCount.as_view(), name='create-count'),
         path('create-pins-profiles/<str:platform>', views.CreatePinsProfiles.as_view(), name='create-pins-profiles'),
         path('list', views.CountsListView.as_view(), name='count-list'),
-        path('list-to-expire', views.ProfileExpiredView.as_view(), name='list-to-expire'),
+        path('list-to-expire', views.ProfileNextExpiredView.as_view(), name='list-to-expire'),
+        path('list-expired', views.ProfileExpiredView.as_view(), name='list-expired'),
         path('reactivate-profile/<int:id>', views.ReactivateProfileView.as_view(), name='reactivate-profile'),
 
         #counts

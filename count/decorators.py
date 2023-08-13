@@ -44,7 +44,8 @@ def usertype_in_view(function):
                  'change-password',
                  'update-customer',
                  'create-platform',
-                 'delete-count'
+                 'delete-count',
+                 'list-expired'
                  ]
 
         saler = ['add-user'

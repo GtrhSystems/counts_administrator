@@ -13,6 +13,8 @@ from .whatsapp_api import send_message
 import datetime, pytz
 from count.libraries import getDifference
 from django.contrib import messages
+from django_datatables_view.base_datatable_view import BaseDatatableView
+
 
 utc = pytz.UTC
 now = datetime.datetime.now()
@@ -122,6 +124,48 @@ class UserListView(ListView):
 
         users = self.model.objects.all()
         return users
+
+
+class CustomerJson(BaseDatatableView):
+
+    columns = ['Nombre', 'Telefono',  'Accion']
+    order_columns = ['name']
+    model = Customer
+    #max_display_length = 500
+
+    def get_initial_queryset(self):
+
+        return self.model.objects.filter(active=True)
+
+
+    def render_column(self, row, column):
+        return super(OrderListJson, self).render_column(row, column)
+
+    def filter_queryset(self, qs):
+
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            q = Q(phone__icontains=search) | Q(name__icontains=search)
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+
+        json_data = []
+
+        for item in qs:
+
+            link1 = f'<a href="/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
+            link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Editar</button></a>'
+            json_data.append([
+                item.name,
+                str(item.phone),
+                link1,
+                link2
+            ])
+        return json_data
+
 
 @method_decorator(login_required, name='dispatch')
 class SendMessagesWhatsappApi(View) :

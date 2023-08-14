@@ -14,7 +14,7 @@ import datetime, pytz
 from count.libraries import getDifference
 from django.contrib import messages
 from django_datatables_view.base_datatable_view import BaseDatatableView
-
+from django.db.models import Q
 
 utc = pytz.UTC
 now = datetime.datetime.now()

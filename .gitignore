@@ -21,7 +21,6 @@ user/__pycache__/
 user/__pycache__/*
 count/__pycache__/*
 count/__pycache__/
-start.sh
 
 __pycache__/*
 *.project
@@ -31,5 +30,4 @@ logs/
 static/ss
 static/media
 promotions/*
-
-
+logos/*

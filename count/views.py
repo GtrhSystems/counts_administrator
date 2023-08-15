@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .decorators import usertype_in_view
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm, ChangePaswordForm
+from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm, ChangePaswordForm, ChangeDateLimitForm
 from .models import Profile, Count, Platform, Promotion, PromotionPlatform, Price, Bill, Sale, PromotionSale
 from user.models import Customer, Action
 from django.http import HttpResponse, JsonResponse
@@ -19,6 +19,8 @@ from count.libraries import CalculateDateLimit
 from user.whatsapp_api import message_sale, message_renew
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.db.models import Q
 
 
 utc = pytz.UTC
@@ -133,20 +135,124 @@ class CountsListView(ListView):
 
     def get_queryset(self,  *args, **kwargs):
 
+        counts = self.model.objects.all()
+        return None
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class CountListJson(BaseDatatableView):
+
+    columns = ['Plataforma', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña', 'Vence']
+    order_columns = ['email']
+    model = Count
+    #max_display_length = 500
+
+    def get_initial_queryset(self):
+
         counts = self.model.objects.all().order_by('-date')
-        counts_list = []
-        for count in counts:
-            profiles = Profile.objects.filter(count=count)
-            count.profiles = len(profiles)
-            count.profiles_available = len(profiles.filter(saled=False))
-            rest_days =  getDifference(now, count.date_limit, 'days')
+
+        return counts
+
+    def render_column(self, row, column):
+        return super(OrderListJson, self).render_column(row, column)
+
+    def filter_queryset(self, qs):
+
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            q = Q(email__icontains=search)
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+
+        json_data = []
+
+        for item in qs:
+
+            profiles = Profile.objects.filter(count=item)
+            len_profiles = len(profiles)
+            profiles_available = len(profiles.filter(saled=False))
+            rest_days = getDifference(now, item.date_limit, 'days')
+            if rest_days < 0:
+                rest_days = "Vencida"
+            else:
+                rest_days = str(rest_days) + " dia(s)"
+
+            #link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
+            #link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Editar</button></a>'
+            json_data.append([
+                item.platform.name,
+                item.email,
+                len_profiles,
+                profiles_available,
+                item.password,
+                rest_days
+            ])
+        return json_data
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class CountNextExpiredView(ListView):
+
+    model = Count
+    template_name = "count/list-to-expire.html"
+
+    def get_queryset(self,  *args, **kwargs):
+
+        #date_init = datetime.datetime.now() - datetime.timedelta(days=2)
+
+        date_finish = datetime.datetime.now() + datetime.timedelta(days=3)
+        count_to_expires = self.model.objects.filter(date_limit__range=[datetime.datetime.now()  , date_finish ]).order_by('date')
+        for count in count_to_expires:
+            rest_days = getDifference(now, count.date_limit, 'days')
             if rest_days < 0:
                 count.rest_days = "Vencida"
             else:
                 count.rest_days = str(rest_days) + " dia(s)"
-            counts_list.append(count)
-        return counts_list
+        return count_to_expires
 
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class CountExpiredView(ListView):
+
+    model = Sale
+    template_name = "user/list-expired.html"
+
+    def get_queryset(self,  *args, **kwargs):
+        date_init = datetime.datetime.now() - datetime.timedelta(days=1)
+        count_expired = self.model.objects.filter(profile__saled=True, date_limit__range=[date_init , datetime.datetime.now() ]).order_by('date')
+
+        return count_expired
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class ChangeDateLimitView(View):
+
+    model = Count
+    form_class = ChangeDateLimitForm
+    template_name = 'count/change_date_limit.html'
+    permission_required = 'count.change_count'
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, self.template_name,  {'form': self.form_class, 'id':kwargs['id'] })
+    def post(self, request, *args, **kwargs):
+
+        date_now = datetime.datetime.now()
+        date_now = date_now +  datetime.timedelta(days=1)
+        date_limit = datetime.datetime.strptime(request.POST['date_limit'], '%Y-%m-%d')
+        if date_limit > date_now:
+            count = self.model.objects.filter(id=kwargs['id']).first()
+            count.date_limit = date_limit
+            count.save()
+            return HttpResponse("Fecha de finalización cambiada con éxito")
+        else:
+            return HttpResponse("La fecha aregistrada tiene que ser mayor quela fecha actual")
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(usertype_in_view, name='dispatch')
@@ -169,38 +275,8 @@ class ChangePasswordView(PermissionRequiredMixin, View):
             return HttpResponse("Contraseña cambiada con éxito")
 
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
-class ProfileNextExpiredView(ListView):
 
-    model = Sale
-    template_name = "count/list-to-expire.html"
 
-    def get_queryset(self,  *args, **kwargs):
-
-        date_init = datetime.datetime.now() - datetime.timedelta(days=2)
-        date_finish = datetime.datetime.now() + datetime.timedelta(days=3)
-        count_to_expires = self.model.objects.filter(profile__saled=True, date_limit__range=[date_init , date_finish ]).order_by('date')
-        for sale in count_to_expires:
-            rest_days = getDifference(now, sale.date_limit, 'days')
-            if rest_days < 0:
-                sale.rest_days = "Vencida"
-            else:
-                sale.rest_days = str(rest_days) + " dia(s)"
-        return count_to_expires
-
-@method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
-class ProfileExpiredView(ListView):
-
-    model = Sale
-    template_name = "count/list-expired.html"
-
-    def get_queryset(self,  *args, **kwargs):
-        date_init = datetime.datetime.now() - datetime.timedelta(days=1)
-        count_expired = self.model.objects.filter(profile__saled=True, date_limit__range=[date_init , datetime.datetime.now() ]).order_by('date')
-
-        return count_expired
 
 
 @method_decorator(login_required, name='dispatch')

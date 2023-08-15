@@ -12,5 +12,6 @@ urlpatterns = [
         path('list-user', views.UserListView.as_view(), name='list-user'),
         path('send-message', views.SendMessagesWhatsappApi.as_view(), name='send-message'),
 
-
+        path('list-to-expire', views.ProfileNextExpiredView.as_view(), name='list-to-expire'),
+        path('list-expired', views.ProfileExpiredView.as_view(), name='list-expired'),
 ]

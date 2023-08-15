@@ -11,43 +11,72 @@ Listado de Cuentas
       <p class="card-description"><code></code>
       </p>
       <div class="table-responsive">
-        <table class="table table-dark table-normal table-list_count">
+        <table class="table table-dark" id="counts-table">
           <thead>
             <tr>
-              <th>#</th>
               <th> Plataforma </th>
               <th> Correo </th>
               <th> Disponibles </th>
               <th> Contraseña </th>
               <th> Vence </th>
-              <th>  </th>
+
             </tr>
           </thead>
           <tbody>
-           {% for count in object_list %}
-            <tr>
-              <td>{{forloop.counter}}</td>
 
-              <td>{{ count.platform.name }}</td>
-              <td>{{ count.email }}</td>
-              <td> {{  count.profiles_available }} de {{ count.profiles }}</td>
-              <td>{{ count.password }}</td>
-              <td>{{ count.date_limit|date:"d/M/Y" }} ({{ count.rest_days }}) </td>
-              <td>
-              {% if perms.count.change_count %}
-                <button type="button" id_count="{{ count.id }}" class="btn btn-primary btn-fw change-password">Cambiar contraseña</button>
-              {% endif %}
-              {% if perms.count.delete_count %}
-                <a href="{% url 'delete-count'  count.id %}"  type="button" class="btn btn-danger btn-fw delete-count">Eliminar</a>
-              {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
           </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
+<script>
+$(document).ready(function() {
 
+  $('#counts-table').dataTable({
+      order: [[ 0, "desc" ]],
+      columnDefs: [
+           {
+              name: 'platform.name',
+              orderable: true,
+              searchable: true,
+              targets: [0]
+          },
+          {
+              name: 'email',
+              orderable: true,
+              searchable: true,
+              targets: [1]
+          },
+          {
+              name: 'profiles_available',
+              orderable: true,
+              searchable: true,
+              targets: [1]
+          },
+          {
+              name: 'password',
+              orderable: true,
+              searchable: true,
+              targets: [1]
+          },
+          {
+              name: 'rest_days',
+              orderable: true,
+              searchable: true,
+              targets: [1]
+          }
+
+      ],
+      searching: true,
+      processing: true,
+      serverSide: true,
+      stateSave: true,
+      ajax: "{% url 'count-list-ajax' %}"
+  });
+
+});
+
+
+</script>
 {% endblock %}

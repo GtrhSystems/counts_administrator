@@ -11,34 +11,34 @@ Listado de Cuentas Proximas a Expirar
       <p class="card-description"><code></code>
       </p>
       <div class="table-responsive">
-        <table class="table table-dark table-normal table-list-count-to-expire">
+        <table class="table table-dark table-normal">
           <thead>
             <tr>
               <th>#</th>
               <th> Plataforma </th>
-
+              <th> Cliente </th>
               <th> Correo </th>
               <th> Contraseña </th>
               <th> Perfil </th>
               <th> Pin </th>
-              <th> Vence </th>
+              <th> Vencio </th>
               <th> </th>
             </tr>
           </thead>
           <tbody>
-           {% for count in object_list %}
+           {% for sale in object_list %}
             <tr>
               <td>{{forloop.counter}}</td>
-
-              <td>{{ count.platform.name }}</td>
-              <td>{{ count.email }}</td>
-              <td>{{ count.password }}</td>
-              <td>{{ count.profile.profile }}</td>
-              <td>{{ count.profile.pin }}</td>
-              <td>{{ count.date_limit|date:"d/M/Y" }} / {{ count.rest_days }} </td>
+              <td>{{ sale.bill.customer.name }}</td>
+              <td>{{ sale.profile.count.platform.name }}</td>
+              <td>{{ sale.profile.count.email }}</td>
+              <td>{{ sale.profile.count.password }}</td>
+              <td>{{ sale.profile.profile }}</td>
+              <td>{{ sale.profile.pin }}</td>
+              <td>{{ sale.date_limit|date:"d/M/Y" }} / {{ sale.rest_days }} </td>
                <td>
-                 <button type="button" id_count="{{ count.id }}" class="btn btn-primary btn-icon-text change-date-limit">
-                     <i class="mdi mdi-grease-pencil"></i> Editar </button>
+                 <button type="button" id_profile="{{ sale.profile.id }}" class="btn btn-primary btn-icon-text cut-profile">
+                     <i class="mdi mdi-content-cut"></i> Cortar </button>
                </td>
             </tr>
           {% endfor %}

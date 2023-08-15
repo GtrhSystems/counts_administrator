@@ -22,6 +22,7 @@ def usertype_in_view(function):
                      'create-count',
                      'create-pins-profiles',
                      'count-list',
+                     'count-list-ajax',
                      'create-promotion',
                      'create-platform',
                      'update-platform',
@@ -30,14 +31,17 @@ def usertype_in_view(function):
                      'set-prices_by-profiles',
                      'list-to-expire',
                      'reactivate-profile',
-                     'change-password'
-
+                     'change-password',
+                     'count-list-expired',
+                     'count-list-to-expire',
+                     'change-date-limit',
                      ]
 
         staff = ['add-user',
                  'create-count',
                  'create-pins-profiles',
                  'count-list',
+                 'count-list-ajax',
                  'create-promotion',
                  'list-to-expire',
                  'reactivate-profile',
@@ -45,7 +49,10 @@ def usertype_in_view(function):
                  'update-customer',
                  'create-platform',
                  'delete-count',
-                 'list-expired'
+                 'list-expired',
+                 'count-list-expired',
+                 'count-list-to-expire',
+                 'change-date-limit',
                  ]
 
         saler = ['add-user'
@@ -56,7 +63,7 @@ def usertype_in_view(function):
         match = resolve(request_url) #devuelve el name de la vista
         url_name = match.url_name
         user_type = check_user_type(request)
-        if   url_name  in eval(user_type):
+        if url_name  in eval(user_type):
             return function(request, *args, **kwargs)        
         else:
             raise PermissionDenied    

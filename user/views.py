@@ -166,6 +166,40 @@ class CustomerJson(BaseDatatableView):
             ])
         return json_data
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class ProfileNextExpiredView(ListView):
+
+    model = Sale
+    template_name = "user/list-to-expire.html"
+
+    def get_queryset(self,  *args, **kwargs):
+
+        #date_init = datetime.datetime.now() - datetime.timedelta(days=2)
+
+        date_finish = datetime.datetime.now() + datetime.timedelta(days=3)
+        count_to_expires = self.model.objects.filter(profile__saled=True, date_limit__range=[datetime.datetime.now()  , date_finish ]).order_by('date')
+        for sale in count_to_expires:
+            rest_days = getDifference(now, sale.date_limit, 'days')
+            if rest_days < 0:
+                sale.rest_days = "Vencida"
+            else:
+                sale.rest_days = str(rest_days) + " dia(s)"
+        return count_to_expires
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class ProfileExpiredView(ListView):
+
+    model = Sale
+    template_name = "user/list-expired.html"
+
+    def get_queryset(self,  *args, **kwargs):
+        date_init = datetime.datetime.now() - datetime.timedelta(days=1)
+        count_expired = self.model.objects.filter(profile__saled=True, date_limit__range=[date_init , datetime.datetime.now() ]).order_by('date')
+
+        return count_expired
+
 
 @method_decorator(login_required, name='dispatch')
 class SendMessagesWhatsappApi(View) :

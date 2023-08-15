@@ -59,6 +59,13 @@ class ChangePaswordForm(forms.ModelForm):
         model = Count
         fields = ["password"]
 
+class ChangeDateLimitForm(forms.ModelForm):
+
+    class Meta:
+        model = Count
+        fields = ["date_limit"]
+
+
 class CreatePromotionForm(forms.ModelForm):
 
     class Meta:

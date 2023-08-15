@@ -18,15 +18,17 @@ urlpatterns = [
         path('create', views.CreateCount.as_view(), name='create-count'),
         path('create-pins-profiles/<str:platform>', views.CreatePinsProfiles.as_view(), name='create-pins-profiles'),
         path('list', views.CountsListView.as_view(), name='count-list'),
-        path('list-to-expire', views.ProfileNextExpiredView.as_view(), name='list-to-expire'),
-        path('list-expired', views.ProfileExpiredView.as_view(), name='list-expired'),
+        path('list-ajax', views.CountListJson.as_view(), name='count-list-ajax'),
         path('reactivate-profile/<int:id>', views.ReactivateProfileView.as_view(), name='reactivate-profile'),
 
         #counts
         path('change-password/<int:id>', views.ChangePasswordView.as_view(), name='change-password'),
+        path('change-date-limit/<int:id>', views.ChangeDateLimitView.as_view(), name='change-date-limit'),
+
         path('<pk>/delete/', views.CountDeleteView.as_view(), name='delete-count'),
         path('send-whatsapp-message', views.SendMessageWhatsapp.as_view(), name='send-whatsapp-message'),
-
+        path('list-to-expire', views.CountNextExpiredView.as_view(), name='count-list-to-expire'),
+        path('list-expired', views.CountExpiredView.as_view(), name='count-list-expired'),
 
 
         #promotions

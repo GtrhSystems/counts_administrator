@@ -185,7 +185,7 @@ $(".table-list_count").on("click", ".change-password" , function(){
     $.get('/count/change-password/'+count_id)
       .done(function( data ) {
             $('.modal-body').html(data)
-            $('.modal-title').text("Respuesta de la solicitud")
+            $('.modal-title').text("Solicitud")
             $('.modal-footer').hide()
             $("#myModal").modal({
                 show: true,
@@ -206,6 +206,51 @@ $(".table-list_count").on("click", ".change-password" , function(){
         });
 
 })
+
+
+$(".table-list-count-to-expire").on("click", ".change-date-limit" , function(){
+    count_id = $(this).attr('id_count')
+    $.get('/count/change-date-limit/'+count_id)
+      .done(function( data ) {
+            $('.modal-body').html(data)
+            $('.modal-title').text("Solicitud")
+            $('.modal-footer').hide()
+            $('#id_date_limit').attr('type','date')
+            const date = new Date();
+            let day = date.getDate();
+            let month = date.getMonth() + 1;
+            let year = date.getFullYear();
+            let currentDate = `${day}/${month}/${year}`;
+            $('#id_date_limit').attr('min',currentDate)
+            $("#myModal").modal({
+                show: true,
+                escapeClose: false,
+                clickClose: false
+                })
+            $('.change-date-limit').click(function(e){
+              e.preventDefault()
+              json = convertFormToJSON($('.change-date-limit-form'))
+              format_currenday = `${year}-${month}-${day}`;
+              const fechaInput = new Date(json.date_limit);
+              console.log(date)
+              console.log(fechaInput)
+              if ( date >= fechaInput){
+                $('#id_date_limit').val("")
+                alert('Fecha invalida, tiene que ser mayor al dia de hoy    ')
+              }else{
+                  $.post('/count/change-date-limit/'+count_id, json)
+                    .done(function( data ) {
+                      $('.modal-body').html(data)
+                  })
+              }
+            })
+            $("#myModal").on('hide.bs.modal', function (e) {
+              location.reload();
+            });
+        });
+
+})
+
 
 function send_message(data){
 

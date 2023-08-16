@@ -35,6 +35,7 @@ def usertype_in_view(function):
                      'count-list-expired',
                      'count-list-to-expire',
                      'change-date-limit',
+                     'count-change-password',
                      ]
 
         staff = ['add-user',
@@ -53,6 +54,7 @@ def usertype_in_view(function):
                  'count-list-expired',
                  'count-list-to-expire',
                  'change-date-limit',
+                 'count-change-password',
                  ]
 
         saler = ['add-user'
@@ -66,8 +68,8 @@ def usertype_in_view(function):
         if url_name  in eval(user_type):
             return function(request, *args, **kwargs)        
         else:
-            raise PermissionDenied    
-       
+            raise PermissionDenied
+
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap

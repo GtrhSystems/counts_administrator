@@ -29,6 +29,7 @@ urlpatterns = [
         path('send-whatsapp-message', views.SendMessageWhatsapp.as_view(), name='send-whatsapp-message'),
         path('list-to-expire', views.CountNextExpiredView.as_view(), name='count-list-to-expire'),
         path('list-expired', views.CountExpiredView.as_view(), name='count-list-expired'),
+        #path('change-password-count/<int:id>', views.ChangePasswrdSaleView.as_view(), name='count-change-password'),
 
 
         #promotions

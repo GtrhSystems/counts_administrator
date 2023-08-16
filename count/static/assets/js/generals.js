@@ -274,7 +274,7 @@ function send_message(data){
     });
 }
 
-function cancel_sale(){
+function count_functions(){
 
      $('body').on("click", ".calcel-sale" , function(){
 
@@ -295,7 +295,39 @@ function cancel_sale(){
         e.preventDefault()
         $(".customer").submit()
      })
+
+
+
+     $('body').on("click", ".change-password" , function(){
+
+        count_id = $(this).attr('id_count')
+        $.get('/count/change-password/'+count_id)
+          .done(function( data ) {
+                $('.modal-body').html(data)
+                $('.modal-title').text("Solicitud")
+                $('.modal-footer').hide()
+                $("#myModal").modal({
+                    show: true,
+                    escapeClose: false,
+                    clickClose: false
+                    })
+                $('.change-pass').click(function(e){
+                  e.preventDefault()
+                  json = convertFormToJSON($('.change-password-form'))
+                  $.post('/count/change-password/'+count_id, json)
+                    .done(function( data ) {
+                      $('.modal-body').html(data)
+                  })
+                })
+                $("#myModal").on('hide.bs.modal', function (e) {
+                  location.reload();
+                });
+            });
+          });
 }
+
+
+
 
 
 

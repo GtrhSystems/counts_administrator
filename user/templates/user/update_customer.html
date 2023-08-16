@@ -5,6 +5,12 @@ Editar Cliente
 {% load humanize %}
 {% load widget_tweaks %}
 {% block content %}
+<style>
+table th {
+  text-align: center;
+}
+
+</style>
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
@@ -62,8 +68,8 @@ Editar Cliente
                   <th> Pin </th>
                   <th> Perfil </th>
                   <th> Meses </th>
-                  <th> Vencimiento
-                  <th> Dias restantes </th>
+                  <th> Vencimiento </th>
+                  <th> Dias </th>
                   <th> Renovar </th>
                   <th></th>
                     <th></th>
@@ -88,6 +94,10 @@ Editar Cliente
                   </td>
                    <td>
                       <button type="button" sale="{{ sale.id }}" class="btn btn-danger calcel-sale">Cancelar</button>
+
+                  </td>
+                    <td>
+                      <button type="button" id_count    ="{{ sale.profile.count.id }}" class="btn btn-warning change-password">Cambiar contraseña</button>
 
                   </td>
                   <td>
@@ -116,10 +126,8 @@ Editar Cliente
   </div>
 </div>
 <script>
-
-    $('document').ready(function(){
-         cancel_sale()
-    })
-
+$('document').ready(function(){
+     count_functions()
+})
 </script>
 {% endblock %}

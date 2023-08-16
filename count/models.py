@@ -187,6 +187,12 @@ class Sale(models.Model):
         self.profile.save()
         self.delete()
 
+    def change_count_password(self, new_password):
+
+        self.count.password  = new_password
+        self.count.save()
+
+
 #facturas
 
 

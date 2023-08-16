@@ -256,7 +256,7 @@ class ChangeDateLimitView(View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(usertype_in_view, name='dispatch')
-class ChangePasswordView(PermissionRequiredMixin, View):
+class ChangePasswordView(View):
 
     model = Count
     form_class = ChangePaswordForm
@@ -268,11 +268,10 @@ class ChangePasswordView(PermissionRequiredMixin, View):
         return render(request, self.template_name,  {'form': self.form_class, 'id':kwargs['id'] })
     def post(self, request, *args, **kwargs):
 
-        if self.request.user.has_perms(['count.change_count']):
-            count = self.model.objects.filter(id=kwargs['id']).first()
-            count.password = request.POST['password']
-            count.save()
-            return HttpResponse("Contraseña cambiada con éxito")
+        count = self.model.objects.filter(id=kwargs['id']).first()
+        count.password = request.POST['password']
+        count.save()
+        return HttpResponse("Contraseña cambiada con éxito")
 
 
 
@@ -388,6 +387,30 @@ class CancelSaleView(View):
 
 
         return HttpResponse("Venta cancelada")
+
+
+# @method_decorator(login_required, name='dispatch')
+# class ChangePasswrdSaleView(View):
+#
+#     model = Sale
+#
+#     def get(self, request, *args, **kwargs):
+#
+#         sale = self.model.objects.filter(id=self.kwargs['id']).first()
+#         Action.action_register(request.user, "Cancelación de la venta id = "+ str(sale.id) + " del dia " + str(sale.date) + " factura :" + str(sale.bill.id) + " cuenta :" + str(sale.profile.count.email))
+#         sale.cancel_sale()
+#
+#
+#         return HttpResponse("Venta cancelada")
+#
+#     def get(self, request, *args, **kwargs):
+#
+#         sale = self.model.objects.filter(id=self.kwargs['id']).first()
+#         Action.action_register(request.user, "Cancelación de la venta id = "+ str(sale.id) + " del dia " + str(sale.date) + " factura :" + str(sale.bill.id) + " cuenta :" + str(sale.profile.count.email))
+#         sale.cancel_sale()
+#
+#
+#         return HttpResponse("Venta cancelada")
 
 
 

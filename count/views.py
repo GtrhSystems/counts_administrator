@@ -269,9 +269,13 @@ class EditCountDataView(View):
     def post(self, request, *args, **kwargs):
 
         profile = self.model.objects.filter(id=kwargs['id']).first()
-        profile.count.password = request.POST['password']
+        print(profile.id)
+        count = Count.objects.filter(id=profile.count.id).first()
+        print(count)
+        count.password = request.POST['password']
         profile.pin = request.POST['pin']
         profile.save()
+        count.save()
         return HttpResponse("Datos Actualizados")
 
 

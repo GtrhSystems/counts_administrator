@@ -22,7 +22,7 @@ urlpatterns = [
         path('reactivate-profile/<int:id>', views.ReactivateProfileView.as_view(), name='reactivate-profile'),
 
         #counts
-        path('change-password/<int:id>', views.ChangePasswordView.as_view(), name='change-password'),
+        path('edit-count-data/<int:id>', views.EditCountDataView.as_view(), name='edit-count-data'),
         path('change-date-limit/<int:id>', views.ChangeDateLimitView.as_view(), name='change-date-limit'),
 
         path('<pk>/delete/', views.CountDeleteView.as_view(), name='delete-count'),

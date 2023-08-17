@@ -31,11 +31,10 @@ def usertype_in_view(function):
                      'set-prices_by-profiles',
                      'list-to-expire',
                      'reactivate-profile',
-                     'change-password',
+                     'edit-count-data',
                      'count-list-expired',
                      'count-list-to-expire',
                      'change-date-limit',
-                     'count-change-password',
                      ]
 
         staff = ['add-user',
@@ -46,7 +45,7 @@ def usertype_in_view(function):
                  'create-promotion',
                  'list-to-expire',
                  'reactivate-profile',
-                 'change-password',
+                 'edit-count-data',
                  'update-customer',
                  'create-platform',
                  'delete-count',
@@ -54,7 +53,6 @@ def usertype_in_view(function):
                  'count-list-expired',
                  'count-list-to-expire',
                  'change-date-limit',
-                 'count-change-password',
                  ]
 
         saler = ['add-user'

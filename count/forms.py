@@ -53,8 +53,12 @@ class CountForm(forms.Form):
         super(CountForm, self).save(*args, **kwargs)
 
 
-class ChangePaswordForm(forms.ModelForm):
+class ChangeCountDataForm(forms.Form):
 
+    pin = forms.CharField(required=False, label="Pin")
+    password = forms.CharField(required=False, label="Contraseña")
+
+class ChangePaswordForm(forms.ModelForm):
     class Meta:
         model = Count
         fields = ["password"]

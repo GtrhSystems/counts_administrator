@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .decorators import usertype_in_view
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm, ChangePaswordForm, ChangeDateLimitForm
+from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm, ChangePaswordForm, ChangeDateLimitForm, ChangeCountDataForm
 from .models import Profile, Count, Platform, Promotion, PromotionPlatform, Price, Bill, Sale, PromotionSale
 from user.models import Customer, Action
 from django.http import HttpResponse, JsonResponse
@@ -256,10 +256,10 @@ class ChangeDateLimitView(View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(usertype_in_view, name='dispatch')
-class ChangePasswordView(View):
+class EditCountDataView(View):
 
-    model = Count
-    form_class = ChangePaswordForm
+    model = Profile
+    form_class = ChangeCountDataForm
     template_name = 'count/change_password.html'
     permission_required = 'count.change_count'
 
@@ -268,10 +268,11 @@ class ChangePasswordView(View):
         return render(request, self.template_name,  {'form': self.form_class, 'id':kwargs['id'] })
     def post(self, request, *args, **kwargs):
 
-        count = self.model.objects.filter(id=kwargs['id']).first()
-        count.password = request.POST['password']
-        count.save()
-        return HttpResponse("Contraseña cambiada con éxito")
+        profile = self.model.objects.filter(id=kwargs['id']).first()
+        profile.count.password = request.POST['password']
+        profile.pin = request.POST['pin']
+        profile.save()
+        return HttpResponse("Datos Actualizados")
 
 
 

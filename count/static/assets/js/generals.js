@@ -301,7 +301,7 @@ function count_functions(){
      $('body').on("click", ".change-password" , function(){
 
         count_id = $(this).attr('id_count')
-        $.get('/count/change-password/'+count_id)
+        $.get('/count/edit-count-data/'+count_id)
           .done(function( data ) {
                 $('.modal-body').html(data)
                 $('.modal-title').text("Solicitud")
@@ -314,7 +314,7 @@ function count_functions(){
                 $('.change-pass').click(function(e){
                   e.preventDefault()
                   json = convertFormToJSON($('.change-password-form'))
-                  $.post('/count/change-password/'+count_id, json)
+                  $.post('/count/edit-count-data/'+count_id, json)
                     .done(function( data ) {
                       $('.modal-body').html(data)
                   })

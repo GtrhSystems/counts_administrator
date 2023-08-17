@@ -150,7 +150,7 @@ class CountListJson(BaseDatatableView):
 
     def get_initial_queryset(self):
 
-        counts = self.model.objects.all().order_by('-date')
+        counts = self.model.objects.all().order_by('-date_limit')
 
         return counts
 
@@ -181,7 +181,8 @@ class CountListJson(BaseDatatableView):
             else:
                 rest_days = str(rest_days) + " dia(s)"
 
-            #link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
+            link= f'<button type="button" id_count    ="{{ itemsale.profile.id }}" class="btn btn-warning change-password">Cambiar</button>'
+            link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
             #link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Editar</button></a>'
             json_data.append([
                 item.platform.name,
@@ -205,11 +206,13 @@ class CountNextExpiredView(ListView):
         #date_init = datetime.datetime.now() - datetime.timedelta(days=2)
 
         date_finish = datetime.datetime.now() + datetime.timedelta(days=3)
-        count_to_expires = self.model.objects.filter(date_limit__range=[datetime.datetime.now()  , date_finish ]).order_by('date')
+        count_to_expires = self.model.objects.filter(date_limit__range=[datetime.datetime.now()  , date_finish ]).order_by('date_limit')
         for count in count_to_expires:
+            profiles = Profile.objects.filter(count=count)
+            count.profiles_available = len(profiles.filter(saled=False))
             rest_days = getDifference(now, count.date_limit, 'days')
             if rest_days < 0:
-                count.rest_days = "Vencida"
+                cccccrest_days = "Vencida"
             else:
                 count.rest_days = str(rest_days) + " dia(s)"
         return count_to_expires
@@ -219,13 +222,15 @@ class CountNextExpiredView(ListView):
 @method_decorator(usertype_in_view, name='dispatch')
 class CountExpiredView(ListView):
 
-    model = Sale
-    template_name = "user/list-expired.html"
+    model = Count
+    template_name = "count/list-expired.html"
 
     def get_queryset(self,  *args, **kwargs):
-        date_init = datetime.datetime.now() - datetime.timedelta(days=1)
-        count_expired = self.model.objects.filter(profile__saled=True, date_limit__range=[date_init , datetime.datetime.now() ]).order_by('date')
 
+        count_expired = self.model.objects.filter(date_limit__lt=datetime.datetime.now()).order_by('date')
+        for count in count_expired:
+            profiles = Profile.objects.filter(count=count)
+            count.profiles_available = len(profiles.filter(saled=False))
         return count_expired
 
 

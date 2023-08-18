@@ -326,7 +326,55 @@ function count_functions(){
           });
 }
 
+function change_password(){
 
+    $('body').on("click", ".change-password" , function(){
+
+        count_id = $(this).attr('id_count')
+        $.get('/count/change-password-count/'+count_id)
+          .done(function( data ) {
+                $('.modal-body').html(data)
+                $('.modal-title').text("Solicitud")
+                $('.modal-footer').hide()
+                $("#myModal").modal({
+                    show: true,
+                    escapeClose: false,
+                    clickClose: false
+                    })
+                $('.change-pass').click(function(e){
+                  e.preventDefault()
+                  json = convertFormToJSON($('.change-password-form'))
+                  $.post('/count/change-password-count/'+count_id, json)
+                    .done(function( data ) {
+                      $('.modal-body').html(data)
+                  })
+                })
+                $("#myModal").on('hide.bs.modal', function (e) {
+                  location.reload();
+                });
+            });
+          });
+
+      $('body').on("click", ".delete-count" , function(){
+            var opcion = confirm("Desea borrar esta cuenta definitivamente");
+            if (opcion == true) {
+                count_id = $(this).attr('id_count')
+                $.get('/count/'+count_id+'/delete/')
+                   .done(function( data ) {
+                       $('.modal-body').html(data)
+                       $("#myModal").modal({
+                            show: true,
+                            escapeClose: false,
+                            clickClose: false
+                            })
+                   })
+                   $("#myModal").on('hide.bs.modal', function (e) {
+                       location.reload();
+                    });
+            }
+       });
+
+}
 
 
 

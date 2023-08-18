@@ -21,6 +21,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
+from django.urls import reverse_lazy
+
+
 
 
 utc = pytz.UTC
@@ -181,16 +184,17 @@ class CountListJson(BaseDatatableView):
             else:
                 rest_days = str(rest_days) + " dia(s)"
 
-            link= f'<button type="button" id_count    ="{{ itemsale.profile.id }}" class="btn btn-warning change-password">Cambiar</button>'
-            link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
-            #link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Editar</button></a>'
+            link_change= f'<button type="button" id_count="{ item.id }" class="btn btn-warning change-password">Cambiar</button>'
+            link_detele= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>' #link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Editar</button></a>'
             json_data.append([
                 item.platform.name,
                 item.email,
                 len_profiles,
                 profiles_available,
                 item.password,
-                rest_days
+                rest_days,
+                link_change,
+                link_detele
             ])
         return json_data
 
@@ -274,9 +278,7 @@ class EditCountDataView(View):
     def post(self, request, *args, **kwargs):
 
         profile = self.model.objects.filter(id=kwargs['id']).first()
-        print(profile.id)
         count = Count.objects.filter(id=profile.count.id).first()
-        print(count)
         count.password = request.POST['password']
         profile.pin = request.POST['pin']
         profile.save()
@@ -399,19 +401,22 @@ class CancelSaleView(View):
         return HttpResponse("Venta cancelada")
 
 
-# @method_decorator(login_required, name='dispatch')
-# class ChangePasswrdSaleView(View):
-#
-#     model = Sale
-#
-#     def get(self, request, *args, **kwargs):
-#
-#         sale = self.model.objects.filter(id=self.kwargs['id']).first()
-#         Action.action_register(request.user, "Cancelación de la venta id = "+ str(sale.id) + " del dia " + str(sale.date) + " factura :" + str(sale.bill.id) + " cuenta :" + str(sale.profile.count.email))
-#         sale.cancel_sale()
-#
-#
-#         return HttpResponse("Venta cancelada")
+@method_decorator(login_required, name='dispatch')
+class ChangeCountPasswordView(View):
+
+    model = Count
+    template_name = "count/change_password.html"
+    form_class = ChangePaswordForm
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name,  {'form': self.form_class, 'id':kwargs['id'] })
+
+    def post(self, request, *args, **kwargs):
+
+        count = self.model.objects.filter(id=self.kwargs['id']).first()
+        Action.action_register(request.user, "Cambio password de cuenta id = "+ str(count.id) + " del dia " + str(count.date) )
+        count.password = request.POST['password']
+        count.save()
+        return HttpResponse("Contraseña editada conrrectamente")
 #
 #     def get(self, request, *args, **kwargs):
 #
@@ -583,10 +588,18 @@ class InterDatesView(View):
         return render(request, 'inter-dates.html', ctx)
 
 
-@method_decorator(usertype_in_view, name='dispatch')
+
 @method_decorator(login_required, name='dispatch')
-class CountDeleteView(DeleteView):
+class CountDeleteView(View):
 
     model = Count
-    success_url = '/count/list'
-    template_name = "count/confirm_delete.html"
+
+    def get(self, request, *args, **kwargs):
+        try:
+            count = Count.objects.filter(id=kwargs['pk']).first()
+            count.delete()
+            return HttpResponse("La cuenta has sido eliminada permanentemente.")
+
+        except:
+            return HttpResponse("Hubo un error.")
+

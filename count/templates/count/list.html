@@ -20,7 +20,8 @@ Listado de Cuentas
               <th> Disponibles </th>
               <th> Contraseña </th>
               <th> Vence </th>
-
+              <th>  </th>
+              <th>  </th>
 
             </tr>
           </thead>
@@ -34,6 +35,8 @@ Listado de Cuentas
 </div>
 <script>
 $(document).ready(function() {
+
+  change_password()
 
   $('#counts-table').dataTable({
       order: [[ 0, "desc" ]],
@@ -78,6 +81,8 @@ $(document).ready(function() {
   });
 
 });
+
+
 
 
 </script>

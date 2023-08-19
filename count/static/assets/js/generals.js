@@ -296,6 +296,10 @@ function count_functions(){
         $(".customer").submit()
      })
 
+    $('.renew_input').change(function(){
+        $('.hide').show()
+
+    })
 
 
      $('body').on("click", ".change-password" , function(){

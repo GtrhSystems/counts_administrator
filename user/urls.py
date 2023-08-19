@@ -14,4 +14,6 @@ urlpatterns = [
 
         path('list-to-expire', views.ProfileNextExpiredView.as_view(), name='list-to-expire'),
         path('list-expired', views.ProfileExpiredView.as_view(), name='list-expired'),
+        path('delete-customer/<pk>', views.CustomerDeleteView.as_view(), name='delete-customer'),
+
 ]

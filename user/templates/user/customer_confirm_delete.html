@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Listado de Cuentas
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<form method="post">{% csrf_token %}
+    <p>Esta seguro que quiere eliminar  "{{ object.name }}"?</p>
+    <input type="submit" value="Confirmar">
+</form>
+
+{% endblock %}

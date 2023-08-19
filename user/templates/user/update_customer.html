@@ -90,7 +90,7 @@ table th {
                   <td>{{ sale.date_limit|date:"d/M/Y" }}</td>
                   <td>{{ sale.rest_days }}</td>
                   <td>
-                     <input type="checkbox" name="{{ sale.profile.id }}"  >
+                     <input type="checkbox" class="renew_input" name="{{ sale.profile.id }}"  >
                   </td>
                    <td>
                       <button type="button" sale="{{ sale.id }}" class="btn btn-danger calcel-sale">Cancelar</button>
@@ -116,11 +116,13 @@ table th {
             </table>
           </form>
         </div>
+     <div class="hide" style="display:none">
         <div class="form-group">
           <label for="months">Meses a renovar:</label>
           <input type="number" id="months" name="months" min="1" max="12">
         </div>
        <button type="submit" class="btn btn-primary mr-2 renew">Renovar</button>
+     </div>
        {{ form.errors }}
     </div>
   </div>

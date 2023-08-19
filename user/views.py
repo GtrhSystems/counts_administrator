@@ -15,6 +15,8 @@ from count.libraries import getDifference
 from django.contrib import messages
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
+from django.urls import reverse_lazy
+from django.db.models.query import QuerySet
 
 utc = pytz.UTC
 now = datetime.datetime.now()
@@ -66,9 +68,15 @@ class UpdateCustomerView(UpdateView):
 
     def get_context_data(self, **kwargs):
 
-        buys = []
+
+        from django.db.models import Max
+
         ctx = super(UpdateCustomerView, self).get_context_data(**kwargs)
-        sales = Sale.objects.filter(bill__customer=self.kwargs['pk'])
+        profiles_id = list(Sale.objects.filter(bill__customer=self.kwargs['pk']).values_list('profile_id', flat=True))
+        uniques_ids = set(profiles_id)
+        sales = []
+        for id in uniques_ids:
+            sales.append(Sale.objects.filter(bill__customer=self.kwargs['pk'], profile_id= id).last())
         for sale in sales:
             rest_days = getDifference(now, sale.date_limit, 'days')
             if rest_days < 0:
@@ -129,7 +137,7 @@ class UserListView(ListView):
 class CustomerJson(BaseDatatableView):
 
     columns = ['Nombre', 'Telefono',  'Accion']
-    order_columns = ['name']
+    order_columns = ['id']
     model = Customer
     #max_display_length = 500
 
@@ -158,13 +166,23 @@ class CustomerJson(BaseDatatableView):
 
             link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
             link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Editar</button></a>'
+            link3 = f'<a href="/user/delete-customer/{item.id}"><button type="button" class="btn btn-danger  btn-icon-text"><i class="mdi mdi-delete-forever"></i>Eliminar</button></a>'
             json_data.append([
+                item.id,
                 item.name,
                 str(item.phone),
                 link1,
-                link2
+                link2,
+                link3
             ])
         return json_data
+
+
+class CustomerDeleteView(DeleteView):
+
+    model = Customer
+    success_url = reverse_lazy("list-customer")
+
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(usertype_in_view, name='dispatch')

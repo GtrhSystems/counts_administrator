@@ -147,13 +147,13 @@ class CountsListView(ListView):
 class CountListJson(BaseDatatableView):
 
     columns = ['Plataforma', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña', 'Vence']
-    order_columns = ['email']
+    order_columns = ['date']
     model = Count
     #max_display_length = 500
 
     def get_initial_queryset(self):
 
-        counts = self.model.objects.all().order_by('-date_limit')
+        counts = self.model.objects.all().order_by('-date')
 
         return counts
 
@@ -164,7 +164,7 @@ class CountListJson(BaseDatatableView):
 
         search = self.request.GET.get('search[value]', None)
         if search:
-            q = Q(email__icontains=search)
+            q = Q(email__icontains=search) | Q(platform__name__icontains=search)
             qs = qs.filter(q)
 
         return qs
@@ -466,14 +466,14 @@ class SalesListView(ListView):
                 profile = Profile.objects.filter(id=item).first()
                 sale = Sale.objects.filter(profile=item).last()
                 continue
+
         total = Price.objects.filter(platform=profile.count.platform, num_profiles=num_profiles).first()
         bill = Bill.objects.create(customer=sale.bill.customer, saler=request.user, total=total.price)
         for item in request.POST:
             if item.isnumeric():
                 if request.POST[item] == 'on':
-                    profile = Profile.objects.filter(id=item).first()
-                    date_limit = CalculateDateLimit(now, int(request.POST['months']))
-                    profile_saled = request.user.sale_profile(profile, int(request.POST['months']), date_limit, bill)
+                    date_limit = CalculateDateLimit(sale.date_limit, int(request.POST['months']))
+                    request.user.sale_profile(profile, int(request.POST['months']), date_limit, bill)
                     message_renew(profile, sale.bill.customer, date_limit)
 
         return redirect('bill-list')

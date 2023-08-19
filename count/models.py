@@ -131,7 +131,7 @@ class Profile(models.Model):
     def search_profiles_no_saled(cls, platform_id):
 
         profiles = cls.objects.filter(saled=0, count__platform_id=platform_id)
-        return profiles[:19]
+        return profiles
 
 
 

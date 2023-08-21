@@ -14,6 +14,7 @@ static/
 !user/migrations/__init__.py
 !plataforma/migrations/__init__.py
 !count/migrations/__init__.py
+start.sh.*
 
 count_admin_project/__pycache__/
 

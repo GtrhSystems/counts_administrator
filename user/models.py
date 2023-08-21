@@ -25,7 +25,7 @@ class Customer(models.Model):
             remaining_days = getDifference(sale.date_limit, now, "days")
             payload.append({ "email": sale.profile.count.email,
                              "password": sale.profile.count.password,
-                             "phone":sale.customer.phone.as_e164,
+                             "phone":sale.bill.customer.phone.as_e164,
                              "remaining_days":  abs(remaining_days) })
         return payload
 

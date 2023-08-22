@@ -460,22 +460,28 @@ class SalesListView(ListView):
 
     def post(self, request, *args, **kwargs):
 
-        num_profiles = list(request.POST.values()).count("on")
-        for item in request.POST:
-            if item.isnumeric():
-                profile = Profile.objects.filter(id=item).first()
-                sale = Sale.objects.filter(profile=item).last()
-                continue
-
-        total = Price.objects.filter(platform=profile.count.platform, num_profiles=num_profiles).first()
-        bill = Bill.objects.create(customer=sale.bill.customer, saler=request.user, total=total.price)
+        total = 0
+        counts = {}
+        bill = Bill.objects.create(customer_id=kwargs['id'], saler=request.user, total=0)
         for item in request.POST:
             if item.isnumeric():
                 if request.POST[item] == 'on':
-                    date_limit = CalculateDateLimit(sale.date_limit, int(request.POST['months']))
-                    request.user.sale_profile(profile, int(request.POST['months']), date_limit, bill)
-                    message_renew(profile, sale.bill.customer, date_limit)
+                    profile = Profile.objects.filter(id=item).first()
+                    if not profile.count.id in counts:
+                        counts[profile.count.id] = { "amount": 1 }
+                    else:
+                        counts[profile.count.id]['amount'] = counts[profile.count.id]['amount'] + 1
+                    counts[profile.count.id]["platform"] = profile.count.platform.id
+                sale = Sale.objects.filter(profile=profile).last()
+                date_limit = CalculateDateLimit(sale.date_limit, int(request.POST['months']))
+                request.user.sale_profile(profile, int(request.POST['months']), date_limit, bill)
+                message_renew(profile, sale.bill.customer, date_limit)
 
+        for key in counts:
+            subtotal = Price.objects.filter(platform_id=counts[key]['platform'], num_profiles=counts[key]['amount'] ).first()
+            total = total + subtotal.price
+        bill.total = total
+        bill.save()
         return redirect('bill-list')
 
 

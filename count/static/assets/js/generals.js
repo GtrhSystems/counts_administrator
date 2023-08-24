@@ -288,8 +288,12 @@ function count_functions(){
 
      $(".renew").click(function(e){
         e.preventDefault()
-        $(".sales").submit()
-
+        months = $('#months').val()
+        if(months != ""){
+            $(".sales").submit()
+        }else{
+            alert("Debe ingresar los meses de renovación")
+        }
      })
      $(".update").click(function(e){
         e.preventDefault()

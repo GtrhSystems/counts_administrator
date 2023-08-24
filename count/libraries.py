@@ -1,12 +1,10 @@
 
-import datetime
+from dateutil.relativedelta import relativedelta
 
 
 def CalculateDateLimit(date, months) :
 
-
-    days = months * 30
-    date_limit = date + datetime.timedelta(days=days)
+    date_limit = date + relativedelta(months=months)
     return  date_limit
 
 

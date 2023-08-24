@@ -473,6 +473,7 @@ class SalesListView(ListView):
                         counts[profile.count.id]['amount'] = counts[profile.count.id]['amount'] + 1
                     counts[profile.count.id]["platform"] = profile.count.platform.id
                 sale = Sale.objects.filter(profile=profile).last()
+                print(int(request.POST['months']))
                 date_limit = CalculateDateLimit(sale.date_limit, int(request.POST['months']))
                 request.user.sale_profile(profile, int(request.POST['months']), date_limit, bill)
                 message_renew(profile, sale.bill.customer, date_limit)

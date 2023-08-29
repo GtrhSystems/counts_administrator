@@ -56,7 +56,7 @@ class Count(models.Model):
     email = models.CharField(max_length=100, verbose_name="Email")
     password = models.CharField(max_length=50, default="")
     date = models.DateTimeField(auto_now_add=True)
-    date_limit = models.DateTimeField(verbose_name="Fecha de vencimiento",  auto_now_add=False)#Fecha de vencimiento de la cuenta
+    date_limit = models.DateTimeField(blank=True,  null=True, verbose_name="Fecha de vencimiento",  auto_now_add=False)#Fecha de vencimiento de la cuenta
 
     class Meta:
         verbose_name = 'Cuenta'

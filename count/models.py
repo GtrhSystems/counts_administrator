@@ -58,6 +58,7 @@ class Count(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     date_limit = models.DateTimeField(blank=True,  null=True, verbose_name="Fecha de vencimiento",  auto_now_add=False)#Fecha de vencimiento de la cuenta
 
+
     class Meta:
         verbose_name = 'Cuenta'
         verbose_name_plural = 'Cuentas'
@@ -160,6 +161,7 @@ class Sale(models.Model):
     months = models.PositiveIntegerField(default=1)
     date_limit = models.DateTimeField(verbose_name="Fecha de vencimiento", blank=True, null=True, auto_now_add=False)
     bill = models.ForeignKey(Bill, verbose_name="Factura", on_delete=models.CASCADE)
+    renovated = models.BooleanField(default=0, verbose_name="Renovada:")
 
     @classmethod
     def GetInterdatesSales(cls, user, initial_date, final_date):

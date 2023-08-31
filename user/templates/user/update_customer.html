@@ -90,14 +90,14 @@ table th {
                   <td>{{ sale.date_limit|date:"d/M/Y" }}</td>
                   <td>{{ sale.rest_days }}</td>
                   <td>
-                     <input type="checkbox" class="renew_input" name="{{ sale.profile.id }}"  >
+                     <input type="checkbox" class="renew_input" name="{{ sale.id }}"  >
                   </td>
                    <td>
                       <button type="button" sale="{{ sale.id }}" class="btn btn-danger calcel-sale">Cancelar</button>
 
                   </td>
                     <td>
-                      <button type="button" id_count    ="{{ sale.profile.id }}" class="btn btn-warning change-password">Cambiar</button>
+                      <button type="button" id_count="{{ sale.profile.id }}" class="btn btn-warning change-password">Cambiar</button>
 
                   </td>
                   <td>

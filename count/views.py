@@ -466,17 +466,19 @@ class SalesListView(ListView):
         for item in request.POST:
             if item.isnumeric():
                 if request.POST[item] == 'on':
+                    sale = Sale.objects.filter(id=item).last()
+                    sale.renovated=True
+                    sale.save()
                     profile = Profile.objects.filter(id=item).first()
                     if not profile.count.id in counts:
-                        counts[profile.count.id] = { "amount": 1 }
+                        counts[sale.profile.count.id] = { "amount": 1 }
                     else:
-                        counts[profile.count.id]['amount'] = counts[profile.count.id]['amount'] + 1
-                    counts[profile.count.id]["platform"] = profile.count.platform.id
-                sale = Sale.objects.filter(profile=profile).last()
-                print(int(request.POST['months']))
-                date_limit = CalculateDateLimit(sale.date_limit, int(request.POST['months']))
-                request.user.sale_profile(profile, int(request.POST['months']), date_limit, bill)
-                message_renew(profile, sale.bill.customer, date_limit)
+                        counts[sale.profile.count.id]['amount'] = counts[profile.count.id]['amount'] + 1
+                    counts[sale.profile.count.id]["platform"] = profile.count.platform.id
+
+                    date_limit = CalculateDateLimit(sale.date_limit, int(request.POST['months']))
+                    request.user.sale_profile(sale.profile, int(request.POST['months']), date_limit, bill)
+                    message_renew(sale.profile, sale.bill.customer, date_limit)
 
         for key in counts:
             subtotal = Price.objects.filter(platform_id=counts[key]['platform'], num_profiles=counts[key]['amount'] ).first()

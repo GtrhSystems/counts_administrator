@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from .models import Customer
-from count.models import Sale, Bill
+from count.models import Sale, Bill, Profile, Price
 from .forms import CustomerForm, UserForm
 from count.decorators import usertype_in_view, check_user_type
 from django.contrib.auth.models import User
@@ -16,6 +16,8 @@ from django.contrib import messages
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
 from django.urls import reverse_lazy
+from count.libraries import CalculateDateLimit
+from user.whatsapp_api import message_sale, message_renew
 from django.db.models.query import QuerySet
 
 utc = pytz.UTC
@@ -196,7 +198,7 @@ class ProfileNextExpiredView(ListView):
         #date_init = datetime.datetime.now() - datetime.timedelta(days=2)
 
         date_finish = datetime.datetime.now() + datetime.timedelta(days=3)
-        count_to_expires = self.model.objects.filter(profile__saled=True, date_limit__range=[datetime.datetime.now()  , date_finish ]).order_by('date_limit')
+        count_to_expires = self.model.objects.filter(profile__saled=True, renovated=0, date_limit__range=[datetime.datetime.now()  , date_finish ]).order_by('date_limit')
         for sale in count_to_expires:
             rest_days = getDifference(now, sale.date_limit, 'days')
             if rest_days < 0:
@@ -204,6 +206,27 @@ class ProfileNextExpiredView(ListView):
             else:
                 sale.rest_days = str(rest_days) + " dia(s)"
         return count_to_expires
+
+
+    def post(self, request, *args, **kwargs):
+
+
+        counts = {}
+        for item in request.POST:
+            if item.isnumeric():
+                if request.POST[item] == 'on':
+                    sale = Sale.objects.filter(id=item).last()
+                    sale.renovated=True
+                    sale.save()
+                    bill = Bill.objects.create(customer_id=sale.bill.customer.id, saler=request.user, total=0)
+                    date_limit = CalculateDateLimit(sale.date_limit, int(request.POST['months']))
+                    request.user.sale_profile(sale.profile, int(request.POST['months']), date_limit, bill)
+                    message_renew(sale.profile, bill.customer, date_limit)
+
+        subtotal = Price.objects.filter(platform=sale.profile.count.platform, num_profiles=1 ).first()
+        bill.total =  subtotal.price *int(request.POST['months'])
+        bill.save()
+        return redirect('bill-list')
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(usertype_in_view, name='dispatch')

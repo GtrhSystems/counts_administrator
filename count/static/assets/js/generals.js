@@ -277,14 +277,13 @@ function send_message(data){
 function count_functions(){
 
      $('body').on("click", ".calcel-sale" , function(){
-
          sale_id= $(this).attr('sale');
          $.get('/count/sale/cancel-sale/'+sale_id)
             .done(function( data ) {
             alert(data)
             location.reload();
          });
-      });
+     });
 
      $(".renew").click(function(e){
         e.preventDefault()
@@ -300,14 +299,12 @@ function count_functions(){
         $(".customer").submit()
      })
 
-    $('.renew_input').change(function(){
+     $('.renew_input').change(function(){
         $('.hide').show()
-
-    })
+     })
 
 
      $('body').on("click", ".change-password" , function(){
-
         count_id = $(this).attr('id_count')
         $.get('/count/edit-count-data/'+count_id)
           .done(function( data ) {

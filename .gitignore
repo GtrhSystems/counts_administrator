@@ -10,7 +10,7 @@ user/migrations/*
 count/migrations/*
 .idea/
 count_admin_project/__pycache__/*
-static/
+!static/assets/images/faces/user.jpeg
 !user/migrations/__init__.py
 !plataforma/migrations/__init__.py
 !count/migrations/__init__.py

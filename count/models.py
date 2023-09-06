@@ -116,7 +116,7 @@ class Profile(models.Model):
 
     count = models.ForeignKey(Count, verbose_name="Plataforma", on_delete=models.CASCADE)
     profile = models.CharField(max_length=100, verbose_name="Perfil")
-    pin = models.CharField(max_length=4, verbose_name="Pin", default="0")
+    pin = models.CharField(max_length=5, verbose_name="Pin", default="0")
     saled = models.BooleanField(default=0, verbose_name="Vendida?:")
 
     #mixin

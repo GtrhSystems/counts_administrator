@@ -247,13 +247,12 @@ class SendMessagesWhatsappApi(View) :
 
     def get(self, request, *args, **kwargs):
 
-        date_ago = now + datetime.timedelta(days=2)
-        payload = Customer.get_phones_for_messages( Sale, now, date_ago)
+        payload = Customer.get_phones_for_messages( Sale)
         for data in payload:
             message = f"Hola, tu servicio  \n" \
                       f" 👤USUARIO: {data['email']} \n" \
                       f"🔐CONTRASEÑA: {data['password']}  \n" \
-                      f" Se vence dentro de: {data['remaining_days']} día (s) \n" \
+                      f" Se vence/vencio el dia: {data['date_finish']}  \n" \
                       f" Avísame si lo vas a renovar. Muchas gracias 🙂"
-            #data['response'] = send_message(data['phone'], message)
+            send_message(data['phone'], message)
         return HttpResponse(payload)

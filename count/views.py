@@ -23,6 +23,8 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
 from django.urls import reverse_lazy
 
+from datetime import timezone
+
 
 
 
@@ -147,18 +149,17 @@ class CountsListView(ListView):
 class CountListJson(BaseDatatableView):
 
     columns = ['Plataforma', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña', 'Vence']
-    order_columns = ['date']
+    order_columns = ['date','platform.name', 'email']
     model = Count
     #max_display_length = 500
 
     def get_initial_queryset(self):
 
-        counts = self.model.objects.all().order_by('-date')
-
+        counts = self.model.objects.all()
         return counts
 
     def render_column(self, row, column):
-        return super(OrderListJson, self).render_column(row, column)
+        return super(CountListJson, self).render_column(row, column)
 
     def filter_queryset(self, qs):
 
@@ -172,17 +173,18 @@ class CountListJson(BaseDatatableView):
     def prepare_results(self, qs):
 
         json_data = []
-
+        rest_days = "indeterminado"
         for item in qs:
-
+            now = datetime.datetime.now(timezone.utc)
             profiles = Profile.objects.filter(count=item)
             len_profiles = len(profiles)
             profiles_available = len(profiles.filter(saled=False))
-            rest_days = getDifference(now, item.date_limit, 'days')
-            if rest_days < 0:
-                rest_days = "Vencida"
-            else:
-                rest_days = str(rest_days) + " dia(s)"
+            if item.date_limit:
+                rest_days = getDifference(item.date_limit, now, 'days')
+                if rest_days < 0:
+                    rest_days = "Vencida"
+                else:
+                    rest_days = str(rest_days) + " dia(s)"
 
             link_change= f'<button type="button" id_count="{ item.id }" class="btn btn-warning change-password">Cambiar</button>'
             link_detele= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>' #link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Editar</button></a>'
@@ -297,7 +299,6 @@ class ReactivateProfileView(View):
     def get(self, request, *args, **kwargs):
 
         try:
-            print(kwargs['id'])
             profile = Profile.objects.filter(id = kwargs['id']).first()
             profile.saled=False
             profile.save()

@@ -35,7 +35,7 @@ Listado de Cuentas
 </div>
 <script>
 $(document).ready(function() {
-
+ $.fn.dataTable.ext.errMode = 'none';
   change_password()
 
   $('#counts-table').dataTable({
@@ -54,36 +54,46 @@ $(document).ready(function() {
               targets: [1]
           },
           {
-              name: 'profiles_available',
-              orderable: true,
-              searchable: true,
-              targets: [1]
+              orderable: false,
+              searchable: false,
+              targets: [2]
           },
           {
-              name: 'password',
-              orderable: true,
-              searchable: true,
-              targets: [1]
+              orderable: false,
+              searchable: false,
+              targets: [3]
           },
           {
-              name: 'rest_days',
-              orderable: true,
-              searchable: true,
-              targets: [1]
-          }
+              orderable: false,
+              searchable: false,
+              targets: [4]
+          },
+           {
+              orderable: false,
+              searchable: false,
+              targets: [5]
+          },
+           {
+              orderable: false,
+              searchable: false,
+              targets: [6]
+          },
+           {
+              orderable: false,
+              searchable: false,
+              targets: [7]
+          },
+
 
       ],
       searching: true,
       processing: true,
       serverSide: true,
-      stateSave: true,
+      stateSave: false,
       ajax: "{% url 'count-list-ajax' %}"
-  });
+  })
 
 });
-
-
-
 
 </script>
 {% endblock %}

@@ -149,7 +149,7 @@ class CustomerJson(BaseDatatableView):
 
 
     def render_column(self, row, column):
-        return super(OrderListJson, self).render_column(row, column)
+        return super(CustomerJson, self).render_column(row, column)
 
     def filter_queryset(self, qs):
 

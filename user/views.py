@@ -19,7 +19,7 @@ from django.urls import reverse_lazy
 from count.libraries import CalculateDateLimit
 from user.whatsapp_api import message_sale, message_renew
 from django.db.models.query import QuerySet
-
+import time
 utc = pytz.UTC
 now = datetime.datetime.now()
 now = now.replace(tzinfo=utc)
@@ -249,10 +249,12 @@ class SendMessagesWhatsappApi(View) :
 
         payload = Customer.get_phones_for_messages( Sale)
         for data in payload:
-            message = f"Hola, tu servicio  \n" \
+            message = f"Hola, {data['name']} tu servicio  {data['platform']}\n" \
                       f" 👤USUARIO: {data['email']} \n" \
-                      f"🔐CONTRASEÑA: {data['password']}  \n" \
-                      f" Se vence/vencio el dia: {data['date_finish']}  \n" \
+                      f" 🔐CONTRASEÑA: {data['password']}  \n" \
+                      f" {data['days']}  \n" \
                       f" Avísame si lo vas a renovar. Muchas gracias 🙂"
+
             send_message(data['phone'], message)
+            time.sleep(1)
         return HttpResponse(payload)

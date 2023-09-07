@@ -4,6 +4,7 @@ from count.libraries import getDifference
 from django.contrib.auth.models import User
 import datetime
 
+
 class Customer(models.Model):
 
     name =  models.CharField( max_length=100, verbose_name="Nombres")
@@ -20,14 +21,12 @@ class Customer(models.Model):
     @classmethod
     def get_phones_for_messages(cls, Sale):
 
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(datetime.timezone.utc)
         today = datetime.date.today()
         yestarday = today + datetime.timedelta(days=-1)
         tomorrow = today + datetime.timedelta(days=1)
         date_ago = today + datetime.timedelta(days=2)
         end_date_ago = date_ago + datetime.timedelta(days=1)
-
-
         payload = []
 
         sales_today = Sale.objects.filter(date_limit__gte=today, date_limit__lt=tomorrow)
@@ -36,10 +35,20 @@ class Customer(models.Model):
         sales = sales_yesterday | sales_today | sales_3_days
 
         for sale in sales:
-            payload.append({ "email": sale.profile.count.email,
+            remaining_days = getDifference(sale.date_limit, now, "days")
+            if remaining_days == 1:
+                day = "vencio ayer"
+            elif remaining_days == 0:
+                day = "vence hoy"
+            elif remaining_days == -2:
+                day = "vence en dos dias"
+            payload.append({ "name": sale.bill.customer.name,
+                             "email": sale.profile.count.email,
                              "password": sale.profile.count.password,
                              "phone":sale.bill.customer.phone.as_e164,
-                             "date_finish":  sale.date_limit.strftime('%d de %m de %Y') })
+                             "platform":  sale.profile.count.platform,
+                             "days" :  day
+                             })
         return payload
 
 

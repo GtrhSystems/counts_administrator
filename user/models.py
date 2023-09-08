@@ -44,7 +44,7 @@ class Customer(models.Model):
             elif remaining_days == -2:
                 day = "vence en dos dias"
 
-            payload[str(sale.profile.count.email) + str(sale.bill.customer.name)] = { "name": sale.bill.customer.name,
+            payload[sale.profile.count.email + sale.bill.customer.name] = { "name": sale.bill.customer.name,
                              "email": sale.profile.count.email,
                              "password": sale.profile.count.password,
                              "phone":sale.bill.customer.phone.as_e164,

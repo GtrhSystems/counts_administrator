@@ -256,7 +256,6 @@ class SendMessagesWhatsappApi(View) :
                       f" {payload[data]['days']}  \n" \
                       f" Avísame si lo vas a renovar. Muchas gracias 🙂"
             counts.append([payload[data]['name'], payload[data]['email']])
-
-            #send_message(data['phone'], message)
+            send_message(data['phone'], message)
 
         return HttpResponse(counts)

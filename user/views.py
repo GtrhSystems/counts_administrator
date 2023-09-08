@@ -247,14 +247,16 @@ class SendMessagesWhatsappApi(View) :
 
     def get(self, request, *args, **kwargs):
 
+        counts = []
         payload = Customer.get_phones_for_messages( Sale)
-        for data in payload:
-            message = f"Hola, {data['name']} tu servicio  {data['platform']}\n" \
-                      f" 👤USUARIO: {data['email']} \n" \
-                      f" 🔐CONTRASEÑA: {data['password']}  \n" \
-                      f" {data['days']}  \n" \
+        for  data in payload:
+            message = f"Hola, {payload[data]['name']} tu servicio  {payload[data]['platform']}\n" \
+                      f" 👤USUARIO: {payload[data]['email']} \n" \
+                      f" 🔐CONTRASEÑA: {payload[data]['password']}  \n" \
+                      f" {payload[data]['days']}  \n" \
                       f" Avísame si lo vas a renovar. Muchas gracias 🙂"
+            counts.append([payload[data]['name'], payload[data]['email']])
 
-            send_message(data['phone'], message)
-            time.sleep(1)
-        return HttpResponse(payload)
+            #send_message(data['phone'], message)
+
+        return HttpResponse(counts)

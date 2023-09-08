@@ -27,7 +27,7 @@ class Customer(models.Model):
         tomorrow = today + datetime.timedelta(days=1)
         date_ago = today + datetime.timedelta(days=2)
         end_date_ago = date_ago + datetime.timedelta(days=1)
-        payload = []
+        payload = {}
 
         sales_today = Sale.objects.filter(date_limit__gte=today, date_limit__lt=tomorrow)
         sales_yesterday = Sale.objects.filter(date_limit__gte=yestarday, date_limit__lt=today)
@@ -35,6 +35,7 @@ class Customer(models.Model):
         sales = sales_yesterday | sales_today | sales_3_days
 
         for sale in sales:
+
             remaining_days = getDifference(sale.date_limit, now, "days")
             if remaining_days == 1:
                 day = "vencio ayer"
@@ -42,13 +43,14 @@ class Customer(models.Model):
                 day = "vence hoy"
             elif remaining_days == -2:
                 day = "vence en dos dias"
-            payload.append({ "name": sale.bill.customer.name,
+
+            payload[str(sale.profile.count.email) + str(sale.bill.customer.name)] = { "name": sale.bill.customer.name,
                              "email": sale.profile.count.email,
                              "password": sale.profile.count.password,
                              "phone":sale.bill.customer.phone.as_e164,
                              "platform":  sale.profile.count.platform,
                              "days" :  day
-                             })
+                             }
         return payload
 
 

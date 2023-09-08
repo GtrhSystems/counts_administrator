@@ -22,10 +22,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
 from django.urls import reverse_lazy
-
 from datetime import timezone
-
-
 
 
 utc = pytz.UTC
@@ -281,8 +278,10 @@ class EditCountDataView(View):
 
         profile = self.model.objects.filter(id=kwargs['id']).first()
         count = Count.objects.filter(id=profile.count.id).first()
-        count.password = request.POST['password']
-        profile.pin = request.POST['pin']
+        if not request.POST['password'] == "":
+            count.password = request.POST['password']
+        if not request.POST['pin'] == "":
+            profile.pin = request.POST['pin']
         profile.save()
         count.save()
         return HttpResponse("Datos Actualizados")

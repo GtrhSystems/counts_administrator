@@ -58,10 +58,34 @@ class ChangeCountDataForm(forms.Form):
     pin = forms.CharField(required=False, label="Pin")
     password = forms.CharField(required=False, label="Contraseña")
 
+
+class ChangeSaleDataForm(forms.Form):
+
+     def __init__(self, id,  *args, **kwargs):
+
+        super(ChangeSaleDataForm, self).__init__(*args, **kwargs)
+        sale = Sale.objects.filter(id=id).first()
+        self.fields['date'] = forms.DateField(widget=forms.DateInput(
+            attrs={'type': 'date', 'placeholder': 'Fecha de venta', 'data-date-format': 'YYYY/MMMM/DD',
+                   'value': sale.date}))
+        self.fields['date_limit'] = forms.DateField(widget=forms.DateInput(
+            attrs={'type': 'date', 'placeholder': 'Fecha de finalización', 'data-date-format': 'YYYY/MMMM/DD',
+                   'value': sale.date_limit}))
+
+
+
+
 class ChangePaswordForm(forms.ModelForm):
     class Meta:
         model = Count
         fields = ["password"]
+
+class ChangeDatePaswordForm(forms.ModelForm):
+    class Meta:
+        model = Count
+        fields = ["password", 'date_limit']
+
+
 
 class ChangeDateLimitForm(forms.ModelForm):
 

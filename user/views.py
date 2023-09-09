@@ -70,9 +70,6 @@ class UpdateCustomerView(UpdateView):
 
     def get_context_data(self, **kwargs):
 
-
-        from django.db.models import Max
-
         ctx = super(UpdateCustomerView, self).get_context_data(**kwargs)
         profiles_id = list(Sale.objects.filter(bill__customer=self.kwargs['pk']).values_list('profile_id', flat=True))
         uniques_ids = set(profiles_id)

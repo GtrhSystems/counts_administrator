@@ -35,6 +35,7 @@ def usertype_in_view(function):
                      'count-list-expired',
                      'count-list-to-expire',
                      'change-date-limit',
+                     'edit-sale-data'
                      ]
 
         staff = ['add-user',
@@ -53,6 +54,7 @@ def usertype_in_view(function):
                  'count-list-expired',
                  'count-list-to-expire',
                  'change-date-limit',
+                 'edit-sale-data',
                  ]
 
         saler = ['add-user'

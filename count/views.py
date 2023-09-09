@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .decorators import usertype_in_view
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm, ChangePaswordForm, ChangeDateLimitForm, ChangeCountDataForm
+from .forms import SaleForm, GetInterDatesForm, CountForm, CreatePromotionForm, PlatformForm, CreatePlatformForm, RenovationForm, ChangePaswordForm, ChangeDateLimitForm, ChangeCountDataForm, ChangeSaleDataForm
 from .models import Profile, Count, Platform, Promotion, PromotionPlatform, Price, Bill, Sale, PromotionSale
 from user.models import Customer, Action
 from django.http import HttpResponse, JsonResponse
@@ -286,10 +286,30 @@ class EditCountDataView(View):
             profile.pin = request.POST['pin']
         profile.save()
         count.save()
-        return HttpResponse("Datos Actualizados")
+        return HttpResponse("Cuenta Actualizados")
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(usertype_in_view, name='dispatch')
+class EditSaleDataView(View):
 
+    model = Sale
+
+    template_name = 'count/change_sale.html'
+    permission_required = 'count.change_sale'
+
+    def get(self, request, *args, **kwargs):
+        form_class = ChangeSaleDataForm(kwargs['id'])
+        return render(request, self.template_name,  {'form': form_class, 'id':kwargs['id'] })
+    def post(self, request, *args, **kwargs):
+
+        sale = self.model.objects.filter(id=kwargs['id']).first()
+        if not request.POST['date'] == "":
+            sale.date = request.POST['date']
+        if not request.POST['date_limit'] == "":
+            sale.date_limit = request.POST['date_limit']
+        sale.save()
+        return HttpResponse("Venta Actualizados")
 
 
 

@@ -8,17 +8,17 @@ Edición de cuenta
       <div class="card-body">
         <h4 class="card-title">Editar cuenta</h4>
         <p class="card-description">Digite los cambios a la cuenta</p>
-        <form  method="post" class="forms-sample change-password-form" action="/count/change-password/{{ id }}">
+        <form  method="post" class="forms-sample change-sale-form" >
           	{% csrf_token %}
           <div class="form-group">
-            <label for="password">{{ form.password.label }}</label>
-             {{ form.password|add_class:'form-control' }}
+            <label for="date">{{ form.date.label }}</label>
+             {{ form.date|add_class:'form-control' }}
           </div>
           <div class="form-group">
-            <label for="pin">{{ form.pin.label }}</label>
-             {{ form.pin|add_class:'form-control' }}
+            <label for="date_limit">{{ form.date_limit.label }}</label>
+             {{ form.date_limit|add_class:'form-control' }}
           </div>
-          <button type="submit" class="btn btn-primary mr-2 change-pass">Guardar</button>
+          <button type="submit" class="btn btn-primary mr-2 change-sale">Guardar</button>
         </form>
         {{ form.errors }}
       </div>

@@ -329,6 +329,33 @@ function count_functions(){
                 });
             });
           });
+
+
+     $('body').on("click", ".change-sale" , function(){
+        sale_id = $(this).attr('id_sale')
+        $.get('/count/edit-sale-data/'+sale_id)
+          .done(function( data ) {
+                $('.modal-body').html(data)
+                $('.modal-title').text("Editar fechas de venta")
+                $('.modal-footer').hide()
+                $("#myModal").modal({
+                    show: true,
+                    escapeClose: false,
+                    clickClose: false
+                    })
+                $('.change-sale').click(function(e){
+                  e.preventDefault()
+                  json = convertFormToJSON($('.change-sale-form'))
+                  $.post('/count/edit-sale-data/'+sale_id, json)
+                    .done(function( data ) {
+                      $('.modal-body').html(data)
+                  })
+                })
+                $("#myModal").on('hide.bs.modal', function (e) {
+                  location.reload();
+                });
+            });
+          });
 }
 
 function change_password(){

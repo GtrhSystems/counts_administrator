@@ -23,6 +23,7 @@ urlpatterns = [
 
         #counts
         path('edit-count-data/<int:id>', views.EditCountDataView.as_view(), name='edit-count-data'),
+        path('edit-sale-data/<int:id>', views.EditSaleDataView.as_view(), name='edit-sale-data'),
         path('change-date-limit/<int:id>', views.ChangeDateLimitView.as_view(), name='change-date-limit'),
 
         path('<pk>/delete/', views.CountDeleteView.as_view(), name='delete-count'),

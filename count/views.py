@@ -177,7 +177,7 @@ class CountListJson(BaseDatatableView):
             len_profiles = len(profiles)
             profiles_available = len(profiles.filter(saled=False))
             if item.date_limit:
-                rest_days = getDifference(item.date_limit, now, 'days')
+                rest_days = getDifference(now, item.date_limit ,  'days')
                 if rest_days < 0:
                     rest_days = "Vencida"
                 else:

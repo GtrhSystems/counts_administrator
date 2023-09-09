@@ -183,8 +183,9 @@ class CountListJson(BaseDatatableView):
                 else:
                     rest_days = str(rest_days) + " dia(s)"
 
-            link_change= f'<button type="button" id_count="{ item.id }" class="btn btn-warning change-password">Cambiar</button>'
-            link_detele= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>' #link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Editar</button></a>'
+            link_change_password = f'<button type="button" id_count="{ item.id }" class="btn btn-warning change-password">Cambiar password</button>'
+            link_change_date =f'<button type="button" id_count="{ item.id }" class="btn btn-primary btn-icon-text change-date-limit"><i class="mdi mdi-grease-pencil"></i>Cambiar fecha</button>'
+            link_detele= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>'
             json_data.append([
                 item.platform.name,
                 item.email,
@@ -192,7 +193,8 @@ class CountListJson(BaseDatatableView):
                 profiles_available,
                 item.password,
                 rest_days,
-                link_change,
+                link_change_password,
+                link_change_date,
                 link_detele
             ])
         return json_data

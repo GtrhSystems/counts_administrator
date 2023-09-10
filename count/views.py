@@ -439,15 +439,6 @@ class ChangeCountPasswordView(View):
         count.password = request.POST['password']
         count.save()
         return HttpResponse("Contraseña editada conrrectamente")
-#
-#     def get(self, request, *args, **kwargs):
-#
-#         sale = self.model.objects.filter(id=self.kwargs['id']).first()
-#         Action.action_register(request.user, "Cancelación de la venta id = "+ str(sale.id) + " del dia " + str(sale.date) + " factura :" + str(sale.bill.id) + " cuenta :" + str(sale.profile.count.email))
-#         sale.cancel_sale()
-#
-#
-#         return HttpResponse("Venta cancelada")
 
 
 

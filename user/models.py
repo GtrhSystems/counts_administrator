@@ -29,9 +29,9 @@ class Customer(models.Model):
         end_date_ago = date_ago + datetime.timedelta(days=1)
         payload = {}
 
-        sales_today = Sale.objects.filter(date_limit__gte=today, date_limit__lt=tomorrow)
-        sales_yesterday = Sale.objects.filter(date_limit__gte=yestarday, date_limit__lt=today)
-        sales_3_days = Sale.objects.filter(date_limit__gte=date_ago, date_limit__lt=end_date_ago)
+        sales_today = Sale.objects.filter(date_limit__gte=today, date_limit__lt=tomorrow, renovated=False)
+        sales_yesterday = Sale.objects.filter(date_limit__gte=yestarday, date_limit__lt=today, renovated=False)
+        sales_3_days = Sale.objects.filter(date_limit__gte=date_ago, date_limit__lt=end_date_ago, renovated=False)
         sales = sales_yesterday | sales_today | sales_3_days
 
         for sale in sales:

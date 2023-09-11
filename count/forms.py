@@ -40,7 +40,7 @@ class CountForm(forms.Form):
         platforms = Platform.objects.filter(active=True)
         self.fields['platform'] = forms.ModelChoiceField(queryset=platforms, help_text='Selecciones la plataforma',
                                                       label="Plataforma")
-        self.fields['date_limit'] = forms.DateField(widget=forms.DateInput(
+        self.fields['date_limit'] = forms.DateField(label="Fecha de vencimiento",  widget=forms.DateInput(
             attrs={'type': 'date', 'placeholder': 'Digite la fecha de vencimiento', 'data-date-format': 'YYYY/MMMM/DD',
                    'value': date.today()}))
 

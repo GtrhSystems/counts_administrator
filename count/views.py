@@ -53,6 +53,7 @@ class CreateCount(View):
                                          password = request.POST['password'],
                                          date_limit = request.POST['date_limit']
                                          )
+
         for item in request.POST:
             if item.isnumeric():
                 Profile.objects.create(count=new_count, profile = item, pin=request.POST[item], saled=0)

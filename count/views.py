@@ -483,13 +483,12 @@ class SalesListView(ListView):
                     sale = Sale.objects.filter(id=item).last()
                     sale.renovated=True
                     sale.save()
-                    profile = Profile.objects.filter(id=item).first()
+                    profile = Profile.objects.filter(id=sale.profile_id).first()
                     if not profile.count.id in counts:
                         counts[sale.profile.count.id] = { "amount": 1 }
                     else:
                         counts[sale.profile.count.id]['amount'] = counts[profile.count.id]['amount'] + 1
                     counts[sale.profile.count.id]["platform"] = profile.count.platform.id
-
                     date_limit = CalculateDateLimit(sale.date_limit, int(request.POST['months']))
                     request.user.sale_profile(sale.profile, int(request.POST['months']), date_limit, bill)
                     message_renew(sale.profile, sale.bill.customer, date_limit)

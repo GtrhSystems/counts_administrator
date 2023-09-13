@@ -197,7 +197,7 @@ class ProfileNextExpiredView(ListView):
         count_to_expires = self.model.objects.filter(profile__saled=True, renovated=0, date_limit__range=[date_init , date_finish ]).order_by('date_limit')
         for sale in count_to_expires:
             rest_days = getDifference( sale.date_limit, now,  'days')
-            sale.rest_days = rest_days
+            sale.rest_days = abs(rest_days)
         return count_to_expires
 
 

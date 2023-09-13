@@ -16,7 +16,7 @@ from .libraries import getDifference
 import datetime, pytz, json
 from django.contrib import messages
 from count.libraries import CalculateDateLimit
-from user.whatsapp_api import message_sale, message_renew
+from user.whatsapp_api import message_sale, message_renew, message_expired
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
@@ -397,6 +397,12 @@ class SendMessageWhatsapp(View):
         return HttpResponse("Mensaje enviado")
 
 
+class SendMessageWhatsappExpired(SendMessageWhatsapp):
+    def post(self, request, *args, **kwargs):
+
+        json_data = json.loads(request.body)
+        message_expired(json_data)
+        return HttpResponse(str(json_data["profile_id"]))
 
 
 @method_decorator(login_required, name='dispatch')

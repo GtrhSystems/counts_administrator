@@ -27,8 +27,10 @@ Listado de Cuentas Proximas a Expirar
               <th> Perfil </th>
               <th> Pin </th>
               <th> Vence </th>
+              <th> Dias </th>
               <th>  Renovar  </th>
               <th> </th>
+
             </tr>
           </thead>
           <tbody>
@@ -41,11 +43,25 @@ Listado de Cuentas Proximas a Expirar
               <td>{{ sale.profile.count.password }}</td>
               <td>{{ sale.profile.profile }}</td>
               <td>{{ sale.profile.pin }}</td>
-              <td>{{ sale.date_limit|date:"d/M/Y" }} / {{ sale.rest_days }} </td>
+              <td>{{ sale.date_limit|date:"d/M/Y" }} </td>
+              <td>{{ sale.rest_days }}</td>
               <td>
                   <input type="checkbox" class="renew_input" name="{{ sale.id }}"  >
               </td>
-               <td>
+                <td>
+                <button type="button" id="{{sale.profile.id}}"  onclick='send_message_expired({"platform":"{{ sale.profile.count.platform }}",
+                                                                  "email":"{{ sale.profile.count.email }}",
+                                                                  "password":"{{ sale.profile.count.password }}",
+                                                                  "name":"{{ sale.bill.customer.name }}",
+                                                                  "phone":"{{ sale.bill.customer.phone }}",
+                                                                  "days":"{{ sale.rest_days }}",
+                                                                  "profile_id":"{{ sale.profile.id }}",
+                                                                  "profile":"{{ sale.profile.profile }}",
+                                                                  "pin":"{{ sale.profile.pin }}"})'
+                            class="btn btn-success btn-icon-text">
+                        <i class="mdi mdi-alert mdi mdi-whatsapp"></i> {{ sale.bill.customer.phone }}
+                  </button>
+
                  <button type="button" id_profile="{{ sale.profile.id }}" class="btn btn-primary btn-icon-text  btn-danger cut-profile">
                      <i class="mdi mdi-content-cut"></i> Cortar </button>
                </td>
@@ -107,7 +123,7 @@ $('document').ready(function(){
 
         $("#myModal").on('hide.bs.modal', function (e) {
             $('.hide').hide()
-             $('.renew_input').prop('checked',false);
+            $('.renew_input').prop('checked',false);
         });
 
     })

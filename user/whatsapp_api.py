@@ -42,6 +42,27 @@ def message_renew(profile, phone, date_limit):
                 f"Muchas gracias 😊 "
     send_message(str(phone), message)
 
+
+
+def message_expired(data):
+
+     if data['days'] == "1":
+         day = "Vence mañana"
+     elif data['days'] == "0":
+         day = "Vence hoy"
+     elif data['days'] == "-1":
+         day = "Vencio ayer"
+     elif data['days'] == "-2":
+         day = "Vencio hace dos dias"
+
+     message = f"Hola, {data['name']} tu servicio  { data['platform']}\n" \
+              f"👤USUARIO: {data['email']} \n" \
+              f"🔐CONTRASEÑA: {data['password']}  \n" \
+              f"{ day }   \n" \
+              f"Avísame si lo vas a renovar. \n" \
+              f"Muchas gracias 😊 "
+     send_message(data['phone'], message)
+
 def send_message(phone, message):
 
     try:

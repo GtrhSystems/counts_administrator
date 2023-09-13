@@ -424,6 +424,19 @@ function send_message_individual(data){
         }
     });
 
+}
 
+function send_message_expired(data){
+
+    $.ajax({
+        url: '/count/send-whatsapp-expired',
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (response) {
+            $("#"+response).text("Enviado");
+        }
+    });
 
 }

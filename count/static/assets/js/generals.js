@@ -8,6 +8,7 @@ $(document).ready(function() {
     $('.table-normal').DataTable( {
           responsive: true,
           ordering: false,
+          stateSave: true,
           language: {
             processing:     "Procesamiento en courso...",
             search:         "Buscar&nbsp;:",

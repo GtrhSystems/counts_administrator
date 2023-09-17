@@ -47,15 +47,15 @@ def message_renew(profile, phone, date_limit):
 def message_expired(data):
 
      if data['days'] == "-1":
-         day = "Vence mañana"
+         day = "Vencio ayer"
      elif data['days'] == "0":
          day = "Vence hoy"
      elif data['days'] == "1":
-         day = "Vencio ayer"
+         day = "Vence mañana"
      elif data['days'] == "2":
-         day = "Vencio hace dos dias"
+         day = "Vence en dos dias"
      elif data['days'] == "3":
-         day = "Vencio hace tres dias"
+         day = "Vence en tres dias"
 
      message = f"Hola, {data['name']} tu servicio  { data['platform']}\n" \
               f"👤USUARIO: {data['email']} \n" \

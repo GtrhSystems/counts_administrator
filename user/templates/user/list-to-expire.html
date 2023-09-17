@@ -4,11 +4,10 @@ Listado de Cuentas Proximas a Expirar
 {% endblock %}
 {% load widget_tweaks %}
 {% block content %}
-<form  method="post" class="sales" >
-<div class="col-lg-14 grid-margin stretch-card">
 
+<div class="col-lg-12 grid-margin stretch-card">
   <div class="card">
-
+        <form  method="post" class="sales" >
     <div class="card-body">
       <h4 class="card-title">Cuentas</h4>
       <p class="card-description"><code></code>
@@ -80,10 +79,7 @@ Listado de Cuentas Proximas a Expirar
      </div>
 
     </div>
-
-  </div>
-</div>
-<div id="myModal2"  class="modal fade bd-example-modal-g "  role="dialog"  >
+            <div id="myModal2"  class="modal fade bd-example-modal-g "  role="dialog"  >
 	  <div class="modal-dialog  modal-g">
 		<!-- Modal content-->
 		<div class="modal-content" style ="background:#2f4f4f">
@@ -102,9 +98,14 @@ Listado de Cuentas Proximas a Expirar
 		</div>
 	   </div>
 	</div>
+
+</div>
+     </form>
+  </div>
 </div>
 
- </form>
+
+
 <script>
 $('document').ready(function(){
     $('.renew_input').click(function(){

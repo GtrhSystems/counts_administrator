@@ -321,10 +321,16 @@ class ReactivateProfileView(View):
     def get(self, request, *args, **kwargs):
 
         try:
-            profile = Profile.objects.filter(id = kwargs['id']).first()
-            profile.saled=False
-            profile.save()
-            return HttpResponse("El perfil se activo para venta")
+            sale = Sale.objects.filter(id= kwargs['sale_id'], profile_id= kwargs['id'] ).first()
+            if sale:
+                sale.cutted = True
+                sale.save()
+                profile = Profile.objects.filter(id =sale.profile_id).first()
+                profile.saled=False
+                profile.save()
+                return HttpResponse("El perfil se activo para venta")
+            else:
+                return HttpResponse('No existeHubo un error, contacte al administrador del sistema')
         except:
             return HttpResponse('Hubo un error, contacte al administrador del sistema')
 

@@ -19,7 +19,7 @@ urlpatterns = [
         path('create-pins-profiles/<str:platform>', views.CreatePinsProfiles.as_view(), name='create-pins-profiles'),
         path('list', views.CountsListView.as_view(), name='count-list'),
         path('list-ajax', views.CountListJson.as_view(), name='count-list-ajax'),
-        path('reactivate-profile/<int:id>', views.ReactivateProfileView.as_view(), name='reactivate-profile'),
+        path('reactivate-profile/<int:sale_id>/<int:id>', views.ReactivateProfileView.as_view(), name='reactivate-profile'),
 
         #counts
         path('edit-count-data/<int:id>', views.EditCountDataView.as_view(), name='edit-count-data'),

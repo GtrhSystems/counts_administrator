@@ -174,7 +174,8 @@ $("#id_platform").on("change", function() {
 $(".cut-profile").on("click", function() {
 
       id_profile = $(this).attr('id_profile');
-      $.get('/count/reactivate-profile/'+id_profile )
+      id_sale = $(this).attr('id_sale');
+      $.get('/count/reactivate-profile/'+id_sale+'/' +id_profile )
        .done(function( data ) {
            alert(data)
            location.reload();

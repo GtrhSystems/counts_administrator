@@ -162,6 +162,7 @@ class Sale(models.Model):
     date_limit = models.DateTimeField(verbose_name="Fecha de vencimiento", blank=True, null=True, auto_now_add=False)
     bill = models.ForeignKey(Bill, verbose_name="Factura", on_delete=models.CASCADE)
     renovated = models.BooleanField(default=0, verbose_name="Renovada:")
+    cutted = models.BooleanField(default=0, verbose_name="Cortado:")
 
     @classmethod
     def GetInterdatesSales(cls, user, initial_date, final_date):

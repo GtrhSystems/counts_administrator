@@ -75,7 +75,7 @@ class UpdateCustomerView(UpdateView):
         uniques_ids = set(profiles_id)
         sales = []
         for id in uniques_ids:
-            sales.append(Sale.objects.filter(bill__customer=self.kwargs['pk'], profile_id= id).last())
+            sales.append(Sale.objects.filter(bill__customer=self.kwargs['pk'], profile_id= id, cutted=False).last())
         for sale in sales:
             rest_days = getDifference(now, sale.date_limit, 'days')
             if rest_days < 0:
@@ -194,11 +194,11 @@ class ProfileNextExpiredView(ListView):
 
         date_init = datetime.datetime.now() - datetime.timedelta(days=1)
         date_finish = datetime.datetime.now() + datetime.timedelta(days=3)
-        count_to_expires = self.model.objects.filter(profile__saled=True, renovated=0, date_limit__range=[date_init , date_finish ]).order_by('date_limit')
-        for sale in count_to_expires:
+        sales_to_expires = self.model.objects.filter(profile__saled=True, renovated=False, cutted=False, date_limit__range=[date_init , date_finish ]).order_by('date_limit')
+        for sale in sales_to_expires:
             rest_days = getDifference( sale.date_limit, now,  'days')
             sale.rest_days = abs(rest_days)
-        return count_to_expires
+        return sales_to_expires
 
 
     def post(self, request, *args, **kwargs):
@@ -229,13 +229,14 @@ class ProfileExpiredView(ListView):
     template_name = "user/list-expired.html"
 
     def get_queryset(self,  *args, **kwargs):
+
         date_init = datetime.datetime.now() - datetime.timedelta(days=2)
         date_finish = datetime.datetime.now() - datetime.timedelta(days=1)
-        count_expired = self.model.objects.filter(profile__saled=True, renovated=False, date_limit__lt=date_finish).order_by('-date_limit')
-        for sale in count_expired:
+        sale_expired = self.model.objects.filter(profile__saled=True, renovated=False, cutted=False, date_limit__lt=date_finish).order_by('-date_limit')
+        for sale in sale_expired:
             rest_days = getDifference(sale.date_limit, now, 'days')
             sale.rest_days = -rest_days
-        return count_expired
+        return sale_expired
 
 
 

@@ -182,6 +182,19 @@ $(".cut-profile").on("click", function() {
        });
 })
 
+$(".owner-profile").on("click", function() {
+
+      id_profile = $(this).attr('id_profile');
+      id_sale = $(this).attr('id_sale');
+      $.get('/count/owner-profile/'+id_sale+'/' +id_profile )
+       .done(function( data ) {
+           alert(data)
+           location.reload();
+       });
+})
+
+
+
 $(".table-list_count").on("click", ".change-password" , function(){
     count_id = $(this).attr('id_count')
     $.get('/count/change-password/'+count_id)

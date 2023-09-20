@@ -80,6 +80,13 @@ class ChangePaswordForm(forms.ModelForm):
         model = Count
         fields = ["password"]
 
+
+class SearchCountForm(forms.ModelForm):
+    class Meta:
+        model = Count
+        fields = ["email", "platform"]
+
+
 class ChangeDatePaswordForm(forms.ModelForm):
     class Meta:
         model = Count

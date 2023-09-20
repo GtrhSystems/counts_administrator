@@ -73,9 +73,12 @@ class UpdateCustomerView(UpdateView):
         ctx = super(UpdateCustomerView, self).get_context_data(**kwargs)
         profiles_id = list(Sale.objects.filter(bill__customer=self.kwargs['pk']).values_list('profile_id', flat=True))
         uniques_ids = set(profiles_id)
+
         sales = []
         for id in uniques_ids:
-            sales.append(Sale.objects.filter(bill__customer=self.kwargs['pk'], profile_id= id, cutted=False).last())
+            sale = Sale.objects.filter(bill__customer=self.kwargs['pk'], profile_id= id, cutted=False).last()
+            if sale:
+                sales.append(sale)
         for sale in sales:
             if sale:
                 rest_days = getDifference(now, sale.date_limit, 'days')

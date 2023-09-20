@@ -77,11 +77,12 @@ class UpdateCustomerView(UpdateView):
         for id in uniques_ids:
             sales.append(Sale.objects.filter(bill__customer=self.kwargs['pk'], profile_id= id, cutted=False).last())
         for sale in sales:
-            rest_days = getDifference(now, sale.date_limit, 'days')
-            if rest_days < 0:
-                sale.rest_days = "Vencida"
-            else:
-                sale.rest_days = rest_days
+            if sale:
+                rest_days = getDifference(now, sale.date_limit, 'days')
+                if rest_days < 0:
+                    sale.rest_days = "Vencida"
+                else:
+                    sale.rest_days = rest_days
         ctx['sales'] = sales
         ctx['pk'] = self.kwargs['pk']
         return ctx

@@ -40,21 +40,23 @@ Listado de Cuentas Proximas a Expirar
               <td>{{ sale.date_limit|date:"d/M/Y" }} </td>
               <td>{{ sale.rest_days }}</td>
                 <td>
-                <button type="button" id="{{sale.profile.id}}" onclick='send_message_expired({"platform":"{{ sale.profile.count.platform }}",
-                                                                  "email":"{{ sale.profile.count.email }}",
-                                                                  "password":"{{ sale.profile.count.password }}",
-                                                                  "name":"{{ sale.bill.customer.name }}",
-                                                                  "phone":"{{ sale.bill.customer.phone }}",
-                                                                  "days":"{{ sale.rest_days }}",
-                                                                  "profile_id":"{{ sale.profile.id }}",
-                                                                  "profile":"{{ sale.profile.profile }}",
-                                                                  "pin":"{{ sale.profile.pin }}"})'
-                            class="btn btn-success btn-icon-text">
-                        <i class="mdi mdi-alert mdi mdi-whatsapp"></i> {{ sale.bill.customer.phone }}
-                  </button>
+                  <button type="button" id_count="{{ sale.profile.count.id }}" class="btn btn-warning change-password">
+                    <i class="mdi mdi-key-change"></i> Cambiar password</button>
+                  <button type="button" id="{{sale.profile.id}}" onclick='send_message_expired({"platform":"{{ sale.profile.count.platform }}",
+                                                                    "email":"{{ sale.profile.count.email }}",
+                                                                    "password":"{{ sale.profile.count.password }}",
+                                                                    "name":"{{ sale.bill.customer.name }}",
+                                                                    "phone":"{{ sale.bill.customer.phone }}",
+                                                                    "days":"{{ sale.rest_days }}",
+                                                                    "profile_id":"{{ sale.profile.id }}",
+                                                                    "profile":"{{ sale.profile.profile }}",
+                                                                    "pin":"{{ sale.profile.pin }}"})'
+                              class="btn btn-success btn-icon-text">
+                          <i class="mdi mdi-alert mdi mdi-whatsapp"></i> {{ sale.bill.customer.phone }}
+                    </button>
 
-                 <button type="button" id_sale="{{ sale.id }}" id_profile="{{ sale.profile.id }}" class="btn btn-danger btn-icon-text cut-profile">
-                     <i class="mdi mdi-content-cut"></i> Cortar </button>
+                   <button type="button" id_sale="{{ sale.id }}" id_profile="{{ sale.profile.id }}" class="btn btn-danger btn-icon-text cut-profile">
+                       <i class="mdi mdi-content-cut"></i> Cortar </button>
                </td>
             </tr>
           {% endfor %}
@@ -64,4 +66,10 @@ Listado de Cuentas Proximas a Expirar
     </div>
   </div>
 </div>
+<script>
+$(document).ready(function() {
+  change_password()
+})
+
+</script>
 {% endblock %}

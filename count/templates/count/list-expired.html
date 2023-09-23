@@ -35,6 +35,8 @@ Listado de Cuentas Proximas a Expirar
                <td>
                  <button type="button" id_count="{{ count.id }}" class="btn btn-primary btn-icon-text change-date-limit">
                      <i class="mdi mdi-grease-pencil"></i> Editar </button>
+                  <button type="button" id_count="{{ count.id }}" class="btn btn-danger delete-count">
+                    <i class="mdi mdi-delete-forever"></i>Eliminar</button>
                </td>
             </tr>
           {% endfor %}
@@ -44,4 +46,9 @@ Listado de Cuentas Proximas a Expirar
     </div>
   </div>
 </div>
+<script>
+$(document).ready(function() {
+  change_password()
+})
+</script>
 {% endblock %}

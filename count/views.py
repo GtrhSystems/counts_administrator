@@ -467,7 +467,10 @@ class SearchSaleView(View):
 
     def post(self, request, *args, **kwargs):
 
-        sales = self.model.objects.filter(profile__saled=True, cutted=False, profile__count__email=request.POST['email'], profile__count__platform=request.POST['platform']).order_by('date_limit')
+        print(request.POST['email'])
+        print(request.POST['platform'])
+        sales = self.model.objects.filter(profile__saled=True, cutted=False, profile__count__email=request.POST['email'].strip(), profile__count__platform=request.POST['platform']).order_by('date_limit')
+        print(sales.query)
         sales_profiles = list(sales.values_list('profile_id', flat=True))
         visited = set()
         repeats = {x for x in sales_profiles if x in visited or (visited.add(x) or False)}

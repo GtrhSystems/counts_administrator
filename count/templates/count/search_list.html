@@ -18,7 +18,6 @@ Listado de clientes de la cuenta {{ sales.0.profile.count.platform.name }} - {{ 
               <th> Fecha </th>
               <th> Usuario </th>
               <th> Teléfono </th>
-              <th> Plataforma </th>
               <th> Correo </th>
               <th> Perfil </th>
               <th> Contraseña </th>
@@ -34,7 +33,7 @@ Listado de clientes de la cuenta {{ sales.0.profile.count.platform.name }} - {{ 
               <td>{{ sale.date|date:"d/M/Y"  }}</td>
               <td>{{ sale.bill.customer.name }}
                <td>{{ sale.bill.customer.phone }}</td>
-              <td>{{ sale.profile.count.platform.name }}</td>
+
               <td>{{ sale.profile.count.email }}</td>
               <td>{{ sale.profile.profile }}</td>
               <td>{{ sale.profile.count.password }}</td>

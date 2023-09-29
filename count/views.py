@@ -452,7 +452,23 @@ class CancelSaleView(View):
 
         return HttpResponse("Venta cancelada")
 
+def get_profiles_avaliable(sales):
 
+    from collections import Counter
+    profile_num = int(sales[0].profile.count.platform.num_profiles)+1
+    sales_profiles = list(sales.values_list('profile__profile', flat=True))
+    repeats = []
+    availables = []
+    for x in range(1, profile_num):
+        freq = Counter(sales_profiles).get(str(x))
+        if freq:
+            if freq > 1:
+                repeats.append(x)
+        else:
+            availables.append(x)
+    have_avaliable = True if len(availables) > 0 else False
+
+    return have_avaliable, availables, repeats
 
 @method_decorator(login_required, name='dispatch')
 class SearchSaleView(View):
@@ -467,19 +483,42 @@ class SearchSaleView(View):
 
     def post(self, request, *args, **kwargs):
 
-        print(request.POST['email'])
-        print(request.POST['platform'])
+
         sales = self.model.objects.filter(profile__saled=True, cutted=False, profile__count__email=request.POST['email'].strip(), profile__count__platform=request.POST['platform']).order_by('date_limit')
-        print(sales.query)
-        sales_profiles = list(sales.values_list('profile_id', flat=True))
-        visited = set()
-        repeats = {x for x in sales_profiles if x in visited or (visited.add(x) or False)}
+        have_avaliable, availables, repeats = get_profiles_avaliable(sales)
         for sale in sales:
             rest_days = getDifference( now, sale.date_limit, 'days')
-            if  sale.profile.id in repeats:
+            if  int(sale.profile.profile) in repeats:
                 sale.buttom_owner = True
             sale.rest_days = rest_days
-        return render(request, "count/search_list.html", { 'sales':sales, 'email': request.POST['email'] })
+        return render(request, "count/search_list.html", { 'sales':sales, 'email': request.POST['email'], 'have_avaliable':have_avaliable })
+
+@method_decorator(login_required, name='dispatch')
+class ChangeProfileSaleView(View):
+
+    model = Sale
+    template_name = "count/change_profile_sale.html"
+
+    def get(self, request, *args, **kwargs):
+
+        sale = self.model.objects.filter(id=kwargs['pk']).first()
+        sales = self.model.objects.filter(profile__saled=True, cutted=False, profile__count__email=sale.profile.count.email.strip()).order_by('date_limit')
+        have_avaliable, availables, repeats = get_profiles_avaliable(sales)
+        profiles = Profile.objects.filter(count=sale.profile.count, profile__in=availables )
+        return render(request, self.template_name,  {'profiles': profiles, 'id':kwargs['pk'] })
+
+    def post(self, request, *args, **kwargs):
+
+        sale = self.model.objects.filter(id=kwargs['pk']).first()
+        if sale:
+            sale.profile_id = request.POST['profile']
+            sale.save()
+            profile = Profile.objects.filter(id = request.POST['profile'] ).first()
+            profile.saled=True
+            profile.save()
+            return redirect('search-sale')
+
+
 
 
 @method_decorator(login_required, name='dispatch')

@@ -13,6 +13,7 @@ urlpatterns = [
         path('sales/<str:user>/<str:initial_date>/<str:final_date>', views.InterdatesSalesView.as_view(), name='interdates-sales-saler-list'),
         path('sale/cancel-sale/<int:id>', views.CancelSaleView.as_view(), name='cancel-sale'),
         path('sale/search', views.SearchSaleView.as_view(), name='search-sale'),
+        path('change-profile-sale/<int:pk>', views.ChangeProfileSaleView.as_view(), name='change-profile-sale'),
 
 
         path('services/cron-whatsapp', views.CronWhatsappView.as_view(), name='cron-whatsapp'),

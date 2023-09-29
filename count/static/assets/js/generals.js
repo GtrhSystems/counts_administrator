@@ -182,6 +182,26 @@ $(".cut-profile").on("click", function() {
        });
 })
 
+$('body').on("click", ".change-profile-sale" , function(){
+
+     sale_id = $(this).attr('id_sale')
+    $.get('/count/change-profile-sale/'+sale_id)
+       .done(function( data ) {
+           $('.modal-body').html(data)
+           $("#myModal").modal({
+                show: true,
+                escapeClose: false,
+                clickClose: false
+                })
+       })
+       $("#myModal").on('hide.bs.modal', function (e) {
+           location.reload();
+        });
+
+});
+
+
+
 $(".owner-profile").on("click", function() {
 
       id_profile = $(this).attr('id_profile');

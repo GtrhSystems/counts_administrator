@@ -128,6 +128,25 @@ class Profile(models.Model):
             Profile.objects.create(count=instance, profile=profile )
         return None
 
+    def get_profiles_avaliable(sales, platform_id):
+
+        from collections import Counter
+        platform = Platform.objects.filter(id=platform_id).first()
+        sales_profiles = list(sales.values_list('profile__profile', flat=True))
+        repeats = []
+        availables = []
+        for x in range(1, int(platform.num_profiles) + 1):
+            freq = Counter(sales_profiles).get(str(x))
+            if freq:
+                if freq > 1:
+                    repeats.append(x)
+            else:
+                availables.append(x)
+        have_avaliable = True if len(availables) > 0 else False
+
+        return have_avaliable, availables, repeats
+
+
     @classmethod
     def search_profiles_no_saled(cls, platform_id):
 

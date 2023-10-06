@@ -452,23 +452,7 @@ class CancelSaleView(View):
 
         return HttpResponse("Venta cancelada")
 
-def get_profiles_avaliable(sales):
 
-    from collections import Counter
-    profile_num = int(sales[0].profile.count.platform.num_profiles)+1
-    sales_profiles = list(sales.values_list('profile__profile', flat=True))
-    repeats = []
-    availables = []
-    for x in range(1, profile_num):
-        freq = Counter(sales_profiles).get(str(x))
-        if freq:
-            if freq > 1:
-                repeats.append(x)
-        else:
-            availables.append(x)
-    have_avaliable = True if len(availables) > 0 else False
-
-    return have_avaliable, availables, repeats
 
 @method_decorator(login_required, name='dispatch')
 class SearchSaleView(View):
@@ -483,9 +467,8 @@ class SearchSaleView(View):
 
     def post(self, request, *args, **kwargs):
 
-
         sales = self.model.objects.filter(profile__saled=True, cutted=False, profile__count__email=request.POST['email'].strip(), profile__count__platform=request.POST['platform']).order_by('date_limit')
-        have_avaliable, availables, repeats = get_profiles_avaliable(sales)
+        have_avaliable, availables, repeats = Profile.get_profiles_avaliable(sales, request.POST['platform'])
         for sale in sales:
             rest_days = getDifference( now, sale.date_limit, 'days')
             if  int(sale.profile.profile) in repeats:

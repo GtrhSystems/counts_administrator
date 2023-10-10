@@ -234,11 +234,10 @@ class ProfileExpiredView(ListView):
 
     def get_queryset(self,  *args, **kwargs):
 
-        date_init = datetime.datetime.now() - datetime.timedelta(days=2)
         date_finish = datetime.datetime.now() - datetime.timedelta(days=1)
         sale_expired = self.model.objects.filter(profile__saled=True, renovated=False, cutted=False, date_limit__lt=date_finish).order_by('-date_limit')
         for sale in sale_expired:
-            rest_days = getDifference(sale.date_limit, now, 'days')
+            rest_days = getDifference(sale.date_limit.date(), now.date(), 'days')
             sale.rest_days = -rest_days
         return sale_expired
 

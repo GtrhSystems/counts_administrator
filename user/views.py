@@ -241,7 +241,10 @@ class ProfileExpiredView(ListView):
             sale.rest_days = -rest_days
         return sale_expired
 
-
+    def get_context_data(self,**kwargs):
+        context = super(ProfileExpiredView,self).get_context_data(**kwargs)
+        context['now'] = datetime.datetime.now()
+        return context
 
 class SendMessagesWhatsappApi(View) :
 

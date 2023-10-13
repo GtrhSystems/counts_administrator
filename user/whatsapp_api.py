@@ -63,6 +63,13 @@ def message_expired(data):
               f"{ day }   \n" \
               f"Avísame si lo vas a renovar. \n" \
               f"Muchas gracias 😊 "
+     if data['days'] == "-1":
+         message = message +"n" \
+                            " 👋 ¡Saludos! Solo queremos recordarte que el pago debe realizarse antes de la 🕛 12:00 pm \n" \
+                            "del último día de la fecha de corte para evitar la suspensión de tus servicios. ⏰ 🚫 \n" \
+                            "Si deseas mantener tu historial activo, te recomendamos renovar antes de ese horario. \n" \
+                            " ¡No esperes hasta el último minuto! 🙌 ¡Gracias por confiar en nosotros!"
+
      send_message(data['phone'], message)
 
 def send_message(phone, message):

@@ -7,10 +7,10 @@ $('body').on("submit", "form" , function(event){
 $(document).ready(function() {
     $('.table-normal').DataTable( {
           responsive: true,
-          ordering: false,
+          ordering: true,
           stateSave: true,
           language: {
-            processing:     "Procesamiento en courso...",
+            processing:     "Procesamiento en curso...",
             search:         "Buscar&nbsp;:",
             lengthMenu:     "Mostrar _MENU_ &eacute;l&eacute;mentos",
             info:           "Mostrar de elelemento _START_ al _END_,     Total _TOTAL_ ",
@@ -175,7 +175,7 @@ $(".cut-profile").on("click", function() {
 
       id_profile = $(this).attr('id_profile');
       id_sale = $(this).attr('id_sale');
-      $.get('/count/reactivate-profile/'+id_sale+'/' +id_profile )
+      $.get('/count/cut-profile/'+id_sale+'/' +id_profile )
        .done(function( data ) {
            alert(data)
            location.reload();

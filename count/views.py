@@ -316,23 +316,20 @@ class EditSaleDataView(View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(usertype_in_view, name='dispatch')
-class ReactivateProfileView(View):
+class CutProfileView(View):
 
     def get(self, request, *args, **kwargs):
 
-        try:
-            sale = Sale.objects.filter(id= kwargs['sale_id'], profile_id= kwargs['id'] ).first()
-            if sale:
-                sale.cutted = True
-                sale.save()
-                profile = Profile.objects.filter(id =sale.profile_id).first()
-                profile.saled=False
-                profile.save()
-                return HttpResponse("El perfil se activo para venta")
-            else:
-                return HttpResponse('No existeHubo un error, contacte al administrador del sistema')
-        except:
-            return HttpResponse('Hubo un error, contacte al administrador del sistema')
+        #try:
+        sales = Sale.objects.filter(id= kwargs['sale_id'], profile_id= kwargs['id'] )
+        if sales:
+            sales.update(cutted = True)
+            profile = Profile.objects.filter(id = kwargs['id']).update(saled=False)
+            return HttpResponse("El perfil se activo para venta")
+        else:
+            return HttpResponse('No existe o hubo un error, contacte al administrador del sistema')
+        #except:
+        #    return HttpResponse('Hubo un error, contacte al administrador del sistema')
 
 
 
@@ -560,18 +557,18 @@ class SalesListView(ListView):
         for item in request.POST:
             if item.isnumeric():
                 if request.POST[item] == 'on':
-                    sale = Sale.objects.filter(id=item).last()
-                    sale.renovated=True
-                    sale.save()
-                    profile = Profile.objects.filter(id=sale.profile_id).first()
+                    sales = Sale.objects.filter(id=item)
+                    last_sale = sales.last()
+                    sales.update(renovated=True)
+                    profile = Profile.objects.filter(id=last_sale.profile_id).first()
                     if not profile.count.id in counts:
-                        counts[sale.profile.count.id] = { "amount": 1 }
+                        counts[last_sale.profile.count.id] = { "amount": 1 }
                     else:
-                        counts[sale.profile.count.id]['amount'] = counts[profile.count.id]['amount'] + 1
-                    counts[sale.profile.count.id]["platform"] = profile.count.platform.id
-                    date_limit = CalculateDateLimit(sale.date_limit, int(request.POST['months']))
-                    request.user.sale_profile(sale.profile, int(request.POST['months']), date_limit, bill)
-                    message_renew(sale.profile, sale.bill.customer, date_limit)
+                        counts[last_sale.profile.count.id]['amount'] = counts[profile.count.id]['amount'] + 1
+                    counts[last_sale.profile.count.id]["platform"] = profile.count.platform.id
+                    date_limit = CalculateDateLimit(last_sale.date_limit, int(request.POST['months']))
+                    request.user.sale_profile(last_sale.profile, int(request.POST['months']), date_limit, bill)
+                    message_renew(last_sale.profile, last_sale.bill.customer, date_limit)
 
         for key in counts:
             subtotal = Price.objects.filter(platform_id=counts[key]['platform'], num_profiles=counts[key]['amount'] ).first()

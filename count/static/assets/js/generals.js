@@ -32,6 +32,36 @@ $(document).ready(function() {
             }
         }
     });
+
+    $('.table-no-cache').DataTable( {
+          responsive: true,
+          ordering: true,
+          stateSave: false,
+          language: {
+            processing:     "Procesamiento en curso...",
+            search:         "Buscar&nbsp;:",
+            lengthMenu:     "Mostrar _MENU_ &eacute;l&eacute;mentos",
+            info:           "Mostrar de elelemento _START_ al _END_,     Total _TOTAL_ ",
+            infoEmpty:      "Visualización del elemento 0 a 0 de 0 artículos",
+            infoFiltered:   "(filtrados _MAX_ elementos del total)",
+            infoPostFix:    "",
+            loadingRecords: "Procesamiento en curso...",
+            zeroRecords:    "No hay elementos para mostrar",
+            emptyTable:     "No se encotraron elementos",
+            paginate: {
+                first:      "Primera",
+                previous:   "Anterior",
+                next:       "Próxima",
+                last:       "Ültima"
+            },
+            aria: {
+                sortAscending:  ": activar para ordenar la columna en orden ascendente",
+                sortDescending: ": activar para ordenar la columna en orden descendente"
+            }
+        }
+    });
+
+
 });
 
 $("#myModal").on("click", ".close-modal", function () {

@@ -10,6 +10,7 @@ def CalculateDateLimit(date, months) :
 
 
 def getDifference(then, now, interval="secs"):
+
     duration = now - then
     duration_in_s = duration.total_seconds()
 

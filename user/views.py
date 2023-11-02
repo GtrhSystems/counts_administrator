@@ -196,7 +196,7 @@ class ProfileNextExpiredView(ListView):
 
     def get_queryset(self,  *args, **kwargs):
 
-        date_init = datetime.datetime.now() - datetime.timedelta(days=1)
+        date_init = datetime.datetime.now()
         date_finish = datetime.datetime.now() + datetime.timedelta(days=3)
         date_init = date_init.strftime("%Y-%m-%d")
         date_finish = date_finish.strftime("%Y-%m-%d")

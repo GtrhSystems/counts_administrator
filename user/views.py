@@ -234,7 +234,7 @@ class ProfileExpiredView(ListView):
 
     def get_queryset(self,  *args, **kwargs):
 
-        date_finish = datetime.datetime.now() - datetime.timedelta(days=1)
+        date_finish = datetime.datetime.now()# - datetime.timedelta(days=0)
         date_finish = date_finish.strftime("%Y-%m-%d")
         sale_expired = self.model.objects.filter(profile__saled=True, renovated=False, cutted=False, date_limit__lt=date_finish).order_by('-date_limit')
         for sale in sale_expired:

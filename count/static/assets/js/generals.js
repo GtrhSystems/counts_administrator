@@ -408,7 +408,7 @@ function count_functions(){
                     escapeClose: false,
                     clickClose: false
                     })
-                $('.change-sale').click(function(e){
+                $('.changer-sale').click(function(e){
                   e.preventDefault()
                   json = convertFormToJSON($('.change-sale-form'))
                   $.post('/count/edit-sale-data/'+sale_id, json)

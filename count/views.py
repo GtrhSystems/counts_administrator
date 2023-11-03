@@ -302,6 +302,7 @@ class EditSaleDataView(View):
     def get(self, request, *args, **kwargs):
         form_class = ChangeSaleDataForm(kwargs['id'])
         return render(request, self.template_name,  {'form': form_class, 'id':kwargs['id'] })
+
     def post(self, request, *args, **kwargs):
 
         sale = self.model.objects.filter(id=kwargs['id']).first()

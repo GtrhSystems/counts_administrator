@@ -469,7 +469,7 @@ class SearchSaleView(View):
         have_avaliable, availables, repeats = Profile.get_profiles_avaliable(sales, request.POST['platform'])
         for sale in sales:
             rest_days = getDifference( now, sale.date_limit, 'days')
-            if  int(sale.profile.profile) in repeats:
+            if  sale.profile.profile in repeats:
                 sale.buttom_owner = True
             sale.rest_days = rest_days
         return render(request, "count/search_list.html", { 'sales':sales, 'email': request.POST['email'], 'have_avaliable':have_avaliable })

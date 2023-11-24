@@ -323,6 +323,8 @@ class CutProfileView(View):
 
         #try:
         sales = Sale.objects.filter(id= kwargs['sale_id'], profile_id= kwargs['id'] )
+        print(sales)
+        post
         if sales:
             sales.update(cutted = True)
             profile = Profile.objects.filter(id = kwargs['id']).update(saled=False)
@@ -465,7 +467,7 @@ class SearchSaleView(View):
 
     def post(self, request, *args, **kwargs):
 
-        sales = self.model.objects.filter(profile__saled=True, cutted=False, profile__count__email=request.POST['email'].strip(), profile__count__platform=request.POST['platform']).order_by('date_limit')
+        sales = self.model.objects.filter(profile__saled=True, cutted=False, renovated=False,  profile__count__email=request.POST['email'].strip(), profile__count__platform=request.POST['platform']).order_by('date_limit')
         have_avaliable, availables, repeats = Profile.get_profiles_avaliable(sales, request.POST['platform'])
         for sale in sales:
             rest_days = getDifference( now, sale.date_limit, 'days')

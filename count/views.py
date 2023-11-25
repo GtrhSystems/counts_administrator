@@ -321,18 +321,18 @@ class CutProfileView(View):
 
     def get(self, request, *args, **kwargs):
 
-        #try:
-        sales = Sale.objects.filter(id= kwargs['sale_id'], profile_id= kwargs['id'] )
-        print(sales)
-        post
-        if sales:
-            sales.update(cutted = True)
-            profile = Profile.objects.filter(id = kwargs['id']).update(saled=False)
-            return HttpResponse("El perfil se activo para venta")
-        else:
-            return HttpResponse('No existe o hubo un error, contacte al administrador del sistema')
-        #except:
-        #    return HttpResponse('Hubo un error, contacte al administrador del sistema')
+        try:
+            sales = Sale.objects.filter(id= kwargs['sale_id'], profile_id= kwargs['id'] )
+            print(sales)
+
+            if sales:
+                sales.update(cutted = True)
+                profile = Profile.objects.filter(id = kwargs['id']).update(saled=False)
+                return HttpResponse("El perfil se activo para venta")
+            else:
+                return HttpResponse('No existe o hubo un error, contacte al administrador del sistema')
+        except:
+                return HttpResponse('Hubo un error, contacte al administrador del sistema')
 
 
 

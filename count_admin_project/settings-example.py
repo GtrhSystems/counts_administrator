@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks', #pip install django-widget-tweaks
     'django.contrib.humanize',
+    'axes',
     'count',
     'user',
     'custom_admin.apps.CustomAdminConfig',
@@ -54,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'user.middleware.OneSessionPerUserMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'count_admin_project.urls'
@@ -77,7 +80,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'count_admin_project.wsgi.application'
 
-OPT_ACTIVE = False
+
+
+AUTHENTICATION_BACKENDS = [
+    # AxesStandaloneBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    'axes.backends.AxesStandaloneBackend',
+
+    # Django ModelBackend is the default authentication backend.
+    'django.contrib.auth.backends.ModelBackend',
+]
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -120,7 +131,7 @@ TIME_ZONE = 'America/Bogota'
 
 
 USE_I18N = True
-
+OPT_ACTIVE = False
 USE_TZ = True
 
 
@@ -142,10 +153,12 @@ PROMOTIONS_ROOT = os.path.join(BASE_DIR, 'promotions/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if OPT_ACTIVE:
+
     LOGIN_URL = '/user/login'
     LOGIN_REDIRECT_URL = '/user/'
     LOGOUT_REDIRECT_URL = '/user/login'
 else:
+
     LOGIN_URL = '/user/accounts/login'
     LOGIN_REDIRECT_URL = '/user/'
     LOGOUT_REDIRECT_URL = '/user/accounts/login'
@@ -162,3 +175,9 @@ TITLES_INTER_DATES = {
         'message': 'Selecciona la fecha a filtrar'
     }
 }
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 3600 # 600 por defecto
+SESSION_SAVE_EVERY_REQUEST = True
+AXES_LOGIN_FAILURE_LIMIT = 1
+AXES_COOLOFF_TIME = 0.1 # tiempo de espera para volver a intentar loguin en horas
+AXES_LOCKOUT_TEMPLATE = 'lockscreen.html'

@@ -73,6 +73,15 @@ class Action(models.Model):
         cls.objects.create(user=user, action=action)
 
 
+class LoggedInUser(models.Model):
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='logged_in_user')
+    # Session keys are 32 characters long
+    session_key = models.CharField(max_length=32, null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
 class UserTwoFactorAuthData(models.Model):
 
     user = models.OneToOneField(User, related_name='two_factor_auth_data', on_delete=models.CASCADE)

@@ -44,10 +44,10 @@ class MyLoginView(auth_views.LoginView):
 
     tamplate_name = 'user/login.html'
     def get(self, request):
-        print("entrando por aca")
+
         return render(self.request, self.tamplate_name)
     def post(self, request):
-        print("Siguiendo por este hp")
+
         user = authenticate(request=self.request, username=self.request.POST['username'],
                             password=self.request.POST['password'])
         if user :

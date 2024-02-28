@@ -23,8 +23,6 @@ urlpatterns = [
 ]
 
 if settings.OPT_ACTIVE:
-   print("activo")
    urlpatterns = urlpatterns +   [ path('login/', views.MyLoginView.as_view(), name='login-otp')]
 else:
-   print("apagado")
    urlpatterns = urlpatterns +   [ path('accounts/', include('django.contrib.auth.urls'))]

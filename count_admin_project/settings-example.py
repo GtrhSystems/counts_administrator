@@ -26,23 +26,24 @@ SECRET_KEY = ''
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     "phonenumber_field",
-    'django.contrib.admin',
+    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.humanize',
     'django.contrib.staticfiles',
     'widget_tweaks', #pip install django-widget-tweaks
+    'django.contrib.humanize',
     'count',
-    'user'
+    'user',
+    'custom_admin.apps.CustomAdminConfig',
 ]
 
 MIDDLEWARE = [
@@ -76,18 +77,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'count_admin_project.wsgi.application'
 
-
+OPT_ACTIVE = False
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': '',
         'NAME': '',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
-        'PORT': '3306',
+        'PORT': '',
     }
 }
 
@@ -140,10 +141,14 @@ PROMOTIONS_ROOT = os.path.join(BASE_DIR, 'promotions/')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-LOGIN_URL = '/user/accounts/login'
-LOGIN_REDIRECT_URL = '/user/'
-LOGOUT_REDIRECT_URL = '/user/accounts/login'
+if OPT_ACTIVE:
+    LOGIN_URL = '/user/login'
+    LOGIN_REDIRECT_URL = '/user/'
+    LOGOUT_REDIRECT_URL = '/user/login'
+else:
+    LOGIN_URL = '/user/accounts/login'
+    LOGIN_REDIRECT_URL = '/user/'
+    LOGOUT_REDIRECT_URL = '/user/accounts/login'
 
 # API de whatsapp
 TOKEN_WHATSAPP_API = ""

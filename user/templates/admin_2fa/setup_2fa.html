@@ -1,0 +1,29 @@
+{% extends "admin/login.html" %}
+
+{% block content %}
+  <form action="" method="post">
+    {% csrf_token %}
+    {% if otp_secret %}
+      <p><strong>OTP Secret:</strong></p>
+      <p>{{ otp_secret }}</p>
+      <p>Ingresé este código dentro de la app (Google Authenticator, Authy) o también puede escanear este código QR.</p>
+      <p>{{ qr_code|safe }}</p>
+       <div class="submit-row">
+           <a href="{% url 'admin:login' %}" class="btn btn-primary m-t-15 waves-effect"s>Volver</a>
+       </div>
+    {% else %}
+        {% if form_errors %}
+            {% for error in form_errors %}
+                <p class="errornote">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        {% else %}
+	        <label>De clic sobre el botón para generar un código 2FA .</label>
+            <div class="submit-row">
+                <input type="submit" value="Generar">
+            </div>
+        {% endif %}
+    {% endif %}
+  </form>
+{% endblock %}

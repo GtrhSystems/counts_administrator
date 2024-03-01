@@ -26,23 +26,25 @@ SECRET_KEY = ''
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     "phonenumber_field",
-    'django.contrib.admin',
+    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.humanize',
     'django.contrib.staticfiles',
     'widget_tweaks', #pip install django-widget-tweaks
+    'django.contrib.humanize',
+    'axes',
     'count',
-    'user'
+    'user',
+    'custom_admin.apps.CustomAdminConfig',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'user.middleware.OneSessionPerUserMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'count_admin_project.urls'
@@ -77,17 +81,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'count_admin_project.wsgi.application'
 
 
+
+AUTHENTICATION_BACKENDS = [
+    # AxesStandaloneBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    'axes.backends.AxesStandaloneBackend',
+
+    # Django ModelBackend is the default authentication backend.
+    'django.contrib.auth.backends.ModelBackend',
+]
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': '',
         'NAME': '',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
-        'PORT': '3306',
+        'PORT': '',
     }
 }
 
@@ -119,7 +131,7 @@ TIME_ZONE = 'America/Bogota'
 
 
 USE_I18N = True
-
+OPT_ACTIVE = False
 USE_TZ = True
 
 
@@ -140,10 +152,16 @@ PROMOTIONS_ROOT = os.path.join(BASE_DIR, 'promotions/')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+if OPT_ACTIVE:
 
-LOGIN_URL = '/user/accounts/login'
-LOGIN_REDIRECT_URL = '/user/'
-LOGOUT_REDIRECT_URL = '/user/accounts/login'
+    LOGIN_URL = '/user/login'
+    LOGIN_REDIRECT_URL = '/user/'
+    LOGOUT_REDIRECT_URL = '/user/login'
+else:
+
+    LOGIN_URL = '/user/accounts/login'
+    LOGIN_REDIRECT_URL = '/user/'
+    LOGOUT_REDIRECT_URL = '/user/accounts/login'
 
 # API de whatsapp
 TOKEN_WHATSAPP_API = ""
@@ -157,3 +175,9 @@ TITLES_INTER_DATES = {
         'message': 'Selecciona la fecha a filtrar'
     }
 }
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 3600 # 600 por defecto
+SESSION_SAVE_EVERY_REQUEST = True
+AXES_LOGIN_FAILURE_LIMIT = 1
+AXES_COOLOFF_TIME = 0.1 # tiempo de espera para volver a intentar loguin en horas
+AXES_LOCKOUT_TEMPLATE = 'lockscreen.html'

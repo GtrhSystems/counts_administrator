@@ -3,8 +3,8 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View #PARA VISTAS GENERICAS
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .models import Customer
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
+from .models import Customer, UserTwoFactorAuthData
 from count.models import Sale, Bill, Profile, Price
 from .forms import CustomerForm, UserForm
 from count.decorators import usertype_in_view, check_user_type
@@ -12,14 +12,19 @@ from django.contrib.auth.models import User
 from .whatsapp_api import send_message
 import datetime, pytz
 from count.libraries import getDifference
-from django.contrib import messages
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
 from django.urls import reverse_lazy
 from count.libraries import CalculateDateLimit
-from user.whatsapp_api import message_sale, message_renew
-from django.db.models.query import QuerySet
-import time
+from user.whatsapp_api import message_renew
+from .libraries import user_two_factor_auth_data_create
+from django.core.exceptions import ValidationError
+from django.contrib.auth import authenticate, views as auth_views
+from custom_admin.forms import OTPForm
+from django.contrib.auth import login, authenticate
+from django.conf import settings
+
+
 utc = pytz.UTC
 now = datetime.datetime.now()
 now = now.replace(tzinfo=utc)
@@ -29,13 +34,80 @@ def context_app(request):
 
     context = {}
     user_type = check_user_type(request)
-
     if request.user.is_authenticated:
-
             context['user_type'] = user_type
-
-
+            context['otp_active'] = settings.OPT_ACTIVE
     return context
+
+
+class MyLoginView(auth_views.LoginView):
+
+    tamplate_name = 'user/login.html'
+    def get(self, request):
+
+        return render(self.request, self.tamplate_name)
+    def post(self, request):
+
+        user = authenticate(request=self.request, username=self.request.POST['username'],
+                            password=self.request.POST['password'])
+        if user :
+            if user.is_active:
+
+                two_factor_auth_data = UserTwoFactorAuthData.objects.filter(user__username=request.POST.get('username')).first()
+                self.request.session['username'] = str(user.username)
+                if two_factor_auth_data:
+                    return redirect('confirm-2fa')
+                else:
+                    return redirect('setup-2fa')
+
+        return render(self.request, self.tamplate_name)
+
+
+
+class SetupTwoFactorAuthView(TemplateView):
+
+    template_name = "2fa/setup_2fa.html"
+
+    def post(self, request):
+
+        username = self.request.session['username']
+        user = User.objects.get(username= username)
+        context = {}
+        try:
+            two_factor_auth_data = user_two_factor_auth_data_create(user=user)
+            context["otp_secret"] = two_factor_auth_data.otp_secret
+            context["qr_code"] = two_factor_auth_data.generate_qr_code(name=user.username)
+        except ValidationError as exc:
+            context["form_errors"] = exc.messages
+
+        return self.render_to_response(context)
+
+
+class ConfirmTwoFactorAuthView(View):
+
+    template_name = "2fa/confirm_2fa.html"
+    success_url = reverse_lazy("index")
+    form_class = OTPForm
+
+    def get(self, request, *args, **kwargs):
+
+        form = self.form_class
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request, *args, **kwargs):
+
+        username = self.request.session['username']
+        user = User.objects.get(username= username)
+        form = OTPForm(request.POST)
+        form.user = user
+        if form.is_valid():
+            form.two_factor_auth_data.rotate_session_identifier()
+            self.request.session['2fa_token'] = str(form.two_factor_auth_data.session_identifier)
+            login(self.request, user, backend = 'django.contrib.auth.backends.ModelBackend')
+            return redirect("index")
+        return render(request, self.template_name, {"form": form})
+
+
 
 @method_decorator(login_required, name='dispatch')
 class IndexView(View):
@@ -265,3 +337,5 @@ class SendMessagesWhatsappApi(View) :
             send_message(payload[data]['phone'], message)
 
         return HttpResponse(counts)
+
+

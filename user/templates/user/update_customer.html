@@ -55,7 +55,6 @@ table th {
       <p class="card-description"><code></code>
       </p>
       <div class="form-group table-responsive">
-
             <table class="table table-dark table-normal">
               <thead>
                 <tr>
@@ -64,28 +63,28 @@ table th {
                   <th> Cliente </th>
                   <th> Plataforma </th>
                   <th> Correo </th>
-                  <th> Contraseña </th>
+                  <th> Contraseña cuenta </th>
+                  <th> Contraseña correo </th>
                   <th> Pin </th>
                   <th> Perfil </th>
                   <th> Meses </th>
                   <th> Vencimiento </th>
                   <th> Dias </th>
-                  <th> Renovar </th>
+                  <th> Renovar
+                      <span><input type="checkbox" class="renew_input" id="renew_all_list"></span></th>
                   <th></th>
-
-
-
                 </tr>
               </thead>
               <tbody>
                {% for sale in sales %}
                 <tr>
-                  <td>{{ sale.bill.id }}</td>
+                 <td>{{forloop.counter}}</td>
                   <td>{{ sale.date|date:"d/M/Y" }}</td>
                   <td>{{ sale.bill.customer.name }}</td>
                   <td>{{ sale.profile.count.platform }}</td>
                   <td>{{ sale.profile.count.email }}</td>
                   <td>{{ sale.profile.count.password }}</td>
+                  <td>{{ sale.profile.count.email_password }}</td>
                   <td>{{ sale.profile.pin }}</td>
                   <td>{{ sale.profile.profile }}</td>
                   <td>{{ sale.months }}</td>
@@ -96,8 +95,9 @@ table th {
                   </td>
                    <td>
                       <button type="button" sale="{{ sale.id }}" class="btn btn-danger calcel-sale">Cancelar</button>
-                      <button type="button" id_count="{{ sale.profile.id }}" class="btn btn-warning change-password">Cambiar cuenta</button>
-                      <button type="button" id_sale="{{ sale.id }}" class="btn btn-info change-sale">Cambiar venta</button>
+                      <button type="button" id_count="{{ sale.profile.id }}" class="btn btn-warning change-password">Cambiar constraseña cuenta</button>
+                      <button type="button" id_count="{{ sale.profile.count.id }}" class="btn btn-secondary btn-fw change-password-email">Cambiar constraseña correo</button>
+                      <button type="button" id_sale="{{ sale.id }}" class="btn btn-info change-sale">Cambiar Fecha</button>
                      <button type="button" onclick='send_message_individual({"platform":"{{ sale.profile.count.platform }}",
                                                                   "email":"{{ sale.profile.count.email }}",
                                                                   "password":"{{ sale.profile.count.password }}",
@@ -127,6 +127,7 @@ table th {
 <script>
 $('document').ready(function(){
      count_functions()
+     change_password_email()
 
 })
 </script>

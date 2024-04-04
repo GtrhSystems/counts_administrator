@@ -368,10 +368,14 @@ function count_functions(){
         $('.hide').show()
      })
 
+     $('#renew_all_list').change(function() {
+         $('.renew_input').prop('checked', $(this).prop('checked'));
+     });
+
 
      $('body').on("click", ".change-password" , function(){
         count_id = $(this).attr('id_count')
-        $.get('/count/edit-count-data/'+count_id)
+        $.get('/count/edit-count-data/count/'+count_id)
           .done(function( data ) {
                 $('.modal-body').html(data)
                 $('.modal-title').text("Solicitud")
@@ -384,7 +388,7 @@ function count_functions(){
                 $('.change-pass').click(function(e){
                   e.preventDefault()
                   json = convertFormToJSON($('.change-password-form'))
-                  $.post('/count/edit-count-data/'+count_id, json)
+                  $.post('/count/edit-count-data/count/'+count_id, json)
                     .done(function( data ) {
                       $('.modal-body').html(data)
                   })
@@ -428,7 +432,7 @@ function change_password(){
     $('body').on("click", ".change-password" , function(){
 
         count_id = $(this).attr('id_count')
-        $.get('/count/change-password-count/'+count_id)
+        $.get('/count/change-password/count/'+count_id)
           .done(function( data ) {
                 $('.modal-body').html(data)
                 $('.modal-title').text("Solicitud")
@@ -441,7 +445,7 @@ function change_password(){
                 $('.change-pass').click(function(e){
                   e.preventDefault()
                   json = convertFormToJSON($('.change-password-form'))
-                  $.post('/count/change-password-count/'+count_id, json)
+                  $.post('/count/change-password/count/'+count_id, json)
                     .done(function( data ) {
                       $('.modal-body').html(data)
                   })
@@ -474,6 +478,38 @@ function change_password(){
 }
 
 
+function change_password_email(){
+
+    $('body').on("click", ".change-password-email" , function(){
+
+         count_id = $(this).attr('id_count')
+         $.get('/count/change-password/email/'+count_id)
+          .done(function( data ) {
+                $('.modal-body').html(data)
+                $('.modal-title').text("Solicitud")
+                $('.modal-footer').hide()
+
+                $("#myModal").modal({
+                    show: true,
+                    escapeClose: false,
+                    clickClose: false
+                })
+
+                $('.change-pass').click(function(e){
+                  e.preventDefault()
+                  json = convertFormToJSON($('.change-password-form'))
+                  $.post('/count/change-password/email/'+count_id, json)
+                    .done(function( data ) {
+                      $('.modal-body').html(data)
+                  })
+                })
+                $("#myModal").on('hide.bs.modal', function (e) {
+                    location.reload();
+                });
+            });
+          });
+
+}
 
 
 function send_message_individual(data){
@@ -505,3 +541,9 @@ function send_message_expired(data){
     });
 
 }
+
+
+
+
+
+

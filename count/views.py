@@ -146,7 +146,7 @@ class CountsListView(ListView):
 @method_decorator(usertype_in_view, name='dispatch')
 class CountListJson(BaseDatatableView):
 
-    columns = ['Plataforma', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña', 'Vence']
+    columns = ['Plataforma', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña de cuenta', 'Contraseña de correo', 'Vence']
     order_columns = ['date','platform.name', 'email']
     model = Count
     #max_display_length = 500
@@ -184,17 +184,21 @@ class CountListJson(BaseDatatableView):
                 else:
                     rest_days = str(rest_days) + " dia(s)"
 
-            link_change_password = f'<button type="button" id_count="{ item.id }" class="btn btn-warning change-password">Cambiar password</button>'
+            link_change_password = f'<button type="button" id_count="{ item.id }" class="btn btn-warning change-password">Cambiar password de cuenta</button>'
+            link_change_password_email = f'<button type="button" id_count="{ item.id }" class="btn btn-info change-password-email">Cambiar password de correo</button>'
             link_change_date =f'<button type="button" id_count="{ item.id }" class="btn btn-primary btn-icon-text change-date-limit"><i class="mdi mdi-grease-pencil"></i>Cambiar fecha</button>'
             link_detele= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>'
+
             json_data.append([
                 item.platform.name,
                 item.email,
                 len_profiles,
                 profiles_available,
                 item.password,
+                item.email_password,
                 rest_days,
                 link_change_password,
+                link_change_password_email,
                 link_change_date,
                 link_detele
             ])
@@ -276,7 +280,7 @@ class EditCountDataView(View):
 
     def get(self, request, *args, **kwargs):
 
-        return render(request, self.template_name,  {'form': self.form_class, 'id':kwargs['id'] })
+        return render(request, self.template_name,  {'form': self.form_class, 'id':kwargs['id'], 'type': kwargs['type'] })
     def post(self, request, *args, **kwargs):
 
         profile = self.model.objects.filter(id=kwargs['id']).first()
@@ -286,7 +290,9 @@ class EditCountDataView(View):
         if not request.POST['pin'] == "":
             profile.pin = request.POST['pin']
         profile.save()
+        Profile.change_password_to_perfile_message(count)
         count.save()
+
         return HttpResponse("Cuenta Actualizados")
 
 
@@ -505,20 +511,32 @@ class ChangeProfileSaleView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class ChangeCountPasswordView(View):
+class ChangeTypePasswordView(View):
 
     model = Count
     template_name = "count/change_password.html"
-    form_class = ChangePaswordForm
+    form_class_count = ChangePaswordForm
+    form_class_email = ChangePaswordEmailForm
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name,  {'form': self.form_class, 'id':kwargs['id'] })
+
+        form_class = self.form_class_count if kwargs['type'] == "count"  else self.form_class_email
+
+        return render(request, self.template_name,  {'form': form_class, 'id':kwargs['id'], 'type': kwargs['type'] })
 
     def post(self, request, *args, **kwargs):
 
         count = self.model.objects.filter(id=self.kwargs['id']).first()
-        Action.action_register(request.user, "Cambio password de cuenta id = "+ str(count.id) + " del dia " + str(count.date) )
-        count.password = request.POST['password']
-        count.save()
+
+        if  kwargs['type'] == "count":
+            Action.action_register(request.user, "Cambio password de cuenta id = "+ str(count.id) + " del dia " + str(count.date) )
+            count.change_count_password(request.POST['password'])
+            Profile.change_password_to_perfile_message(count)
+
+        elif kwargs['type'] == "email":
+            Action.action_register(request.user,
+                                   "Cambio password de correo id = " + str(count.id) + " del dia " + str(count.date))
+            count.change_email_password(request.POST['email_password'])
+
         return HttpResponse("Contraseña editada conrrectamente")
 
 
@@ -571,7 +589,7 @@ class SalesListView(ListView):
                     counts[last_sale.profile.count.id]["platform"] = profile.count.platform.id
                     date_limit = CalculateDateLimit(last_sale.date_limit, int(request.POST['months']))
                     request.user.sale_profile(last_sale.profile, int(request.POST['months']), date_limit, bill)
-                    message_renew(last_sale.profile, last_sale.bill.customer, date_limit)
+                    message_renew(last_sale.profile, last_sale.bill.customer.phone, date_limit)
 
         for key in counts:
             subtotal = Price.objects.filter(platform_id=counts[key]['platform'], num_profiles=counts[key]['amount'] ).first()

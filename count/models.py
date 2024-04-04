@@ -3,6 +3,7 @@ from .validators import valid_extension, valid_image_extension
 from user.models import Customer
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from user.whatsapp_api import send_message
 from django.contrib.auth.models import User
 import datetime
 
@@ -54,7 +55,8 @@ class Count(models.Model):
 
     platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
     email = models.CharField(max_length=100, verbose_name="Email")
-    password = models.CharField(max_length=50, default="")
+    password = models.CharField(max_length=50, default="",  verbose_name="Contraseña de cuenta")
+    email_password = models.CharField(max_length=50, default="", verbose_name="Contraseña de correo")
     date = models.DateTimeField(auto_now_add=True)
     date_limit = models.DateTimeField(blank=True,  null=True, verbose_name="Fecha de vencimiento",  auto_now_add=False)#Fecha de vencimiento de la cuenta
 
@@ -65,6 +67,17 @@ class Count(models.Model):
 
     def __str__(self):
         return str(self.email)
+
+
+    def change_count_password(self, new_password):
+
+        self.password  = new_password
+        self.save()
+
+    def change_email_password(self, new_password):
+        self.email_password = new_password
+        self.save()
+
 
 
 class Promotion(models.Model):
@@ -153,7 +166,21 @@ class Profile(models.Model):
         profiles = cls.objects.filter(saled=0, count__platform_id=platform_id)
         return profiles
 
+    @classmethod
+    def change_password_to_perfile_message(cls, count):
 
+        profiles = cls.objects.filter(count=count)
+        for profile in profiles:
+            sale = Sale.search_customer_by_profile(profile)
+            if sale:
+                message = f"Hola " + sale.bill.customer.name + " por motivos de seguridad la contraseña de tu cuenta ha cambiada  \n" \
+                f"Plataforma :" + count.platform.name + "\n" \
+                f"Correo : " + count.email + "\n" \
+                f"Nueva Contraseña " + count.password + "\n" \
+                f"Pin " + profile.pin + "\n" \
+                f"Lamentamos el inconveniente, sigue disfrutando de los servicios de el gamer Mx "
+                customer_number = str(sale.bill.customer.phone)
+                send_message(customer_number, message)
 
 
 class Bill(models.Model):
@@ -184,6 +211,12 @@ class Sale(models.Model):
     cutted = models.BooleanField(default=0, verbose_name="Cortado:")
 
     @classmethod
+    def search_customer_by_profile(cls, profile):
+
+        sale = cls.objects.filter(profile=profile).last()
+        return sale
+
+    @classmethod
     def GetInterdatesSales(cls, user, initial_date, final_date):
 
         initial_date = datetime.datetime.strptime(initial_date, '%Y-%m-%d')
@@ -192,8 +225,6 @@ class Sale(models.Model):
         final_date = final_date + datetime.timedelta(hours=29)
         sales = cls.objects.filter(bill__saler=user, date__range=[initial_date, final_date]).order_by('-date')
         return sales
-
-
 
     def set_renovation(self, saler, months,  CalculateDateLimit):
 
@@ -215,7 +246,6 @@ class Sale(models.Model):
         self.count.save()
 
 
-#facturas
 
 
 

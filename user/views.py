@@ -145,7 +145,6 @@ class UpdateCustomerView(UpdateView):
         ctx = super(UpdateCustomerView, self).get_context_data(**kwargs)
         profiles_id = list(Sale.objects.filter(bill__customer=self.kwargs['pk']).values_list('profile_id', flat=True))
         uniques_ids = set(profiles_id)
-
         sales = []
         for id in uniques_ids:
             sale = Sale.objects.filter(bill__customer=self.kwargs['pk'], profile_id= id, cutted=False).last()

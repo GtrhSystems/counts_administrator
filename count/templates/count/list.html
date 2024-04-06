@@ -18,7 +18,8 @@ Listado de Cuentas
               <th> Correo </th>
               <th> Perfil </th>
               <th> Disponibles </th>
-              <th> Contraseña </th>
+              <th> Contraseña de cuenta</th>
+               <th> Contraseña de correo</th>
               <th> Vence </th>
               <th>  </th>
               <th>  </th>
@@ -36,6 +37,7 @@ Listado de Cuentas
 $(document).ready(function() {
  $.fn.dataTable.ext.errMode = 'none';
   change_password()
+  change_password_email()
 
   $('#counts-table').dataTable({
       order: [[ 0, "desc" ]],

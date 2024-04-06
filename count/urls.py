@@ -24,9 +24,8 @@ urlpatterns = [
         path('cut-profile/<int:sale_id>/<int:id>', views.CutProfileView.as_view(), name='cut-profile'),
         path('owner-profile/<int:sale_id>/<int:id>', views.OwnerProfileView.as_view(), name='owner-profile'),
 
-
         #counts
-        path('edit-count-data/<int:id>', views.EditCountDataView.as_view(), name='edit-count-data'),
+        path('edit-count-data/<str:type>/<int:id>', views.EditCountDataView.as_view(), name='edit-count-data'),
         path('edit-sale-data/<int:id>', views.EditSaleDataView.as_view(), name='edit-sale-data'),
         path('change-date-limit/<int:id>', views.ChangeDateLimitView.as_view(), name='change-date-limit'),
 
@@ -35,7 +34,7 @@ urlpatterns = [
         path('send-whatsapp-expired', views.SendMessageWhatsappExpired.as_view(), name='send-whatsapp-expired'),
         path('list-to-expire', views.CountNextExpiredView.as_view(), name='count-list-to-expire'),
         path('list-expired', views.CountExpiredView.as_view(), name='count-list-expired'),
-        path('change-password-count/<int:id>', views.ChangeCountPasswordView.as_view(), name='count-change-password'),
+        path('change-password/<str:type>/<int:id>', views.ChangeTypePasswordView.as_view(), name='change-password-type'),
 
 
         #promotions

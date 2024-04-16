@@ -31,8 +31,10 @@ def message_renew(profile, phone, date_limit):
                 f"🔐CONTRASEÑA: {profile.count.password} \n" \
                 f"📺: PERFIL {profile.profile}  \n" \
                 f"🔒 PIN: {profile.pin} \n" \
-                f"📅 Fecha de corte: {date_limit.strftime('%d/%m/%Y')} \n" \              
-                f"Muchas gracias 😊 "
+                f"📅 Fecha de corte: {date_limit.strftime('%d/%m/%Y')} \n" \
+                "Condiciones del servicio:  \n" \
+                "Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
+                "Muchas gracias 😊 "
     send_message(str(phone), message)
 
 

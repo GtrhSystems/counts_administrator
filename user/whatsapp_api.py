@@ -26,14 +26,12 @@ def message_sale(data):
 
 def message_renew(profile, phone, date_limit):
 
-    message =  f"Hola, tu servicio {profile.count.platform.name} ha sido renovado y se encuentra activo, \n" \
+    message =  f"Hola, tu servicio {profile.count.platform.name} ha sido RENOVADO, \n" \
                 f"👤USUARIO:  {profile.count.email}   \n" \
                 f"🔐CONTRASEÑA: {profile.count.password} \n" \
                 f"📺: PERFIL {profile.profile}  \n" \
                 f"🔒 PIN: {profile.pin} \n" \
                 f"📅 Fecha de corte: {date_limit.strftime('%d/%m/%Y')} \n" \
-                "Condiciones del servicio:  \n" \
-                "Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
                 "Muchas gracias 😊 "
     send_message(str(phone), message)
 

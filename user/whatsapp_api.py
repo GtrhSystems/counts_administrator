@@ -31,14 +31,7 @@ def message_renew(profile, phone, date_limit):
                 f"🔐CONTRASEÑA: {profile.count.password} \n" \
                 f"📺: PERFIL {profile.profile}  \n" \
                 f"🔒 PIN: {profile.pin} \n" \
-                f"📅 Fecha de corte: {date_limit.strftime('%d/%m/%Y')} \n" \
-                f"Condiciones del servicio:  \n" \
-                f"1.-No modifique ninguna información de la cuenta \n" \
-                f"2.-No puede estar en 2 o más dispositivos simultáneamente  \n" \
-                f"3.-No agregue ni elimine ningún perfil \n" \
-                f"4.-Este es un producto digital. Después de la compra, no se puede  \n" \
-                f"hacer ningún reembolso. Solo garantía de reemplazo. \n" \
-                f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
+                f"📅 Fecha de corte: {date_limit.strftime('%d/%m/%Y')} \n" \              
                 f"Muchas gracias 😊 "
     send_message(str(phone), message)
 

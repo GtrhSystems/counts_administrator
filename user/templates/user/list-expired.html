@@ -31,8 +31,8 @@ Listado de Cuentas Proximas a Expirar
            {% for sale in object_list %}
             <tr>
               <td>{{forloop.counter}}</td>
-              <td>{{ sale.bill.customer.name }}</td>
               <td>{{ sale.profile.count.platform.name }}</td>
+                <td>{{ sale.bill.customer.name }}</td>
               <td>{{ sale.profile.count.email }}</td>
               <td>{{ sale.profile.count.password }}</td>
               <td>{{ sale.profile.profile }}</td>

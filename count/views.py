@@ -530,7 +530,7 @@ class ChangeTypePasswordView(View):
         if  kwargs['type'] == "count":
             Action.action_register(request.user, "Cambio password de cuenta id = "+ str(count.id) + " del dia " + str(count.date) )
             count.change_count_password(request.POST['password'])
-            Profile.change_password_to_perfile_message(count)
+            Profile.change_password_to_perfile_message(count, now)
 
         elif kwargs['type'] == "email":
             Action.action_register(request.user,

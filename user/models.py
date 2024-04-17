@@ -67,8 +67,6 @@ class Action(models.Model):
 
     @classmethod
     def action_register(cls, user, action):
-        print(user)
-        print(action)
 
         cls.objects.create(user=user, action=action)
 

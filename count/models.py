@@ -167,11 +167,11 @@ class Profile(models.Model):
         return profiles
 
     @classmethod
-    def change_password_to_perfile_message(cls, count):
+    def change_password_to_perfile_message(cls, count, now):
 
         profiles = cls.objects.filter(count=count)
         for profile in profiles:
-            sale = Sale.search_customer_by_profile(profile)
+            sale = Sale.search_customer_by_profile(profile, now)
             if sale:
                 message = f"Hola " + sale.bill.customer.name + " por motivos de seguridad la contraseña de tu cuenta ha cambiada  \n" \
                 f"Plataforma :" + count.platform.name + "\n" \
@@ -211,9 +211,8 @@ class Sale(models.Model):
     cutted = models.BooleanField(default=0, verbose_name="Cortado:")
 
     @classmethod
-    def search_customer_by_profile(cls, profile):
-
-        sale = cls.objects.filter(profile=profile).last()
+    def search_customer_by_profile(cls, profile, now):
+        sale = cls.objects.filter(profile=profile, date_limit__gte=now).last()
         return sale
 
     @classmethod

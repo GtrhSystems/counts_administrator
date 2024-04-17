@@ -222,7 +222,7 @@ class CountNextExpiredView(ListView):
             count.profiles_available = len(profiles.filter(saled=False))
             rest_days = getDifference(now, count.date_limit, 'days')
             if rest_days < 0:
-                cccccrest_days = "Vencida"
+                rest_days = "Vencida"
             else:
                 count.rest_days = str(rest_days) + " dia(s)"
         return count_to_expires

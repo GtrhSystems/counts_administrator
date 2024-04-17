@@ -58,11 +58,10 @@ table th {
             <table class="table table-dark table-normal">
               <thead>
                 <tr>
-                  <th> #</th>
+                  <th> Correo </th>
+                  <th> Plataforma </th>
                   <th> Fecha </th>
                   <th> Cliente </th>
-                  <th> Plataforma </th>
-                  <th> Correo </th>
                   <th> Contraseña cuenta </th>
                   <th> Contraseña correo </th>
                   <th> Pin </th>
@@ -78,11 +77,12 @@ table th {
               <tbody>
                {% for sale in sales %}
                 <tr>
-                 <td>{{forloop.counter}}</td>
+                  <td>{{ sale.profile.count.email }}</td>
+                  <td>{{ sale.profile.count.platform }}</td>
                   <td>{{ sale.date|date:"d/M/Y" }}</td>
                   <td>{{ sale.bill.customer.name }}</td>
-                  <td>{{ sale.profile.count.platform }}</td>
-                  <td>{{ sale.profile.count.email }}</td>
+
+
                   <td>{{ sale.profile.count.password }}</td>
                   <td>{{ sale.profile.count.email_password }}</td>
                   <td>{{ sale.profile.pin }}</td>

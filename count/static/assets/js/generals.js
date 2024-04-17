@@ -6,7 +6,12 @@ $('body').on("submit", "form" , function(event){
 })
 $(document).ready(function() {
     $('.table-normal').DataTable( {
-          responsive: true,
+          responsive: {
+                details: {
+                    display: $.fn.dataTable.Responsive.display.childRowImmediate,
+                    type: ''
+                }
+          },
           ordering: true,
           stateSave: true,
           language: {

@@ -18,9 +18,8 @@ Listado de Cuentas Proximas a Expirar
         <table class="table table-dark table-normal">
           <thead>
             <tr>
-              <th>#</th>
-              <th> Plataforma </th>
               <th> Cliente </th>
+              <th> Plataforma </th>
               <th> Telefono </th>
               <th> Correo </th>
               <th> Contraseña de cuenta </th>
@@ -37,9 +36,8 @@ Listado de Cuentas Proximas a Expirar
           <tbody>
            {% for sale in object_list %}
             <tr>
-              <td>{{forloop.counter}}</td>
-              <td>{{ sale.profile.count.platform.name }}</td>
               <td>{{ sale.bill.customer.name }}</td>
+              <td>{{ sale.profile.count.platform.name }}</td>
               <td>{{ sale.bill.customer.phone }}</td>
               <td>{{ sale.profile.count.email }}</td>
               <td>{{ sale.profile.count.password }}</td>

@@ -290,7 +290,7 @@ class EditCountDataView(View):
         if not request.POST['pin'] == "":
             profile.pin = request.POST['pin']
         profile.save()
-        Profile.change_password_to_perfile_message(count)
+        Profile.change_password_to_perfile_message(count, now)
         count.save()
 
         return HttpResponse("Cuenta Actualizados")

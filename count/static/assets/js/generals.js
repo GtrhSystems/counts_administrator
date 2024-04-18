@@ -36,6 +36,7 @@ $(document).ready(function() {
     $('.table-no-cache').DataTable( {
           responsive: true,
           ordering: true,
+          order: [[8, 'desc']],
           stateSave: false,
           language: {
             processing:     "Procesamiento en curso...",

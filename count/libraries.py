@@ -11,6 +11,7 @@ def CalculateDateLimit(date, months) :
 
 def getDifference(then, now, interval="secs"):
 
+
     duration = now - then
     duration_in_s = duration.total_seconds()
 
@@ -24,7 +25,8 @@ def getDifference(then, now, interval="secs"):
         return divmod(duration_in_s, yr_ct)[0]
 
     def days():
-        return divmod(duration_in_s, day_ct)[0]
+        diferencia = now - then
+        return diferencia.days
 
     def hrs():
         return divmod(duration_in_s, hour_ct)[0]

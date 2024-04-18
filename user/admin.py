@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import User, Permission
-
-
+from .apps import  PERMISSIONS_ACTIVES
 
 
 admin.site.site_header = "El Gamer Mexicano  Administrador"
@@ -25,7 +24,7 @@ class UserAdmin(admin.ModelAdmin):
     filter_horizontal = ('groups', 'user_permissions',)
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
         if db_field.name == "user_permissions":
-            kwargs["queryset"] = Permission.objects.filter(codename__in=['add_post', 'change_post', 'delete_post'])
+            kwargs["queryset"] = Permission.objects.filter(codename__in=PERMISSIONS_ACTIVES)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 

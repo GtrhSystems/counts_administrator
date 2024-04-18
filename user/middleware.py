@@ -1,6 +1,7 @@
 #Session model stores the session data
 from django.contrib.sessions.models import Session
 from .models import LoggedInUser
+from django.http import HttpResponseForbidden
 
 class OneSessionPerUserMiddleware:
     # Called only once when the web server starts
@@ -29,3 +30,18 @@ class OneSessionPerUserMiddleware:
         response = self.get_response(request)
 
         return response
+
+class PermissionsMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        return response
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        # Verifica si la vista tiene el atributo 'required_permission'
+        required_permission = getattr(view_func, 'required_permission', None)
+        if required_permission and not request.user.has_perm(required_permission):
+            return HttpResponseForbidden("No tienes permisos para acceder a esta página.")
+        return None

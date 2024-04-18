@@ -65,6 +65,10 @@ class Action(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     action = models.CharField( max_length=250, verbose_name="Accion")
 
+    class Meta:
+        verbose_name = 'Accion'
+        verbose_name_plural = 'Acciones de usuarios'
+
     @classmethod
     def action_register(cls, user, action):
 

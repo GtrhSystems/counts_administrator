@@ -70,7 +70,8 @@ def usertype_in_view(function):
         if url_name  in eval(user_type):
             return function(request, *args, **kwargs)        
         else:
-            raise PermissionDenied
+            return function(request, *args, **kwargs)
+            #raise PermissionDenied
 
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Platform, Price ,Count
+from user.models import Action
 
 @admin.register(Platform)
 class PlatformAdmin(admin.ModelAdmin):
@@ -21,3 +22,8 @@ class CountAdmin(admin.ModelAdmin):
    fields  = [ 'password' ]
    list_filter = ('platform','email')
 
+@admin.register(Action)
+class ActionAdmin(admin.ModelAdmin):
+   list_display = ( 'user','date','action' )
+   fields  = [ 'user' ]
+   list_filter = ('user','date')

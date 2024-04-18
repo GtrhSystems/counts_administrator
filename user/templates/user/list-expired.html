@@ -8,7 +8,7 @@ Listado de Cuentas Proximas a Expirar
 <div class="col-lg-12 grid-margin stretch-card">
   <div class="card">
     <div class="card-body">
-      <h4 class="card-title">Cuentas</h4>
+      <h4 class="card-title">Cuentaso</h4>
       <p class="card-description"><code></code>
       </p>
       <div class="table-responsive">
@@ -18,7 +18,8 @@ Listado de Cuentas Proximas a Expirar
               <th> Cliente </th>
               <th> Plataforma </th>
               <th> Correo </th>
-              <th> Contraseña </th>
+              <th> Contraseña de cuenta </th>
+              <th> Contraseña de correo </th>
               <th> Perfil </th>
               <th> Pin </th>
               <th> Vencio </th>
@@ -33,13 +34,15 @@ Listado de Cuentas Proximas a Expirar
                <td>{{ sale.profile.count.platform.name }}</td>
               <td>{{ sale.profile.count.email }}</td>
               <td>{{ sale.profile.count.password }}</td>
+              <td>{{ sale.profile.count.email_password }}</td>
               <td>{{ sale.profile.profile }}</td>
               <td>{{ sale.profile.pin }}</td>
               <td>{{ sale.date_limit|date:"d/M/Y" }} </td>
               <td>{{ sale.rest_days }}</td>
                 <td>
                   <button type="button" id_count="{{ sale.profile.count.id }}" class="btn btn-warning change-password">
-                    <i class="mdi mdi-key-change"></i> Cambiar password</button>
+                    <i class="mdi mdi-key-change"></i> Cambiar constraseña cuenta </button>
+                  <button type="button" id_count="{{ sale.profile.count.id }}" class="btn btn-secondary btn-fw change-password-email">Cambiar constraseña correo</button>
                   <button type="button" id="{{sale.profile.id}}" onclick='send_message_expired({"platform":"{{ sale.profile.count.platform }}",
                                                                     "email":"{{ sale.profile.count.email }}",
                                                                     "password":"{{ sale.profile.count.password }}",
@@ -67,6 +70,7 @@ Listado de Cuentas Proximas a Expirar
 <script>
 $(document).ready(function() {
   change_password()
+  change_password_email()
 })
 
 </script>

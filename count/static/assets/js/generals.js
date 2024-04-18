@@ -341,6 +341,7 @@ function send_message(data){
 
 function count_functions(){
 
+
      $('body').on("click", ".calcel-sale" , function(){
          sale_id= $(this).attr('sale');
          $.get('/count/sale/cancel-sale/'+sale_id)
@@ -368,8 +369,13 @@ function count_functions(){
         $('.hide').show()
      })
 
-     $('#renew_all_list').change(function() {
+     $('.content-input').on("change", "#renew_all_list" , function(){
          $('.renew_input').prop('checked', $(this).prop('checked'));
+         if ($(this).prop('checked')){
+             $('.hide').show()
+         }else{
+             $('.hide').hide()
+         }
      });
 
 

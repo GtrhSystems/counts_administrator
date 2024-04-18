@@ -9,6 +9,9 @@ Editar Cliente
 table th {
   text-align: center;
 }
+.dataTable.dtr-inline.collapsed td:nth-child(2) {
+    display: table-cell !important;
+}
 
 </style>
 <div class="col-12 grid-margin stretch-card">
@@ -40,8 +43,6 @@ table th {
         {{ form.errors }}
       </div>
     </div>
-
-
 </div>
 <div class="col-lg-12 grid-margin stretch-card">
   <div class="card">
@@ -54,11 +55,16 @@ table th {
                             </a>
       <p class="card-description"><code></code>
       </p>
-      <div class="form-group table-responsive">
+      <div class="form-group">
+          <div class="content-input"> Renovar todas las cuentas en tabla
+              <input type="checkbox"  id="renew_all_list">
+          </div>
+          <br>
             <table class="table table-dark table-normal">
               <thead>
                 <tr>
                   <th> Correo </th>
+                  <th> Renovar </th>
                   <th> Plataforma </th>
                   <th> Fecha </th>
                   <th> Cliente </th>
@@ -69,8 +75,7 @@ table th {
                   <th> Meses </th>
                   <th> Vencimiento </th>
                   <th> Dias </th>
-                  <th> Renovar
-                      <span><input type="checkbox" class="renew_input" id="renew_all_list"></span></th>
+
                   <th></th>
                 </tr>
               </thead>
@@ -78,11 +83,12 @@ table th {
                {% for sale in sales %}
                 <tr>
                   <td>{{ sale.profile.count.email }}</td>
+                  <td>
+                     <input type="checkbox" class="renew_input" name="{{ sale.id }}"  >
+                  </td>
                   <td>{{ sale.profile.count.platform }}</td>
                   <td>{{ sale.date|date:"d/M/Y" }}</td>
                   <td>{{ sale.bill.customer.name }}</td>
-
-
                   <td>{{ sale.profile.count.password }}</td>
                   <td>{{ sale.profile.count.email_password }}</td>
                   <td>{{ sale.profile.pin }}</td>
@@ -90,9 +96,7 @@ table th {
                   <td>{{ sale.months }}</td>
                   <td>{{ sale.date_limit|date:"d/M/Y" }}</td>
                   <td>{{ sale.rest_days }}</td>
-                  <td>
-                     <input type="checkbox" class="renew_input" name="{{ sale.id }}"  >
-                  </td>
+
                    <td>
                       <button type="button" sale="{{ sale.id }}" class="btn btn-danger calcel-sale">Cancelar</button>
                       <button type="button" id_count="{{ sale.profile.id }}" class="btn btn-warning change-password">Cambiar constraseña cuenta</button>

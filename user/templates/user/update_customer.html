@@ -65,17 +65,16 @@ table th {
                 <tr>
                   <th> Correo </th>
                   <th> Renovar </th>
-                  <th> Plataforma </th>
-                  <th> Fecha </th>
-                  <th> Cliente </th>
                   <th> Contraseña cuenta </th>
                   <th> Contraseña correo </th>
-                  <th> Pin </th>
                   <th> Perfil </th>
+                  <th> Pin </th>
+                  <th> Plataforma </th>
                   <th> Meses </th>
+                  <th> Cliente </th>
+                   <th> Fecha </th>
                   <th> Vencimiento </th>
                   <th> Dias </th>
-
                   <th></th>
                 </tr>
               </thead>
@@ -86,14 +85,14 @@ table th {
                   <td>
                      <input type="checkbox" class="renew_input" name="{{ sale.id }}"  >
                   </td>
-                  <td>{{ sale.profile.count.platform }}</td>
-                  <td>{{ sale.date|date:"d/M/Y" }}</td>
-                  <td>{{ sale.bill.customer.name }}</td>
                   <td>{{ sale.profile.count.password }}</td>
                   <td>{{ sale.profile.count.email_password }}</td>
-                  <td>{{ sale.profile.pin }}</td>
                   <td>{{ sale.profile.profile }}</td>
+                  <td>{{ sale.profile.pin }}</td>
+                  <td>{{ sale.profile.count.platform }}</td>
                   <td>{{ sale.months }}</td>
+                  <td>{{ sale.bill.customer.name }}</td>
+                  <td>{{ sale.date|date:"d/M/Y" }}</td>
                   <td>{{ sale.date_limit|date:"d/M/Y" }}</td>
                   <td>{{ sale.rest_days }}</td>
 

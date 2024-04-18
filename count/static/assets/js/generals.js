@@ -203,7 +203,7 @@ $("#id_platform").on("change", function() {
 
 
 $('body').on("click", ".cut-profile" , function(){
-       alert("Que reito")
+
       id_profile = $(this).attr('id_profile');
       id_sale = $(this).attr('id_sale');
       $.get('/count/cut-profile/'+id_sale+'/' +id_profile )

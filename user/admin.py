@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import User, Permission
-from .apps import  PERMISSIONS_ACTIVES
+
 
 
 admin.site.site_header = "El Gamer Mexicano  Administrador"
@@ -8,7 +8,15 @@ admin.site.site_title = "El Gamer Mexicano  Administrador"
 admin.site.index_title = "Bienvenidos al portal de administración El Gamer Mexicano "
 
 
-
+PERMISSIONS_ACTIVES = [
+    'change_platform',
+    'add_customer',
+    'change_customer',
+    'add_user',
+    'add_count',
+    'change_count',
+    'add_promotion'
+]
 
 class UserAdmin(admin.ModelAdmin):
 

@@ -2,12 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.views import View #PARA VISTAS GENERICAS
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
 from .models import Customer, UserTwoFactorAuthData
 from count.models import Sale, Bill, Profile, Price
 from .forms import CustomerForm, UserForm
-from count.decorators import usertype_in_view, check_user_type
+from count.decorators import permissions_in_view, my_permissions
 from django.contrib.auth.models import User
 from .whatsapp_api import send_message
 import datetime, pytz
@@ -31,12 +31,11 @@ now = now.replace(tzinfo=utc)
 
 
 def context_app(request):
-
+    permissions = my_permissions(request.user)
     context = {}
-    user_type = check_user_type(request)
     if request.user.is_authenticated:
-            context['user_type'] = user_type
             context['otp_active'] = settings.OPT_ACTIVE
+            context['permissions'] = permissions
     return context
 
 
@@ -118,7 +117,7 @@ class IndexView(View):
             return redirect('admin:index')
         return redirect('list-customer')
 
-
+@method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class AddCustomerView(CreateView):
 
@@ -131,7 +130,7 @@ class AddCustomerView(CreateView):
         return redirect('sale-count', user.id)
 
 
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class UpdateCustomerView(UpdateView):
 
@@ -176,7 +175,7 @@ class CustomerListView(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 class AddUserView(CreateView):
 
     form_class = UserForm
@@ -196,7 +195,7 @@ class AddUserView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 class UserListView(ListView):
 
     model = User
@@ -234,21 +233,53 @@ class CustomerJson(BaseDatatableView):
 
     def prepare_results(self, qs):
 
+        permissions = my_permissions(self.request.user)
         json_data = []
+        if 'change_customer' in permissions and 'delete_customer'  in permissions:
+            for item in qs:
+                link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
+                link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Planes</button></a>'
+                link3 = f'<a href="/user/delete-customer/{item.id}"><button type="button" class="btn btn-danger  btn-icon-text"><i class="mdi mdi-delete-forever"></i>Eliminar</button></a>'
+                json_data.append([
+                    item.id,
+                    item.name,
+                    str(item.phone),
+                    link1,
+                    link2,
+                    link3
+                ])
+        elif not 'change_customer' in permissions and 'delete_customer' in permissions:
+            for item in qs:
+                link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
+                link2 = f'<a href="/user/delete-customer/{item.id}"><button type="button" class="btn btn-danger  btn-icon-text"><i class="mdi mdi-delete-forever"></i>Eliminar</button></a>'
+                json_data.append([
+                    item.id,
+                    item.name,
+                    str(item.phone),
+                    link1,
+                    link2
+                ])
+        elif 'change_customer' in permissions and not 'delete_customer' in permissions:
+            for item in qs:
+                link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
+                link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Planes</button></a>'
+                json_data.append([
+                    item.id,
+                    item.name,
+                    str(item.phone),
+                    link1,
+                    link2
+                ])
+        else:
+            for item in qs:
+                link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
+                json_data.append([
+                    item.id,
+                    item.name,
+                    str(item.phone),
+                    link1
+                ])
 
-        for item in qs:
-
-            link1 = f'<a href="/count/sale/{item.id}"><button type="button" class ="btn btn-primary btn-icon-text" ><i class ="mdi mdi-square-inc-cash"></i>Vender</button></a>'
-            link2 = f'<a href="/user/update-customer/{item.id}"><button type="button" class="btn btn-info  btn-icon-text"><i class="mdi mdi-information"></i>Planes</button></a>'
-            link3 = f'<a href="/user/delete-customer/{item.id}"><button type="button" class="btn btn-danger  btn-icon-text"><i class="mdi mdi-delete-forever"></i>Eliminar</button></a>'
-            json_data.append([
-                item.id,
-                item.name,
-                str(item.phone),
-                link1,
-                link2,
-                link3
-            ])
         return json_data
 
 
@@ -259,7 +290,7 @@ class CustomerDeleteView(DeleteView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
+
 class ProfileNextExpiredView(ListView):
 
     model = Sale
@@ -299,7 +330,6 @@ class ProfileNextExpiredView(ListView):
         return redirect('bill-list')
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
 class ProfileExpiredView(ListView):
 
     model = Sale

@@ -23,7 +23,7 @@ Listado de Cuentas Proximas a Expirar
               <th> Perfil </th>
               <th> Pin </th>
               <th> Vencio </th>
-               <th> Dias </th>
+              <th> Dias </th>
               <th> </th>
             </tr>
           </thead>
@@ -40,9 +40,11 @@ Listado de Cuentas Proximas a Expirar
               <td>{{ sale.date_limit }} </td>
               <td>{{ sale.rest_days }}</td>
                 <td>
-                  <button type="button" id_count="{{ sale.profile.count.id }}" class="btn btn-warning change-password">
-                    <i class="mdi mdi-key-change"></i> Cambiar constraseña cuenta </button>
-                  <button type="button" id_count="{{ sale.profile.count.id }}" class="btn btn-secondary btn-fw change-password-email">Cambiar constraseña correo</button>
+                  {% if 'change_count' in permissions %}
+                    <button type="button" id_count="{{ sale.profile.count.id }}" class="btn btn-warning change-password">
+                      <i class="mdi mdi-key-change"></i> Cambiar constraseña cuenta </button>
+                    <button type="button" id_count="{{ sale.profile.count.id }}" class="btn btn-secondary btn-fw change-password-email">Cambiar constraseña correo</button>
+                  {% endif %}
                   <button type="button" id="{{sale.profile.id}}" onclick='send_message_expired({"platform":"{{ sale.profile.count.platform }}",
                                                                     "email":"{{ sale.profile.count.email }}",
                                                                     "password":"{{ sale.profile.count.password }}",
@@ -55,9 +57,10 @@ Listado de Cuentas Proximas a Expirar
                               class="btn btn-success btn-icon-text">
                           <i class="mdi mdi-alert mdi mdi-whatsapp"></i> {{ sale.bill.customer.phone }}
                     </button>
-
-                   <button type="button" id_sale="{{ sale.id }}" id_profile="{{ sale.profile.id }}" class="btn btn-danger btn-icon-text cut-profile">
+                  {% if 'change_count' in permissions %}
+                     <button type="button" id_sale="{{ sale.id }}" id_profile="{{ sale.profile.id }}" class="btn btn-danger btn-icon-text cut-profile">
                        <i class="mdi mdi-content-cut"></i> Cortar </button>
+                  {% endif %}
                </td>
             </tr>
           {% endfor %}

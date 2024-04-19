@@ -33,10 +33,14 @@ Listado de Cuentas Proximas a Expirar
               <td>{{ count.profiles_available }}</td>
              <td>{{ count.date_limit|date:"d/M/Y" }}  </td>
                <td>
-                 <button type="button" id_count="{{ count.id }}" class="btn btn-primary btn-icon-text change-date-limit">
+                 {% if 'change_count' in permissions %}
+                    <button type="button" id_count="{{ count.id }}" class="btn btn-primary btn-icon-text change-date-limit">
                      <i class="mdi mdi-grease-pencil"></i> Editar </button>
+                 {% endif %}
+                 {% if 'delete_count' in permissions %}
                   <button type="button" id_count="{{ count.id }}" class="btn btn-danger delete-count">
                     <i class="mdi mdi-delete-forever"></i>Eliminar</button>
+                 {% endif %}
                </td>
             </tr>
           {% endfor %}

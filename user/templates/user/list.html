@@ -18,8 +18,12 @@ Listado de clientes
                 <th> Nombres </th>
                 <th> Teléfono </th>
                 <th> </th>
+                {% if 'change_customer' in permissions %}
                 <th>  </th>
+                {% endif %}
+                {% if 'delete_customer' in permissions %}
                 <th>  </th>
+                 {% endif %}
               </tr>
             </thead>
             <tbody>

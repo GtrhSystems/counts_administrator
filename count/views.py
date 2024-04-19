@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View  # PARA VISTAS GENERICAS
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .decorators import usertype_in_view
+from .decorators import permissions_in_view, my_permissions
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from .forms import *
 from .models import Profile, Count, Platform, Promotion, PromotionPlatform, Price, Bill, Sale, PromotionSale
@@ -11,7 +11,6 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.conf import settings
 from django.contrib.auth.models import User
-from count.decorators import usertype_in_view, check_user_type
 from .libraries import getDifference
 import datetime, pytz, json
 from django.contrib import messages
@@ -35,7 +34,7 @@ class DashboardView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard.html')
 
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class CreateCount(View):
 
@@ -60,7 +59,7 @@ class CreateCount(View):
         return redirect("count-list")
 
 
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class AddPlatformView(CreateView):
     form_class = CreatePlatformForm
@@ -77,7 +76,7 @@ class AddPlatformView(CreateView):
         return redirect('platform-list')
 
 
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class UpdatePlatformView(UpdateView):
 
@@ -87,7 +86,7 @@ class UpdatePlatformView(UpdateView):
     success_url = "/count/platform/list"
 
 
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class SetPricesOfQuantityProfilesView(View):
 
@@ -113,7 +112,8 @@ class PlatformListView(ListView):
         return platforms
 
 
-@method_decorator(usertype_in_view, name='dispatch')
+
+@method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class CreatePinsProfiles(View):
 
@@ -130,7 +130,6 @@ class CreatePinsProfiles(View):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
 class CountsListView(ListView):
 
     model = Count
@@ -143,7 +142,6 @@ class CountsListView(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
 class CountListJson(BaseDatatableView):
 
     columns = ['Plataforma', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña de cuenta', 'Contraseña de correo', 'Vence']
@@ -172,6 +170,9 @@ class CountListJson(BaseDatatableView):
 
         json_data = []
         rest_days = "indeterminado"
+        permissions = my_permissions(self.request.user)
+        print(permissions)
+
         for item in qs:
             now = datetime.datetime.now(timezone.utc)
             profiles = Profile.objects.filter(count=item)
@@ -183,12 +184,18 @@ class CountListJson(BaseDatatableView):
                     rest_days = "Vencida"
                 else:
                     rest_days = str(rest_days) + " dia(s)"
-
-            link_change_password = f'<button type="button" id_count="{ item.id }" class="btn btn-warning change-password">Cambiar password de cuenta</button>'
-            link_change_password_email = f'<button type="button" id_count="{ item.id }" class="btn btn-info change-password-email">Cambiar password de correo</button>'
-            link_change_date =f'<button type="button" id_count="{ item.id }" class="btn btn-primary btn-icon-text change-date-limit"><i class="mdi mdi-grease-pencil"></i>Cambiar fecha</button>'
-            link_detele= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>'
-
+            if 'change_count' in permissions:
+                link_change_password = f'<button type="button" id_count="{ item.id }" class="btn btn-warning change-password">Cambiar password de cuenta</button>'
+                link_change_password_email = f'<button type="button" id_count="{ item.id }" class="btn btn-info change-password-email">Cambiar password de correo</button>'
+                link_change_date = f'<button type="button" id_count="{item.id}" class="btn btn-primary btn-icon-text change-date-limit"><i class="mdi mdi-grease-pencil"></i>Cambiar fecha</button>'
+            else:
+                link_change_password = ''
+                link_change_password_email = ''
+                link_change_date = ''
+            if 'delete_count' in permissions:
+                link_detele= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>'
+            else:
+                link_detele = ''
             json_data.append([
                 item.platform.name,
                 item.email,
@@ -205,7 +212,6 @@ class CountListJson(BaseDatatableView):
         return json_data
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
 class CountNextExpiredView(ListView):
 
     model = Count
@@ -229,7 +235,6 @@ class CountNextExpiredView(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
 class CountExpiredView(ListView):
 
     model = Count
@@ -245,7 +250,7 @@ class CountExpiredView(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 class ChangeDateLimitView(View):
 
     model = Count
@@ -270,7 +275,7 @@ class ChangeDateLimitView(View):
             return HttpResponse("La fecha aregistrada tiene que ser mayor quela fecha actual")
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 class EditCountDataView(View):
 
     model = Profile
@@ -297,7 +302,7 @@ class EditCountDataView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 class EditSaleDataView(View):
 
     model = Sale
@@ -322,7 +327,7 @@ class EditSaleDataView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 class CutProfileView(View):
 
     def get(self, request, *args, **kwargs):
@@ -343,7 +348,7 @@ class CutProfileView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 class OwnerProfileView(View):
 
     def get(self, request, *args, **kwargs):
@@ -617,7 +622,7 @@ class InterdatesSalesView(ListView):
         return bills
 
 
-@method_decorator(usertype_in_view, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class CreatePromotionView(View):
 

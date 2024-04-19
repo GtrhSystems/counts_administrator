@@ -13,14 +13,17 @@
 </style>
 
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
+
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
           <a class="sidebar-brand brand-logo" href="{% url 'index' %}" >
             <img src="/static/assets/images/logo.png" alt="logo" alt="logo"  /></a>
           <a class="sidebar-brand brand-logo-mini" href="{% url 'index' %}">
             <img src="/static/assets/images/logo_small.png" alt="logo"   /></a>
-        </div>
-        <ul class="nav">
 
+        </div>
+
+        <ul class="nav">
+<!--        {{ permissions }}-->
           <li class="nav-item nav-category">
             <span class="nav-link">Menu proncipal</span>
           </li>
@@ -52,14 +55,16 @@
             </a>
             <div class="collapse" id="clients">
               <ul class="nav flex-column sub-menu">
+                {%  if 'add_customer' in permissions %}
                 <li class="nav-item"> <a class="nav-link" href="{% url 'add-customer' %}">Nuevo cliente</a></li>
+                {% endif %}
                 <li class="nav-item"> <a class="nav-link" href="{% url 'list-customer' %}">Listado</a></li>
                  <li class="nav-item"> <a class="nav-link" href="{% url 'list-to-expire' %}">Proximos a vencer</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{% url 'list-expired' %}">Vencidos</a></li>
               </ul>
             </div>
           </li>
-          {% if user_type == "superuser"%}
+          {%  if 'add_user' in permissions %}
           <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#users" aria-expanded="false" aria-controls="users">
               <span class="menu-icon">
@@ -78,7 +83,6 @@
             </div>
           </li>
           {% endif %}
-          {% if user_type == "superuser" or user_type == "staff"%}
           <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#counts" aria-expanded="false" aria-controls="counts">
               <span class="menu-icon">
@@ -90,7 +94,9 @@
             <div class="collapse" id="counts">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="{% url 'search-sale' %}">Buscar</a></li>
+                {%  if 'add_count' in permissions %}
                 <li class="nav-item"> <a class="nav-link" href="{% url 'create-count' %}">Crear</a></li>
+                {% endif %}
                 <li class="nav-item"> <a class="nav-link" href="{% url 'count-list' %}">Listado</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{% url 'count-list-to-expire' %}">Proximas a vencer</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{% url 'count-list-expired' %}">Vencidas</a></li>
@@ -108,13 +114,14 @@
             </a>
             <div class="collapse" id="promotions">
               <ul class="nav flex-column sub-menu">
-
-                <li class="nav-item"> <a class="nav-link" href="{% url 'create-promotion' %}">Crear promocion</a></li>
+                {%  if 'add_promotion' in permissions %}
+                    <li class="nav-item"> <a class="nav-link" href="{% url 'create-promotion' %}">Crear promocion</a></li>
+                {% endif %}
                 <li class="nav-item"> <a class="nav-link" href="{% url 'list-promotion' %}">Listado</a></li>
               </ul>
             </div>
           </li>
-          {% endif %}
+
 
           <li class="nav-item menu-items">
             <a class="nav-link" data-toggle="collapse" href="#sales" aria-expanded="false" aria-controls="sales">

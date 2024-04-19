@@ -19,7 +19,9 @@ Listado de plataformas
                             <th> logo </th>
                             <th> # perfiles </th>
                             <th> Activo </th>
+                            {%  if 'change_platform' in permissions %}
                             <th>  </th>
+                            {% endif %}
                           </tr>
                         </thead>
                         <tbody>
@@ -30,11 +32,13 @@ Listado de plataformas
                             <td><img src="/{{ platform.logo }}" alt="Girl in a jacket" width="50" height="60"></td>
                             <td>{{ platform.num_profiles }}</td>
                             <td>{{ platform.active }}</td>
+                            {%  if 'change_platform' in permissions %}
                             <td>
                               <a href="{% url 'update-platform' platform.id %}" >
                               <button type="button" class="btn btn-info  btn-icon-text">
                               <i class="mdi mdi-information"></i>Editar</button></a>
                             </td>
+                            {% endif %}
                           </tr>
                         {% endfor %}
                         </tbody>

@@ -41,13 +41,15 @@ Listado de clientes de la cuenta {{ sales.0.profile.count.platform.name }} - {{ 
               <td>{{ sale.rest_days }}</td>
               <td>
                 {% if not sale.buttom_owner %}
+                   {% if 'change_count' in permissions %}
                    <button type="button" id_sale="{{ sale.id }}" id_profile="{{ sale.profile.id }}" class="btn btn-danger btn-icon-text cut-profile">
                    <i class="mdi mdi-content-cut"></i> Cortar </button>
+                    {% endif %}
                  {% else %}
                    <button type="button" id_user="{{ sale.bill.customer.id }}" id_sale="{{ sale.id }}" id_profile="{{ sale.profile.id }}" class="btn btn-info btn-icon-text owner-profile">
                    <i class="mdi mdi-human-greeting"></i> Vigente </button>
                  {% endif %}
-                {% if sale.buttom_owner and have_avaliable %}
+                {% if sale.buttom_owner and have_avaliable and 'change_count' in permissions %}
                  <button type="button" id_sale="{{ sale.id }}" class="btn btn-warning btn-icon-text change-profile-sale">
                    <i class="mdi mdi-flag-triangle"></i> Cambiar perfil </button>
                  {% endif %}

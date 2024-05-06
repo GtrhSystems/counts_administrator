@@ -8,8 +8,13 @@ PERMISSION_BY_VIEW = {
     'update-customer' : ['change_customer'],
     'add-user' : ['add_user'],
     'create-count': ['add_count'],
+    'edit-count-data': ['change_count'],
+    'delete-count': ['delete_count'],
     'change-date-limit': ['change_count'],
-    'create-promotion': ['add_promotion']
+    'create-promotion': ['add_promotion'],
+    'sale-count': ['add_sale'],
+
+
 }
 
 def my_permissions(user):
@@ -21,13 +26,11 @@ def my_permissions(user):
 def permissions_in_view(function):
 
     def wrap(request, *args, **kwargs):
-        print(request.user)
+
         permissions = my_permissions(request.user)
-        print(permissions)
         request_url = request.__dict__['path_info'] #captura todo el request en un dict
         match = resolve(request_url) #devuelve el name de la vista
         url_name = match.url_name
-        print(url_name)
         for permission in permissions:
             if permission  in PERMISSION_BY_VIEW[url_name]:
                 return function(request, *args, **kwargs)

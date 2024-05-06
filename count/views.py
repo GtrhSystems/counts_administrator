@@ -288,14 +288,20 @@ class EditCountDataView(View):
         return render(request, self.template_name,  {'form': self.form_class, 'id':kwargs['id'], 'type': kwargs['type'] })
     def post(self, request, *args, **kwargs):
 
+        change_password = change_pin = False
         profile = self.model.objects.filter(id=kwargs['id']).first()
         count = Count.objects.filter(id=profile.count.id).first()
         if not request.POST['password'] == "":
             count.password = request.POST['password']
+            change_password =True
         if not request.POST['pin'] == "":
             profile.pin = request.POST['pin']
+            change_pin =True
         profile.save()
-        Profile.change_password_to_perfile_message(count, now)
+        if change_password:
+            Profile.change_password_to_perfile_message(count, None,  now)
+        elif change_pin:
+            Profile.change_password_to_perfile_message(count, profile, now)
         count.save()
 
         return HttpResponse("Cuenta Actualizados")
@@ -365,6 +371,7 @@ class OwnerProfileView(View):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(permissions_in_view, name='dispatch')
 class AddSaleView(View):
 
     form_class = SaleForm

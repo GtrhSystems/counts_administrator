@@ -50,9 +50,11 @@ table th {
     {% csrf_token %}
     <div class="card-body">
       <h4 class="card-title">Perfiles vendidos</h4>
+        {% if 'add_sale' in permissions %}
         <a href="/count/sale/{{ pk }}" <button="" type="button" class="btn btn-primary btn-icon-text">
                               <i class="mdi mdi-square-inc-cash"></i>Vender
                             </a>
+         {% endif %}
       <p class="card-description"><code></code>
       </p>
       <div class="form-group">
@@ -97,10 +99,14 @@ table th {
                   <td>{{ sale.rest_days }}</td>
 
                    <td>
+                      {% if 'delete_sale' in permissions %}
                       <button type="button" sale="{{ sale.id }}" class="btn btn-danger calcel-sale">Cancelar</button>
+                      {% endif %}
+                      {% if 'change_count' in permissions %}
                       <button type="button" id_count="{{ sale.profile.id }}" class="btn btn-warning change-password">Cambiar constraseña cuenta</button>
                       <button type="button" id_count="{{ sale.profile.count.id }}" class="btn btn-secondary btn-fw change-password-email">Cambiar constraseña correo</button>
                       <button type="button" id_sale="{{ sale.id }}" class="btn btn-info change-sale">Cambiar Fecha</button>
+                       {% endif %}
                      <button type="button" onclick='send_message_individual({"platform":"{{ sale.profile.count.platform }}",
                                                                   "email":"{{ sale.profile.count.email }}",
                                                                   "password":"{{ sale.profile.count.password }}",

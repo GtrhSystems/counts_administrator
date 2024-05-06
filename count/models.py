@@ -167,19 +167,24 @@ class Profile(models.Model):
         return profiles
 
     @classmethod
-    def change_password_to_perfile_message(cls, count, now):
+    def change_password_to_perfile_message(cls, count, profile, now):
 
-        profiles = cls.objects.filter(count=count)
+        if profile:
+            profiles = [ profile ]
+        else:
+            profiles = cls.objects.filter(count=count)
         for profile in profiles:
             sale = Sale.search_customer_by_profile(profile, now)
             if sale:
-                message = f"Hola " + sale.bill.customer.name + " por motivos de seguridad la contraseña de tu cuenta ha cambiada  \n" \
+                message = f"Hola " + sale.bill.customer.name + ", Por motivos de seguridad la contraseña de tu cuenta ha sido cambiada: \n" \
                 f"Plataforma :" + count.platform.name + "\n" \
                 f"Correo : " + count.email + "\n" \
                 f"Nueva Contraseña " + count.password + "\n" \
                 f"Pin " + profile.pin + "\n" \
-                f"Lamentamos el inconveniente, sigue disfrutando de los servicios de el gamer Mx "
+                "Lamentamos el inconveniente, sigue disfrutando de tu servicio. \n" \
+                "Atte: El gamer Mx"
                 customer_number = str(sale.bill.customer.phone)
+                print(message)
                 send_message(customer_number, message)
 
 

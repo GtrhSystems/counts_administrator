@@ -184,7 +184,6 @@ class Profile(models.Model):
                 "Lamentamos el inconveniente, sigue disfrutando de tu servicio. \n" \
                 "Atte: El gamer Mx"
                 customer_number = str(sale.bill.customer.phone)
-                print(message)
                 send_message(customer_number, message)
 
 

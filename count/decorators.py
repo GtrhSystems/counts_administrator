@@ -13,6 +13,7 @@ PERMISSION_BY_VIEW = {
     'change-date-limit': ['change_count'],
     'create-promotion': ['add_promotion'],
     'sale-count': ['add_sale'],
+    'edit-sale-data':  ['change_count'],
 
 
 }

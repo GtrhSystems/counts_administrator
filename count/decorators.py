@@ -15,6 +15,7 @@ PERMISSION_BY_VIEW = {
     'sale-count': ['add_sale'],
     'edit-sale-data':  ['change_count'],
     'create-pins-profiles':  ['add_count'],
+    'cut-profile': ['change_count'],
 
 }
 

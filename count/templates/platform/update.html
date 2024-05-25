@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block page_header %}
-Crear Plataforma
+Editar Plataforma
 {% endblock %}
 {% load widget_tweaks %}
 {% block content %}
@@ -36,7 +36,15 @@ Crear Plataforma
           <button type="submit" class="btn btn-primary mr-2">Guardar</button>
         </form>
         {{ form.errors }}
+
       </div>
+  <div id="plans"></div>
     </div>
 </div>
+<script>
+    $.get('/count/plan/list/list_ajax/{{ platform_name}}', function(data){
+        $('#plans').html(data)
+    })
+
+</script>
 {% endblock %}

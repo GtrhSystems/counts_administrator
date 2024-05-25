@@ -16,6 +16,9 @@ PERMISSION_BY_VIEW = {
     'edit-sale-data':  ['change_count'],
     'create-pins-profiles':  ['add_count'],
     'cut-profile': ['change_count'],
+    'create-plan': ['add_plan'],
+    'update-plan': ['change_plan'],
+    'update-count': ['change_count'],
 
 }
 

@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Listado de planes de {{ object_list.0.platform.name }}
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-lg-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Planes</h4>
+      <p class="card-description"><code></code>
+      </p>
+      <div class="table-responsive">
+        <table class="table table-dark table-list-count-to-expire" id="counts-table">
+          <thead>
+            <tr>
+              <th> # </th>
+              <th> Plataforma </th>
+              <th> Plan </th>
+              <th> Perfiles a vender </th>
+              <th> Descripción </th>
+              <th>  </th>
+            </tr>
+          </thead>
+           <tbody>
+           {% for plan in object_list %}
+            <tr>
+              <td>{{forloop.counter}}</td>
+              <td>{{ plan.platform.name }}</td>
+              <td>{{ plan.name }}</td>
+              <td>{{ plan.num_profiles }}</td>
+              <td>{{ plan.description }}</td>
+              <td>
+                 {% if 'change_plan' in permissions %}
+                    <a type="button" href="/count/plan/update/{{ plan.platform.name }}" class="btn btn-primary btn-icon-text change-date-limit">
+                     <i class="mdi mdi-grease-pencil"></i> Editar </a>
+                 {% endif %}
+               </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+      </div>
+         {% if 'add_plan' in permissions %}
+            <a type="button" href="/count/plan/create/{{ platform_name }}" class="btn btn-warning btn-rounded btn-fw" style="margin: 12px;">
+             <i class="mdi mdi-grease-pencil"></i> Crear plan </a>
+         {% endif %}
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

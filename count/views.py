@@ -15,14 +15,14 @@ from .libraries import getDifference
 import datetime, pytz, json
 from django.contrib import messages
 from count.libraries import CalculateDateLimit
-from user.whatsapp_api import message_sale, message_renew, message_expired
+from user.whatsapp_api import message_sale, message_plan_sale, message_renew, message_expired
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
-from django.db.models import Q
+from django.db.models import Q, Count as Count_
 from django.urls import reverse_lazy
 from datetime import timezone
-
+from django.http import Http404
 
 utc = pytz.UTC
 now = datetime.datetime.now()
@@ -33,6 +33,92 @@ class DashboardView(View):
 
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard.html')
+
+
+
+@method_decorator(permissions_in_view, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class CreatePlan(View):
+
+    template_name = "plan/create.html"
+    form_class = PlanForm
+
+    def dispatch(self, request, *args, **kwargs):
+
+        platform = Platform.objects.filter(name=kwargs.get('platform')).first()
+        if platform :
+            self.platform = platform
+        else:
+            raise Http404("La plataforma no existe")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, platform, *args, **kwargs):
+
+
+        if self.platform:
+            form = self.form_class(self.platform)
+            return render(request, self.template_name, {'form': form, 'platform': self.platform})
+        else:
+            return redirect("platform-list")
+
+    def post(self, request, *args, **kwargs):
+
+        plan = Plan.objects.create(platform = self.platform,
+                                         name = request.POST['name'],
+                                         num_profiles = request.POST['num_profiles'],
+                                         active = request.POST['active'],
+                                         description = request.POST['description']
+                                         )
+        return redirect('update-platform', self.platform.id)
+
+@method_decorator(permissions_in_view, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class UpdatePlanView(UpdateView):
+
+    model = Plan
+    fields = ["name", "num_profiles", "active", "description"]
+    template_name = "plan/update.html"
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        platform = self.get_object()
+        context['platform_name'] = platform.name
+        return context
+
+    def get_success_url(self):
+
+        plan = self.get_object()
+        success_url = "/count/plan/list/list/"+plan.platform.name
+        return success_url
+
+@method_decorator(login_required, name='dispatch')
+class PlanListView(ListView):
+
+    model = Plan
+
+    def get_queryset(self):
+
+        plans = self.model.objects.filter(platform__name=self.kwargs['platform'], active=True)
+        return plans
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['platform_name'] = self.kwargs['platform']
+        return context
+
+    def get_template_names(self):
+
+        template_name = self.kwargs.get('template_name')
+        if template_name:
+            return [f'plan/{template_name}.html']
+        else:
+            raise Http404("Template no encontrado")
+
+
+
+
+
 
 @method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
@@ -49,7 +135,9 @@ class CreateCount(View):
 
         new_count = Count.objects.create(platform_id = request.POST['platform'],
                                          email = request.POST['email'],
+                                         country_id=request.POST['country'],
                                          password = request.POST['password'],
+                                         email_password=request.POST['email_password'],
                                          date_limit = request.POST['date_limit']
                                          )
 
@@ -57,6 +145,50 @@ class CreateCount(View):
             if item.isnumeric():
                 Profile.objects.create(count=new_count, profile = item, pin=request.POST[item], saled=0)
         return redirect("count-list")
+
+
+
+@method_decorator(permissions_in_view, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class UpdateCount(UpdateView):
+
+    template_name = "count/update.html"
+    form_class = CountUpdateForm
+
+    def get(self, request, id, *args, **kwargs):
+
+        count= Count.objects.filter(id=id).first()
+        print(count)
+        profiles= Profile.objects.filter(count=count)
+        print(profiles)
+        form = self.form_class(instance=count)
+        return render(request, self.template_name, {'form': form, 'profiles':profiles })
+
+    def post(self, request, id, *args, **kwargs):
+
+        count = Count.objects.filter(id=id).first()
+        form = self.form_class(request.POST)
+        form.save()
+        for item in request.POST:
+            if item.isnumeric():
+                profile = Profile.objects.filter(count=count, profile = item).first()
+                profile.pin=request.POST[item]
+                profile.save()
+        return redirect("count-list")
+
+
+
+@method_decorator(login_required, name='dispatch')
+class SelectPlan(View):
+
+    template_name = "count/select-plan-by-platform.html"
+    form_class = CountPlanForm
+
+    def get(self, request, platform_id,  *args, **kwargs):
+
+        form =self.form_class(platform_id)
+
+        return render(request, self.template_name, {'form': form })
 
 
 @method_decorator(permissions_in_view, name='dispatch')
@@ -84,6 +216,13 @@ class UpdatePlatformView(UpdateView):
     fields = ["name", "logo", "num_profiles", "active"]
     template_name = "platform/update.html"
     success_url = "/count/platform/list"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        platform = self.get_object()
+        context['platform_name'] = platform.name
+        return context
+
 
 
 @method_decorator(permissions_in_view, name='dispatch')
@@ -144,7 +283,7 @@ class CountsListView(ListView):
 @method_decorator(login_required, name='dispatch')
 class CountListJson(BaseDatatableView):
 
-    columns = ['Plataforma', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña de cuenta', 'Contraseña de correo', 'Vence']
+    columns = ['Plataforma', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña de cuenta', 'Contraseña de correo', 'pais',  'Vence']
     order_columns = ['date','platform.name', 'email']
     model = Count
     #max_display_length = 500
@@ -171,7 +310,6 @@ class CountListJson(BaseDatatableView):
         json_data = []
         rest_days = "indeterminado"
         permissions = my_permissions(self.request.user)
-        print(permissions)
 
         for item in qs:
             now = datetime.datetime.now(timezone.utc)
@@ -187,7 +325,8 @@ class CountListJson(BaseDatatableView):
             if 'change_count' in permissions:
                 link_change_password = f'<button type="button" id_count="{ item.id }" class="btn btn-warning change-password">Cambiar password de cuenta</button>'
                 link_change_password_email = f'<button type="button" id_count="{ item.id }" class="btn btn-info change-password-email">Cambiar password de correo</button>'
-                link_change_date = f'<button type="button" id_count="{item.id}" class="btn btn-primary btn-icon-text change-date-limit"><i class="mdi mdi-grease-pencil"></i>Cambiar fecha</button>'
+                link_change_date = f'<button type="button" id_count="{item.id}" class="btn btn-primary btn-icon-text change-date-limit">Cambiar fecha</button>'
+                link_update = f'<a href="/count/update/{item.id}" type="button"  class="btn btn-success btn-icon-text"><i class="mdi mdi-grease-pencil"></i>Editar</a>'
             else:
                 link_change_password = ''
                 link_change_password_email = ''
@@ -203,10 +342,12 @@ class CountListJson(BaseDatatableView):
                 profiles_available,
                 item.password,
                 item.email_password,
+                item.country.country,
                 rest_days,
                 link_change_password,
                 link_change_password_email,
                 link_change_date,
+                link_update,
                 link_detele
             ])
         return json_data
@@ -394,31 +535,56 @@ class AddSaleView(View):
         form = self.form_class (request.POST)
         customer = Customer.objects.filter(id= kwargs['id']).first()
         if customer and form.is_valid():
-            num_profiles = list(request.POST.values()).count("on")
-            total = Price.objects.filter(platform_id = request.POST['platform'], num_profiles= num_profiles).first()
-            bill = Bill.objects.create(customer=customer, saler= request.user, total=total.price)
-            i=0
-            for item in request.POST:
-                if item.isnumeric():
-                    if request.POST[item] == 'on':
-                        date_limit = CalculateDateLimit(now, int(request.POST['months']))
-                        profile = Profile.objects.filter(id = item).first()
-                        profile.pin = request.POST['pin_'+item]
-                        profile.profile = request.POST['profile_'+item]
-                        profile_json = {"platform": profile.count.platform.name,
-                                        "email":profile.count.email,
-                                        "password":profile.count.password,
-                                        "phone":str(customer.phone),
-                                        "date_limit":str(date_limit.strftime('%d/%m/%Y')),
-                                        "profile":profile.profile,
-                                        "pin":profile.pin}
-                        profiles_json[i] = profile_json
-                        profile.save()
-                        profiles.append(profile)
-                        i+=1
-                        request.user.sale_profile( profile, int(request.POST['months']), date_limit, bill)
+            date_limit = CalculateDateLimit(now, int(request.POST['months']))
+            if request.POST['plan'] == "":
+                num_profiles = list(request.POST.values()).count("on")
+                total = Price.objects.filter(platform_id = request.POST['platform'], num_profiles= num_profiles).first()
+                bill = Bill.objects.create(customer=customer, saler= request.user, total=total.price)
+                i=0
+                for item in request.POST:
+                    if item.isnumeric():
+                        if request.POST[item] == 'on':
+                            profile = Profile.objects.filter(id = item).first()
+                            profile.pin = request.POST['pin_'+item]
+                            profile.profile = request.POST['profile_'+item]
+                            profile_json = {"platform": profile.count.platform.name,
+                                            "email":profile.count.email,
+                                            "password":profile.count.password,
+                                            "phone":str(customer.phone),
+                                            "date_limit":str(date_limit.strftime('%d/%m/%Y')),
+                                            "profile":profile.profile,
+                                            "pin":profile.pin}
+                            profiles_json[i] = profile_json
+                            profile.save()
+                            profiles.append(profile)
+                            i+=1
+                            request.user.sale_profile( profile, int(request.POST['months']), date_limit, bill)
+                return render(request, 'sale/sale_post.html',
+                              {'profiles': profiles, 'profiles_json': json.dumps(profiles_json)})
+            else:
+                plan = Plan.objects.filter(id=request.POST['plan']).first()
+                total = Price.objects.filter(platform_id=request.POST['platform'], num_profiles=plan.num_profiles).first()
+                bill = Bill.objects.create(customer=customer, saler=request.user, total=total.price)
 
-            return render(request, 'sale/sale_post.html', { 'profiles':profiles,  'profiles_json': json.dumps(profiles_json) })
+                profiles_enables = Profile.objects.filter(saled=0, count__platform=plan.platform).values('count_id').annotate(count=Count_('id')).filter(
+                    count__gte=plan.num_profiles).values('count_id')
+                count_id_enable = profiles_enables[0]['count_id']
+                profiles = Profile.objects.filter(count_id=count_id_enable, saled=0)[0:plan.num_profiles]
+                profiles_json = {"platform": profiles[0].count.platform.name,
+                                "email": profiles[0].count.email,
+                                "password": profiles[0].count.password,
+                                "phone": str(customer.phone),
+                                 "data" : {},
+                                "date_limit": str(date_limit.strftime('%d/%m/%Y'))
+                                 }
+                i=0
+                for profile in profiles:
+                    profiles_json["data"][i] = "Perfil : " + profile.profile + " Pin: "+  profile.pin
+                    #request.user.sale_profile( profile, int(request.POST["months"]), date_limit, bill)
+                    i+=1
+                return render(request, 'sale/sale_plan_post.html',
+                              {'profiles': profiles, 'profiles_json': json.dumps(profiles_json)})
+
 
         return render(request, self.template_name, {'form': self.form_class })
 
@@ -435,6 +601,16 @@ class SendMessageWhatsapp(View):
                 message_sale(data[item])
         except:
             message_sale(json_data)
+        return HttpResponse("Mensaje enviado")
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class SendPlanMessageWhatsapp(View):
+    def post(self, request, *args, **kwargs):
+
+        json_data = json.loads(request.body)
+        json_data = json.loads(json_data)
+        message_plan_sale(json_data)
         return HttpResponse("Mensaje enviado")
 
 

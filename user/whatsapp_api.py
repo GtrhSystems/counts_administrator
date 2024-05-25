@@ -6,11 +6,33 @@ url = "https://api.ultramsg.com/"+settings.INSTANCE_WHATSAPP_API+"/messages/chat
 
 
 def message_sale(data):
+
     message =  f"Hola, tu servicio {data['platform']} está activo, \n" \
                 f"👤USUARIO:  {data['email']}   \n" \
                 f"🔐CONTRASEÑA: {data['password']} \n" \
                 f"📺: PERFIL {data['profile']}  \n" \
                 f"🔒 PIN: {data['pin']} \n" \
+                f"📅 Fecha de corte: {data['date_limit']} \n" \
+                f"Condiciones del servicio:  \n" \
+                f"1.-No modifique ninguna información de la cuenta \n" \
+                f"2.-No puede estar en 2 o más dispositivos simultáneamente  \n" \
+                f"3.-No agregue ni elimine ningún perfil \n" \
+                f"4.-Este es un producto digital. Después de la compra, no se puede  \n" \
+                f"hacer ningún reembolso. Solo garantía de reemplazo. \n" \
+                f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
+                f"Muchas gracias 😊 "
+
+    send_message(data['phone'], message)
+
+def message_plan_sale(data):
+
+    profiles = ""
+    for key, profil in data['data'].items():
+        profiles += f" {profil} \n"
+    message =  f"Hola, tu servicio {data['platform']} está activo, \n" \
+                f"👤USUARIO:  {data['email']}   \n" \
+                f"🔐CONTRASEÑA: {data['password']} \n" \
+                f"📺: Datos: {profiles}  \n" \
                 f"📅 Fecha de corte: {data['date_limit']} \n" \
                 f"Condiciones del servicio:  \n" \
                 f"1.-No modifique ninguna información de la cuenta \n" \

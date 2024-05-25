@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block page_header %}
+Crear Plan
+{% endblock %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Crear un plan de {{ platform.name }}</h4>
+        <p class="card-description">Digite los datos del nuevo plan</p>
+        <form  method="post" class="forms-sample platforms" >
+          	{% csrf_token %}
+
+          <div class="form-group">
+            <label for="name">{{ form.name.label }}</label>
+             {{ form.name|add_class:'form-control' }}
+          </div>
+          <div class="form-group">
+            <label for="num_profiles">{{ form.num_profiles.label }}</label>
+             {{ form.num_profiles|add_class:'form-control' }}
+          </div>
+          <div class="form-group">
+            <label for="active">{{ form.active.label }}</label>
+             {{ form.active }}
+          </div>
+          <div class="form-group">
+                <label for="description">{{ form.description.label }}</label>
+                 <div class="form-line">
+                    {{ form.description|add_class:'form-control' }}
+                </div>
+
+          </div>
+          <div id="profiles">
+
+          </div>
+           <button type="submit" class="btn btn-primary mr-2 sale">Crear plan</button>
+        </form>
+        {{ form.errors }}
+      </div>
+    </div>
+</div>
+<script>
+
+
+  $('.platforms').on("change", "#id_platform" , function(){
+      platform_id = $(this).val()
+      $.get('/count/create-pins-profiles/'+platform_id)
+       .done(function( data ) {
+           $('#profiles').html(data)
+      });
+
+  })
+
+</script>
+
+{% endblock %}

@@ -191,16 +191,23 @@ $( function() {
       return false;
     });
 } );
+$('.platforms').on("change", "#id_platform" , function(){
 
-
-$("#id_platform").on("change", function() {
-
-      platform= $(this).val();
-      $.get('/count/get-profiles-available/'+platform )
+      $('#profiles-content').html('')
+      platform_id = $(this).val()
+      $.get('/count/select-plan-by-platform/'+platform_id)
        .done(function( data ) {
-           $('#profiles-content').html(data)
-       });
+           $('#plans').html(data)
+            var count_options = $("#id_plan option").length;
+            if(count_options == 1){
+                $.get('/count/get-profiles-available/'+platform_id )
+                   .done(function( data ) {
+                       $('#profiles-content').html(data)
+                 });
+            }
+      });
 })
+
 
 
 $('body').on("click", ".cut-profile" , function(){
@@ -319,12 +326,12 @@ $(".table-list-count-to-expire").on("click", ".change-date-limit" , function(){
 })
 
 
-function send_message(data){
-
+function send_message(url, data ){
+    console.log(data)
     $('body').on("click", ".send-message" , function(){
 
         $.ajax({
-            url: '/count/send-whatsapp-message',
+            url: url,
             type: "POST",
             dataType: "json",
             data: JSON.stringify(data),

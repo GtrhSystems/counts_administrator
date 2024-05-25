@@ -18,7 +18,9 @@ PERMISSIONS_ACTIVES = [
     'change_count',
     'add_promotion',
     'delete_sale',
-    'add_sale'
+    'add_sale',
+    'add_plan',
+    'change_plan',
 ]
 
 class UserAdmin(admin.ModelAdmin):

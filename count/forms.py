@@ -1,5 +1,5 @@
 from django import forms
-from .models import Sale, Platform, Count, Promotion
+from .models import Sale, Platform, Plan, Count, Promotion, Country
 
 from datetime import date
 
@@ -38,19 +38,55 @@ class CountForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(CountForm, self).__init__(*args, **kwargs)
         platforms = Platform.objects.filter(active=True)
-        self.fields['platform'] = forms.ModelChoiceField(queryset=platforms, help_text='Selecciones la plataforma',
+        self.fields['platform'] = forms.ModelChoiceField(queryset=platforms, empty_label='Selecciones la plataforma',
                                                       label="Plataforma")
+        countries = Country.objects.all()
+        self.fields['country'] = forms.ModelChoiceField(queryset=countries, empty_label='Selecciones el pais',
+                                                         label="Pais")
+        self.fields['country'].initial = 1
+
         self.fields['date_limit'] = forms.DateField(label="Fecha de vencimiento",  widget=forms.DateInput(
             attrs={'type': 'date', 'placeholder': 'Digite la fecha de vencimiento', 'data-date-format': 'YYYY/MMMM/DD',
                    'value': date.today()}))
 
-    email = forms.EmailField(required=True)
-    password = forms.CharField(required=True, label="Contraseña")
+    email = forms.CharField(required=True)
+    password = forms.CharField(required=True, label="Contraseña de cuenta")
+    email_password = forms.CharField(required=True, label="Contraseña de email")
+
+
 
     def save(self, commit=True):
 
         instance = super().save(commit=False)
         super(CountForm, self).save(*args, **kwargs)
+
+
+class CountUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Count
+        fields = ['platform', 'country', 'email', 'date_limit']
+
+
+class CountPlanForm(forms.Form):
+
+    def __init__(self, platform_id, *args, **kwargs):
+
+        super(CountPlanForm, self).__init__(*args, **kwargs)
+        plans = Plan.objects.filter(platform_id=platform_id, active=True)
+        self.fields['plan'] = forms.ModelChoiceField(queryset=plans, help_text='Selecciones el plan',  label="Plan")
+
+
+
+
+class PlanForm(forms.ModelForm):
+
+    def __init__(self, platform, *args, **kwargs):
+        super(PlanForm, self).__init__(*args, **kwargs)
+        self.fields['num_profiles'] = forms.IntegerField(label="Perfiles a vernder", widget=forms.NumberInput(
+            attrs={'min': 1, 'max': platform.num_profiles,  'placeholder': 'Digite el numero de perfiles a vender en este plan'}))
+    class Meta:
+        model = Plan
+        fields = [ 'name', 'num_profiles', 'active', 'description']
 
 
 class ChangeCountDataForm(forms.Form):

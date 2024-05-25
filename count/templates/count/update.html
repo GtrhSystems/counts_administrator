@@ -7,8 +7,8 @@ Crear cuentas
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Crear una cuenta</h4>
-        <p class="card-description">Digite los datos de la nueva cuenta</p>
+        <h4 class="card-title">Editar cuenta</h4>
+        <p class="card-description">Actualice los datos requeridos</p>
         <form  method="post" class="forms-sample platforms" >
           	{% csrf_token %}
           <div class="form-group">
@@ -24,41 +24,23 @@ Crear cuentas
              {{ form.email|add_class:'form-control' }}
           </div>
           <div class="form-group">
-            <label for="password">{{ form.password.label }}</label>
-             {{ form.password|add_class:'form-control' }}
-          </div>
-           <div class="form-group">
-            <label for="email_password">{{ form.email_password.label }}</label>
-             {{ form.email_password|add_class:'form-control' }}
-          </div>
-          <div class="form-group">
               <label for="date_limit">{{ form.date_limit.label }}</label>
                <div class="form-line">
                   {{ form.date_limit|add_class:'form-control' }}
               </div>
           </div>
-          <div id="profiles">
-
-          </div>
-           <button type="submit" class="btn btn-primary mr-2 sale">Crear cuenta</button>
+      {% for profile in profiles %}
+            <div class="form-group">
+                <label for="pin_{{forloop.counter}}">pin {{forloop.counter}}</label>
+                <input type="text" name="{{forloop.counter}}" value="{{ profile.pin }}" class="form-control" required="">
+            </div>
+      {% endfor %}
+          <button type="submit" class="btn btn-primary mr-2 sale">Guardar</button>
         </form>
         {{ form.errors }}
       </div>
     </div>
 </div>
-<script>
 
-
-  $('.platforms').on("change", "#id_platform" , function(){
-
-      platform_id = $(this).val()
-      $.get('/count/create-pins-profiles/'+platform_id)
-       .done(function( data ) {
-           $('#profiles').html(data)
-      });
-
-  })
-
-</script>
 
 {% endblock %}

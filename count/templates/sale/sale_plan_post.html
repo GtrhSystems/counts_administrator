@@ -1,0 +1,32 @@
+{% load widget_tweaks %}
+
+ <div class="row" >
+	<div class="col-lg-12">
+		<div class="form-group">
+			<strong>Plataforma:</strong>   {{ profiles.0.count.platform.name }}
+		</div>
+		<div class="form-group">
+			<strong>Correo:</strong>    {{ profiles.0.count.email }}
+		</div>
+		<div class="form-group">
+			<strong>Contraseña:</strong>    {{ profiles.0.count.password }}
+		</div>
+		{% for profile in profiles %}
+		<div class="form-group">
+			<strong>Perfil:</strong>    {{ profile.profile }}
+			<strong>Pin:</strong>    {{ profile.pin }}
+		</div>
+		{% endfor %}
+	</div>
+  </div>
+
+
+
+<script>
+
+send_message('/count/send-plan-whatsapp-message','{{ profiles_json|safe  }}')
+
+</script>
+
+
+

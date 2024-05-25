@@ -8,13 +8,13 @@ from django.contrib.auth.models import User
 import datetime
 
 
-
 class Platform(models.Model):
 
     name = models.CharField(max_length=150, verbose_name="Nombre", default="")
     active = models.BooleanField(default=1, verbose_name="Activo?:")
     logo =  models.FileField(default="", upload_to='logos/', validators=[valid_image_extension])
     num_profiles = models.IntegerField(default=0, verbose_name="Número de perfiles")
+    have_plans = models.BooleanField(default=0, verbose_name="Tiene Planes?:")
     #price = models.FloatField(default=0, verbose_name="Precio")
 
     def __str__(self):
@@ -40,26 +40,56 @@ class Platform(models.Model):
         platform = Platform.objects.filter(id=platform_id).first()
         return platform.num_profiles
 
-class Price(models.Model):
 
-    platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
-    num_profiles = models.PositiveIntegerField( verbose_name="Número de perfiles")
-    price = models.FloatField(default=0, verbose_name="Precio")
+
+#Planes de cada plataforma
+#SubProduct(models.Model):
+class Plan(models.Model):
+
+    # UNITY_TIMES = (
+    #     ("horas", "Horas"),
+    #     ("dias", "Dias"),
+    #     ("meses", "Meses")
+    # )
+
+    platform = models.ForeignKey(Platform, default=1, verbose_name="Plataforma", on_delete=models.CASCADE)
+    name = models.CharField(max_length=150, verbose_name="Nombre", default="")
+    num_profiles = models.IntegerField(default=0, verbose_name="Perfiles a vender")
+    #price = models.IntegerField(default=0, verbose_name="Precio general", )
+    #instructions = models.CharField(max_length=1000, verbose_name="Instrucciones", default="")
+    #unity_time = models.CharField(max_length=5, default='horas', choices=UNITY_TIMES, verbose_name="Unidad de tiempo")
+    #time = models.IntegerField(default=0, verbose_name="Duración")
+    #renewable = models.BooleanField(default=0, verbose_name="Renovable?:")
+    active = models.BooleanField(default=1, verbose_name="Activo?:")
+    description = models.CharField(default="", max_length=250, verbose_name="Descripción")
+
+    def __str__(self):
+        return str(self.name)
+
+
+class Country(models.Model):
+
+    country = models.CharField(default="", max_length=100, verbose_name="Pais")
+    iso =  models.CharField(default="", max_length=3, verbose_name="Iso")
 
     class Meta:
-        verbose_name = 'Precio'
-        verbose_name_plural = 'Precios'
+        verbose_name = 'Pais'
+        verbose_name_plural = 'paises'
+        ordering = ['country']
+
+    def __str__(self):
+        return self.country
 
 
 class Count(models.Model):
 
     platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, default=1, verbose_name="Pais", on_delete=models.CASCADE)
     email = models.CharField(max_length=100, verbose_name="Email")
     password = models.CharField(max_length=50, default="",  verbose_name="Contraseña de cuenta")
     email_password = models.CharField(max_length=50, default="", verbose_name="Contraseña de correo")
     date = models.DateTimeField(auto_now_add=True)
     date_limit = models.DateTimeField(blank=True,  null=True, verbose_name="Fecha de vencimiento",  auto_now_add=False)#Fecha de vencimiento de la cuenta
-
 
     class Meta:
         verbose_name = 'Cuenta'
@@ -187,6 +217,17 @@ class Profile(models.Model):
                 send_message(customer_number, message)
 
 
+class Price(models.Model):
+
+    platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
+    num_profiles = models.PositiveIntegerField( verbose_name="Número de perfiles")
+    price = models.FloatField(default=0, verbose_name="Precio")
+
+    class Meta:
+        verbose_name = 'Precio'
+        verbose_name_plural = 'Precios'
+
+
 class Bill(models.Model):
 
     date = models.DateTimeField(auto_now_add=True)
@@ -247,9 +288,6 @@ class Sale(models.Model):
 
         self.count.password  = new_password
         self.count.save()
-
-
-
 
 
 

@@ -5,7 +5,7 @@ from user.models import Action
 @admin.register(Platform)
 class PlatformAdmin(admin.ModelAdmin):
    list_display = ( 'name','logo','num_profiles', 'active' )
-   fields  = ['name', 'logo', 'num_profiles' ,'active']
+   fields  = ['name', 'logo', 'num_profiles' ,'have_plans', 'active']
    list_filter = ('name','active') #se aplican filtros por estos dos campos
 
 

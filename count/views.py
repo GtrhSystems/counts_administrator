@@ -120,6 +120,7 @@ class PlanListView(ListView):
 
 
 
+
 @method_decorator(permissions_in_view, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class CreateCount(View):
@@ -175,7 +176,6 @@ class UpdateCount(UpdateView):
                 profile.pin=request.POST[item]
                 profile.save()
         return redirect("count-list")
-
 
 
 @method_decorator(login_required, name='dispatch')
@@ -568,7 +568,7 @@ class AddSaleView(View):
 
                 profiles_enables = Profile.objects.filter(saled=0, count__platform=plan.platform).values('count_id').annotate(count=Count_('id')).filter(
                     count__gte=plan.num_profiles).values('count_id')
-                count_id_enable = profiles_enables[0]['count_id']
+                count_id_enable = profiles_enables.order_by('-count_id').first()['count_id']
                 profiles = Profile.objects.filter(count_id=count_id_enable, saled=0)[0:plan.num_profiles]
                 profiles_json = {"platform": profiles[0].count.platform.name,
                                 "email": profiles[0].count.email,
@@ -580,7 +580,7 @@ class AddSaleView(View):
                 i=0
                 for profile in profiles:
                     profiles_json["data"][i] = "Perfil : " + profile.profile + " Pin: "+  profile.pin
-                    #request.user.sale_profile( profile, int(request.POST["months"]), date_limit, bill)
+                    request.user.sale_profile( profile, int(request.POST["months"]), date_limit, bill)
                     i+=1
                 return render(request, 'sale/sale_plan_post.html',
                               {'profiles': profiles, 'profiles_json': json.dumps(profiles_json)})

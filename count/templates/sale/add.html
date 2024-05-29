@@ -76,7 +76,9 @@ Formulario de venta
 {% endfor %}
 
 <script>
-
+$(document).ready(function() {
+    create_sale()
+});
 $(".sale").on("click", function() {
   if ($('#id_months').val() ==""){
     alert("Tienes que digitar los meses de compra")

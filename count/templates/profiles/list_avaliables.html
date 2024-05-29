@@ -13,6 +13,7 @@ Seleccione los perfiles a vender, puede cambiar los perfiles y pines a solicitud
           <thead>
             <tr>
               <th>#</th>
+              <th> Plan </th>
               <th> Cuenta </th>
               <th> Contraseña </th>
               <th> Perfil </th>
@@ -21,9 +22,14 @@ Seleccione los perfiles a vender, puede cambiar los perfiles y pines a solicitud
             </tr>
           </thead>
           <tbody>
-           {% for profile in object_list %}
+           {% for profile in profiles %}
             <tr>
               <td>{{forloop.counter}}</td>
+              {% if profile.count.plan.name %}
+                <td>{{ profile.count.plan.name }}</td>
+              {% else %}
+                 <td>-------</td>
+              {% endif %}
               <td>{{ profile.count.email }}</td>
               <td>{{ profile.count.password }}</td>
               <td><input type="text" name="profile_{{ profile.id }}" value="{{ profile.profile }}" class="form-control" required="true" ></td>

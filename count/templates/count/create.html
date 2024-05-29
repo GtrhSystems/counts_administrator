@@ -15,6 +15,9 @@ Crear cuentas
             <label for="platform">{{ form.platform.label }}</label>
             {{ form.platform|add_class:'form-control' }}
           </div>
+             <div id="plans">
+
+          </div>
           <div class="form-group">
             <label for="country">{{ form.country.label }}</label>
             {{ form.country|add_class:'form-control' }}
@@ -47,17 +50,9 @@ Crear cuentas
     </div>
 </div>
 <script>
-
-
-  $('.platforms').on("change", "#id_platform" , function(){
-
-      platform_id = $(this).val()
-      $.get('/count/create-pins-profiles/'+platform_id)
-       .done(function( data ) {
-           $('#profiles').html(data)
-      });
-
-  })
+$(document).ready(function() {
+    create_count()
+});
 
 </script>
 

@@ -73,7 +73,10 @@ class CountPlanForm(forms.Form):
 
         super(CountPlanForm, self).__init__(*args, **kwargs)
         plans = Plan.objects.filter(platform_id=platform_id, active=True)
-        self.fields['plan'] = forms.ModelChoiceField(queryset=plans, help_text='Selecciones el plan',  label="Plan")
+        if len(plans) > 0:
+            self.fields['plan'] = forms.ModelChoiceField(queryset=plans, help_text='Selecciones el plan',  label="Plan")
+        else:
+            self.fields['plan'] = None
 
 
 

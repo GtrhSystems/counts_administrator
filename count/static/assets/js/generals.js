@@ -80,25 +80,25 @@ function convertFormToJSON(form) {
 }
 
 
-function get_charges_sales(username){
-
-    $('#search_inter_dates').click(function(event){
-		event.preventDefault()
-		initial_date = $('#id_init_date').val()
-		final_date = $('#id_final_date').val()
-
-		if (username != ""){
-            $.get('/count/sales/'+username+'/'+initial_date+'/'+final_date, function(data){
-                $('#sales-list').html(data)
-            })
-		}else{
-		    $.get('/count/sales/'+initial_date+'/'+final_date, function(data){
-			    $('#sales-list').html(data)
-		    })
-		}
-
-	})
-}
+//function get_charges_sales(username){
+//
+//    $('#search_inter_dates').click(function(event){
+//		event.preventDefault()
+//		initial_date = $('#id_init_date').val()
+//		final_date = $('#id_final_date').val()
+//
+//		if (username != ""){
+//            $.get('/count/sales/'+username+'/'+initial_date+'/'+final_date, function(data){
+//                $('#sales-list').html(data)
+//            })
+//		}else{
+//		    $.get('/count/sales/'+initial_date+'/'+final_date, function(data){
+//			    $('#sales-list').html(data)
+//		    })
+//		}
+//
+//	})
+//}
 
 
 
@@ -191,15 +191,21 @@ $( function() {
       return false;
     });
 } );
+
+
 $('.platforms').on("change", "#id_platform" , function(){
 
       $('#profiles-content').html('')
       platform_id = $(this).val()
+      $.get('/count/create-pins-profiles/platform/'+platform_id)
+       .done(function( data ) {
+           $('#profiles').html(data)
+      });
       $.get('/count/select-plan-by-platform/'+platform_id)
        .done(function( data ) {
-           $('#plans').html(data)
+            $('#plans').html(data)
             var count_options = $("#id_plan option").length;
-            if(count_options == 1){
+            if (count_options == 0){
                 $.get('/count/get-profiles-available/'+platform_id )
                    .done(function( data ) {
                        $('#profiles-content').html(data)
@@ -207,6 +213,30 @@ $('.platforms').on("change", "#id_platform" , function(){
             }
       });
 })
+
+function create_sale(){
+
+    $('.platforms').on("change", "#id_plan" , function(){
+      plan_id = $(this).val()
+      $.get('/count/get-profiles-available/plan/'+plan_id )
+        .done(function( data ) {
+          $('#profiles-content').html(data)
+      });
+
+    })
+}
+
+function create_count(){
+
+    $('.platforms').on("change", "#id_plan" , function(){
+      plan_id = $(this).val()
+      $.get('/count/create-pins-profiles/plan/'+plan_id)
+       .done(function( data ) {
+           $('#profiles').html(data)
+      });
+
+    })
+}
 
 
 

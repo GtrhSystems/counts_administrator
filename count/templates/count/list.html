@@ -15,6 +15,7 @@ Listado de Cuentas
           <thead>
             <tr>
               <th> Plataforma </th>
+              <th> Plan </th>
               <th> Correo </th>
               <th> Perfil </th>
               <th> Disponibles </th>
@@ -46,6 +47,12 @@ $(document).ready(function() {
       columnDefs: [
            {
               name: 'platform.name',
+              orderable: true,
+              searchable: true,
+              targets: [0]
+          },
+          {
+              name: 'plan.name',
               orderable: true,
               searchable: true,
               targets: [0]

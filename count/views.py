@@ -134,7 +134,10 @@ class CreateCount(View):
 
     def post(self, request, *args, **kwargs):
 
+        print(request.POST)
+        plan_id = request.POST['plan'] if 'plan' in request.POST else None
         new_count = Count.objects.create(platform_id = request.POST['platform'],
+                                         plan_id = plan_id,
                                          email = request.POST['email'],
                                          country_id=request.POST['country'],
                                          password = request.POST['password'],
@@ -257,15 +260,23 @@ class PlatformListView(ListView):
 class CreatePinsProfiles(View):
 
      template_name = "count/num_profiles.html"
-     model_class = Platform
+     model_class_platform = Platform
+     model_class_plan = Plan
      def get(self, request, *args, **kwargs):
 
-         profiles = []
-         num_profiles = self.model_class.get_num_of_profiles(kwargs['platform'])
-         for num in range(num_profiles):
+        profiles = []
+        if kwargs['type'] == "platform":
+           model = self.model_class_platform
+           plans = Plan.objects.filter(platform_id=kwargs['id'])
+           if plans:
+               return render(request, self.template_name, {'profiles': None})
+        elif kwargs['type'] == "plan":
+            model = self.model_class_plan
+        num_profiles = model.get_num_of_profiles(kwargs['id'])
+        for num in range(num_profiles):
             profiles.append(num)
-         return render(request, self.template_name, {'profiles': profiles})
 
+        return render(request, self.template_name, {'profiles': profiles})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -283,7 +294,7 @@ class CountsListView(ListView):
 @method_decorator(login_required, name='dispatch')
 class CountListJson(BaseDatatableView):
 
-    columns = ['Plataforma', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña de cuenta', 'Contraseña de correo', 'pais',  'Vence']
+    columns = ['Plataforma', 'Plan', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña de cuenta', 'Contraseña de correo', 'pais',  'Vence']
     order_columns = ['date','platform.name', 'email']
     model = Count
     #max_display_length = 500
@@ -335,21 +346,41 @@ class CountListJson(BaseDatatableView):
                 link_detele= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>'
             else:
                 link_detele = ''
-            json_data.append([
-                item.platform.name,
-                item.email,
-                len_profiles,
-                profiles_available,
-                item.password,
-                item.email_password,
-                item.country.country,
-                rest_days,
-                link_change_password,
-                link_change_password_email,
-                link_change_date,
-                link_update,
-                link_detele
-            ])
+
+            if item.plan:
+                json_data.append([
+                    item.platform.name,
+                    item.plan.name,
+                    item.email,
+                    len_profiles,
+                    profiles_available,
+                    item.password,
+                    item.email_password,
+                    item.country.country,
+                    rest_days,
+                    link_change_password,
+                    link_change_password_email,
+                    link_change_date,
+                    link_update,
+                    link_detele
+                ])
+            else:
+                json_data.append([
+                    item.platform.name,
+                    "",
+                    item.email,
+                    len_profiles,
+                    profiles_available,
+                    item.password,
+                    item.email_password,
+                    item.country.country,
+                    rest_days,
+                    link_change_password,
+                    link_change_password_email,
+                    link_change_date,
+                    link_update,
+                    link_detele
+                ])
         return json_data
 
 @method_decorator(login_required, name='dispatch')
@@ -628,10 +659,21 @@ class GetProfilesAvailableView(ListView):
     model = Profile
     template_name = "profiles/list_avaliables.html"
 
-    def get_queryset(self,  *args, **kwargs):
+    def get_context_data(self, **kwargs):
 
-        profiles = self.model.search_profiles_no_saled(self.kwargs['platform'])
-        return profiles
+
+        context = super().get_context_data(**kwargs)
+        if 'platform' in self.kwargs:
+            profiles = self.model.search_profiles_no_saled(self.kwargs['platform'])
+        if 'plan' in self.kwargs:
+            profiles, num_profiles  = self.model.search_profiles_no_saled_by_plan(self.kwargs['plan'])
+            context['num_profiles'] = num_profiles
+
+        context['profiles'] = profiles
+
+        return context
+
+
 
 @method_decorator(login_required, name='dispatch')
 class CancelSaleView(View):

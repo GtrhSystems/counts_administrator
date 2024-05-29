@@ -10,6 +10,8 @@ urlpatterns = [
         # path('sale/add-renovation/<int:pk>', views.AddRenovationView.as_view(), name='add-renovation'),
         path('get-profiles-available/<str:platform>', views.GetProfilesAvailableView.as_view(),
              name='get-profiles-available'),
+        path('get-profiles-available/plan/<str:plan>', views.GetProfilesAvailableView.as_view(),
+             name='get-profiles-available'),
         path('sale/<int:id>', views.AddSaleView.as_view(), name='sale-count'),
         path('bill/list', views.BillListView.as_view(), name='bill-list'),
         path('sales/list/<int:id>', views.SalesListView.as_view(), name='sale-list'),
@@ -34,7 +36,7 @@ urlpatterns = [
         #count
         path('create', views.CreateCount.as_view(), name='create-count'),
         path('update/<int:id>', views.UpdateCount.as_view(), name='update-count'),
-        path('create-pins-profiles/<str:platform>', views.CreatePinsProfiles.as_view(), name='create-pins-profiles'),
+        path('create-pins-profiles/<str:type>/<int:id>', views.CreatePinsProfiles.as_view(), name='create-pins-profiles'),
         path('list', views.CountsListView.as_view(), name='count-list'),
         path('list-ajax', views.CountListJson.as_view(), name='count-list-ajax'),
         path('cut-profile/<int:sale_id>/<int:id>', views.CutProfileView.as_view(), name='cut-profile'),

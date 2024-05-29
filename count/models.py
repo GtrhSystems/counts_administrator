@@ -66,6 +66,11 @@ class Plan(models.Model):
     def __str__(self):
         return str(self.name)
 
+    @classmethod
+    def get_num_of_profiles(cls, plan_id):
+        plan= cls.objects.filter(id=plan_id).first()
+        return plan.num_profiles
+
 
 class Country(models.Model):
 
@@ -84,6 +89,7 @@ class Country(models.Model):
 class Count(models.Model):
 
     platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
+    plan = models.ForeignKey(Plan, blank=True, null=True, verbose_name="Plan", on_delete=models.CASCADE)
     country = models.ForeignKey(Country, default=1, verbose_name="Pais", on_delete=models.CASCADE)
     email = models.CharField(max_length=100, verbose_name="Email")
     password = models.CharField(max_length=50, default="",  verbose_name="Contraseña de cuenta")
@@ -195,6 +201,12 @@ class Profile(models.Model):
 
         profiles = cls.objects.filter(saled=0, count__platform_id=platform_id)
         return profiles
+
+    @classmethod
+    def search_profiles_no_saled_by_plan(cls, plan_id):
+
+        profiles = cls.objects.filter(saled=0, count__plan_id=plan_id)
+        return  profiles, profiles[0].count.plan.num_profiles,
 
     @classmethod
     def change_password_to_perfile_message(cls, count, profile, now):

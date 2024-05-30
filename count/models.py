@@ -14,7 +14,7 @@ class Platform(models.Model):
     active = models.BooleanField(default=1, verbose_name="Activo?:")
     logo =  models.FileField(default="", upload_to='logos/', validators=[valid_image_extension])
     num_profiles = models.IntegerField(default=0, verbose_name="Número de perfiles")
-    have_plans = models.BooleanField(default=0, verbose_name="Tiene Planes?:")
+    #have_plans = models.BooleanField(default=0, verbose_name="Tiene Planes?:")
     #price = models.FloatField(default=0, verbose_name="Precio")
 
     def __str__(self):
@@ -92,6 +92,7 @@ class Count(models.Model):
     plan = models.ForeignKey(Plan, blank=True, null=True, verbose_name="Plan", on_delete=models.CASCADE)
     country = models.ForeignKey(Country, default=1, verbose_name="Pais", on_delete=models.CASCADE)
     email = models.CharField(max_length=100, verbose_name="Email")
+    link = models.CharField(default="", max_length=130, verbose_name="Link")
     password = models.CharField(max_length=50, default="",  verbose_name="Contraseña de cuenta")
     email_password = models.CharField(max_length=50, default="", verbose_name="Contraseña de correo")
     date = models.DateTimeField(auto_now_add=True)
@@ -206,7 +207,10 @@ class Profile(models.Model):
     def search_profiles_no_saled_by_plan(cls, plan_id):
 
         profiles = cls.objects.filter(saled=0, count__plan_id=plan_id)
-        return  profiles, profiles[0].count.plan.num_profiles,
+        count = 0
+        if len(profiles) > 0:
+            count =  profiles[0].count.plan.num_profiles
+        return  profiles, count,
 
     @classmethod
     def change_password_to_perfile_message(cls, count, profile, now):

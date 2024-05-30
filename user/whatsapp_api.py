@@ -27,13 +27,13 @@ def message_sale(data):
 def message_plan_sale(data):
 
     profiles = ""
-    for key, profil in data['data'].items():
-        profiles += f" {profil} \n"
-    message =  f"Hola, tu servicio {data['platform']} está activo, \n" \
-                f"👤USUARIO:  {data['email']}   \n" \
-                f"🔐CONTRASEÑA: {data['password']} \n" \
+    for key, profil in data.items():
+        profiles += f" Perfil {profil['profile']} Pin {profil['pin']} \n"
+    message =  f"Hola, tu plan {data['0']['plan']} de s{data['0']['platform']} está activo, \n" \
+                f"👤USUARIO:  {data['0']['email']}   \n" \
+                f"🔐CONTRASEÑA: {data['0']['password']} \n" \
                 f"📺: Datos: {profiles}  \n" \
-                f"📅 Fecha de corte: {data['date_limit']} \n" \
+                f"📅 Fecha de corte: {data['0']['date_limit']} \n" \
                 f"Condiciones del servicio:  \n" \
                 f"1.-No modifique ninguna información de la cuenta \n" \
                 f"2.-No puede estar en 2 o más dispositivos simultáneamente  \n" \
@@ -43,7 +43,7 @@ def message_plan_sale(data):
                 f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
                 f"Muchas gracias 😊 "
 
-    send_message(data['phone'], message)
+    send_message(data['0']['phone'], message)
 
 
 def message_renew(profile, phone, date_limit):

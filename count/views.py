@@ -134,7 +134,6 @@ class CreateCount(View):
 
     def post(self, request, *args, **kwargs):
 
-        print(request.POST)
         plan_id = request.POST['plan'] if 'plan' in request.POST else None
         new_count = Count.objects.create(platform_id = request.POST['platform'],
                                          plan_id = plan_id,
@@ -162,9 +161,7 @@ class UpdateCount(UpdateView):
     def get(self, request, id, *args, **kwargs):
 
         count= Count.objects.filter(id=id).first()
-        print(count)
         profiles= Profile.objects.filter(count=count)
-        print(profiles)
         form = self.form_class(instance=count)
         return render(request, self.template_name, {'form': form, 'profiles':profiles })
 
@@ -512,8 +509,6 @@ class CutProfileView(View):
 
         try:
             sales = Sale.objects.filter(id= kwargs['sale_id'], profile_id= kwargs['id'] )
-            print(sales)
-
             if sales:
                 sales.update(cutted = True)
                 profile = Profile.objects.filter(id = kwargs['id']).update(saled=False)
@@ -567,55 +562,37 @@ class AddSaleView(View):
         customer = Customer.objects.filter(id= kwargs['id']).first()
         if customer and form.is_valid():
             date_limit = CalculateDateLimit(now, int(request.POST['months']))
-            if request.POST['plan'] == "":
-                num_profiles = list(request.POST.values()).count("on")
-                total = Price.objects.filter(platform_id = request.POST['platform'], num_profiles= num_profiles).first()
-                bill = Bill.objects.create(customer=customer, saler= request.user, total=total.price)
-                i=0
-                for item in request.POST:
-                    if item.isnumeric():
-                        if request.POST[item] == 'on':
-                            profile = Profile.objects.filter(id = item).first()
-                            profile.pin = request.POST['pin_'+item]
-                            profile.profile = request.POST['profile_'+item]
-                            profile_json = {"platform": profile.count.platform.name,
-                                            "email":profile.count.email,
-                                            "password":profile.count.password,
-                                            "phone":str(customer.phone),
-                                            "date_limit":str(date_limit.strftime('%d/%m/%Y')),
-                                            "profile":profile.profile,
-                                            "pin":profile.pin}
-                            profiles_json[i] = profile_json
-                            profile.save()
-                            profiles.append(profile)
-                            i+=1
-                            request.user.sale_profile( profile, int(request.POST['months']), date_limit, bill)
-                return render(request, 'sale/sale_post.html',
-                              {'profiles': profiles, 'profiles_json': json.dumps(profiles_json)})
-            else:
-                plan = Plan.objects.filter(id=request.POST['plan']).first()
-                total = Price.objects.filter(platform_id=request.POST['platform'], num_profiles=plan.num_profiles).first()
-                bill = Bill.objects.create(customer=customer, saler=request.user, total=total.price)
-
-                profiles_enables = Profile.objects.filter(saled=0, count__platform=plan.platform).values('count_id').annotate(count=Count_('id')).filter(
-                    count__gte=plan.num_profiles).values('count_id')
-                count_id_enable = profiles_enables.order_by('-count_id').first()['count_id']
-                profiles = Profile.objects.filter(count_id=count_id_enable, saled=0)[0:plan.num_profiles]
-                profiles_json = {"platform": profiles[0].count.platform.name,
-                                "email": profiles[0].count.email,
-                                "password": profiles[0].count.password,
-                                "phone": str(customer.phone),
-                                 "data" : {},
-                                "date_limit": str(date_limit.strftime('%d/%m/%Y'))
-                                 }
-                i=0
-                for profile in profiles:
-                    profiles_json["data"][i] = "Perfil : " + profile.profile + " Pin: "+  profile.pin
-                    request.user.sale_profile( profile, int(request.POST["months"]), date_limit, bill)
-                    i+=1
-                return render(request, 'sale/sale_plan_post.html',
-                              {'profiles': profiles, 'profiles_json': json.dumps(profiles_json)})
-
+            plan = ""
+            num_profiles = list(request.POST.values()).count("on")
+            total = Price.objects.filter(platform_id = request.POST['platform'], num_profiles= num_profiles).first()
+            bill = Bill.objects.create(customer=customer, saler= request.user, total=total.price)
+            i=0
+            for item in request.POST:
+                template = 'sale/sale_post.html'
+                if 'plan' in request.POST:
+                    if request.POST['plan'] != "":
+                        plan = Plan.objects.filter(id=request.POST['plan']).first().name
+                        template = 'sale/sale_plan_post.html'
+                if item.isnumeric():
+                    if request.POST[item] == 'on':
+                        profile = Profile.objects.filter(id = item).first()
+                        profile.pin = request.POST['pin_'+item]
+                        profile.profile = request.POST['profile_'+item]
+                        profile_json = {"platform": profile.count.platform.name,
+                                        "plan":plan,
+                                        "email":profile.count.email,
+                                        "password":profile.count.password,
+                                        "phone":str(customer.phone),
+                                        "date_limit":str(date_limit.strftime('%d/%m/%Y')),
+                                        "profile":profile.profile,
+                                        "pin":profile.pin}
+                        profiles_json[i] = profile_json
+                        profile.save()
+                        profiles.append(profile)
+                        i+=1
+                        request.user.sale_profile( profile, int(request.POST['months']), date_limit, bill)
+            return render(request, template,
+                          {'profiles': profiles, 'profiles_json': json.dumps(profiles_json)})
 
         return render(request, self.template_name, {'form': self.form_class })
 
@@ -629,7 +606,11 @@ class SendMessageWhatsapp(View):
         try:
             data = json.loads(json_data)
             for item in data:
-                message_sale(data[item])
+                if 'plan' in data[item]:
+                    message_plan_sale(data)
+                    continue
+                else:
+                    message_sale(data[item])
         except:
             message_sale(json_data)
         return HttpResponse("Mensaje enviado")
@@ -660,7 +641,6 @@ class GetProfilesAvailableView(ListView):
     template_name = "profiles/list_avaliables.html"
 
     def get_context_data(self, **kwargs):
-
 
         context = super().get_context_data(**kwargs)
         if 'platform' in self.kwargs:

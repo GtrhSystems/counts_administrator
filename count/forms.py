@@ -85,7 +85,7 @@ class PlanForm(forms.ModelForm):
 
     def __init__(self, platform, *args, **kwargs):
         super(PlanForm, self).__init__(*args, **kwargs)
-        self.fields['num_profiles'] = forms.IntegerField(label="Perfiles a vernder", widget=forms.NumberInput(
+        self.fields['num_profiles'] = forms.IntegerField(label="Perfiles a vender", widget=forms.NumberInput(
             attrs={'min': 1, 'max': platform.num_profiles,  'placeholder': 'Digite el numero de perfiles a vender en este plan'}))
     class Meta:
         model = Plan

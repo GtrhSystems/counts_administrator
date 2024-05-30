@@ -357,7 +357,7 @@ $(".table-list-count-to-expire").on("click", ".change-date-limit" , function(){
 
 
 function send_message(url, data ){
-    console.log(data)
+
     $('body').on("click", ".send-message" , function(){
 
         $.ajax({

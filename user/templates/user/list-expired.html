@@ -17,6 +17,7 @@ Listado de Cuentas Proximas a Expirar
             <tr>
               <th> Cliente </th>
               <th> Plataforma </th>
+              <th> Plan </th>
               <th> Correo </th>
               <th> Contraseña de cuenta </th>
               <th> Contraseña de correo </th>
@@ -31,7 +32,8 @@ Listado de Cuentas Proximas a Expirar
            {% for sale in object_list %}
             <tr>
               <td>{{ sale.bill.customer.name }}</td>
-               <td>{{ sale.profile.count.platform.name }}</td>
+              <td>{{ sale.profile.count.platform.name }}</td>
+              <td>{{ sale.profile.count.plan.name }}</td>
               <td>{{ sale.profile.count.email }}</td>
               <td>{{ sale.profile.count.password }}</td>
               <td>{{ sale.profile.count.email_password }}</td>

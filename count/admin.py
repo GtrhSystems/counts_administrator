@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import Platform, Price ,Count
+from .models import Platform, Price ,Count, Country
 from user.models import Action
 
 @admin.register(Platform)
 class PlatformAdmin(admin.ModelAdmin):
    list_display = ( 'name','logo','num_profiles', 'active' )
-   fields  = ['name', 'logo', 'num_profiles' ,'have_plans', 'active']
+   fields  = ['name', 'logo', 'num_profiles' , 'active']
    list_filter = ('name','active') #se aplican filtros por estos dos campos
 
 
@@ -27,3 +27,10 @@ class ActionAdmin(admin.ModelAdmin):
    list_display = ( 'user','date','action' )
    fields  = [ 'user' ]
    list_filter = ('user','date')
+
+
+@admin.register(Country)
+class ActionAdmin(admin.ModelAdmin):
+   list_display = ( 'country','iso' )
+   fields  = [  'country','iso' ]
+   list_filter = ('country','iso')

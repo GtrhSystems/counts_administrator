@@ -72,6 +72,7 @@ table th {
                   <th> Perfil </th>
                   <th> Pin </th>
                   <th> Plataforma </th>
+                  <th> Plan </th>
                   <th> Meses </th>
                   <th> Cliente </th>
                    <th> Fecha </th>
@@ -92,6 +93,11 @@ table th {
                   <td>{{ sale.profile.profile }}</td>
                   <td>{{ sale.profile.pin }}</td>
                   <td>{{ sale.profile.count.platform }}</td>
+                  <td>
+                      {% if sale.profile.count.plan %}
+                      {{ sale.profile.count.plan }}
+                      {% endif %}
+                      </td>
                   <td>{{ sale.months }}</td>
                   <td>{{ sale.bill.customer.name }}</td>
                   <td>{{ sale.date|date:"d/M/Y" }}</td>

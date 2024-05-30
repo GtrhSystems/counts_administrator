@@ -9,6 +9,9 @@ Seleccione los perfiles a vender, puede cambiar los perfiles y pines a solicitud
       <p class="card-description"><code></code>
       </p>
       <div class="table-responsive">
+        {% if profiles|length == 0 %}
+          No existen cuentas disponibles
+        {% else %}
         <table class="table table-dark table-normal">
           <thead>
             <tr>
@@ -41,6 +44,7 @@ Seleccione los perfiles a vender, puede cambiar los perfiles y pines a solicitud
           {% endfor %}
           </tbody>
         </table>
+        {% endif %}
       </div>
     </div>
   </div>

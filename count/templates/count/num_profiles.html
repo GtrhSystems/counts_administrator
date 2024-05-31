@@ -1,4 +1,10 @@
 {% block content %}
+    {% if have_link %}
+        <div class="form-group">
+            <label for="link">Link</label>
+            <input type="text" name="link" class="form-control" required="">
+        </div>
+    {% endif %}
 {% for profile in profiles %}
     <div class="form-group">
         <label for="pin_{{forloop.counter}}">pin {{forloop.counter}}</label>

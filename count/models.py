@@ -46,20 +46,11 @@ class Platform(models.Model):
 #SubProduct(models.Model):
 class Plan(models.Model):
 
-    # UNITY_TIMES = (
-    #     ("horas", "Horas"),
-    #     ("dias", "Dias"),
-    #     ("meses", "Meses")
-    # )
 
     platform = models.ForeignKey(Platform, default=1, verbose_name="Plataforma", on_delete=models.CASCADE)
     name = models.CharField(max_length=150, verbose_name="Nombre", default="")
     num_profiles = models.IntegerField(default=0, verbose_name="Perfiles a vender")
-    #price = models.IntegerField(default=0, verbose_name="Precio general", )
-    #instructions = models.CharField(max_length=1000, verbose_name="Instrucciones", default="")
-    #unity_time = models.CharField(max_length=5, default='horas', choices=UNITY_TIMES, verbose_name="Unidad de tiempo")
-    #time = models.IntegerField(default=0, verbose_name="Duración")
-    #renewable = models.BooleanField(default=0, verbose_name="Renovable?:")
+    have_link = models.BooleanField(default=0, verbose_name="Se envia link?:")
     active = models.BooleanField(default=1, verbose_name="Activo?:")
     description = models.CharField(default="", max_length=250, verbose_name="Descripción")
 

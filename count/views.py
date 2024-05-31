@@ -66,6 +66,7 @@ class CreatePlan(View):
         plan = Plan.objects.create(platform = self.platform,
                                          name = request.POST['name'],
                                          num_profiles = request.POST['num_profiles'],
+                                         have_link = request.POST['have_link'],
                                          active = request.POST['active'],
                                          description = request.POST['description']
                                          )
@@ -76,7 +77,7 @@ class CreatePlan(View):
 class UpdatePlanView(UpdateView):
 
     model = Plan
-    fields = ["name", "num_profiles", "active", "description"]
+    fields = ["name", "num_profiles", "active", "have_link",  "description"]
     template_name = "plan/update.html"
 
 
@@ -139,6 +140,7 @@ class CreateCount(View):
                                          plan_id = plan_id,
                                          email = request.POST['email'],
                                          country_id=request.POST['country'],
+                                         link=request.POST['link'],
                                          password = request.POST['password'],
                                          email_password=request.POST['email_password'],
                                          date_limit = request.POST['date_limit']
@@ -262,18 +264,21 @@ class CreatePinsProfiles(View):
      def get(self, request, *args, **kwargs):
 
         profiles = []
+        have_link = False
         if kwargs['type'] == "platform":
            model = self.model_class_platform
            plans = Plan.objects.filter(platform_id=kwargs['id'])
            if plans:
                return render(request, self.template_name, {'profiles': None})
         elif kwargs['type'] == "plan":
+            plan = Plan.objects.filter(id=kwargs['id']).first()
+            have_link = plan.have_link
             model = self.model_class_plan
         num_profiles = model.get_num_of_profiles(kwargs['id'])
         for num in range(num_profiles):
             profiles.append(num)
 
-        return render(request, self.template_name, {'profiles': profiles})
+        return render(request, self.template_name, {'profiles': profiles, 'have_link':have_link})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -289,9 +294,9 @@ class CountsListView(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
-class CountListJson(BaseDatatableView):
+class CountListAjax(BaseDatatableView):
 
-    columns = ['Plataforma', 'Plan', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña de cuenta', 'Contraseña de correo', 'pais',  'Vence']
+    columns = ['Plataforma', 'Plan', 'Correo', 'Perfiles', 'Disponibles', 'Contraseña de cuenta', 'Contraseña de correo', 'pais',  'Vence', 'link']
     order_columns = ['date','platform.name', 'email']
     model = Count
     #max_display_length = 500
@@ -355,6 +360,7 @@ class CountListJson(BaseDatatableView):
                     item.email_password,
                     item.country.country,
                     rest_days,
+                    item.link,
                     link_change_password,
                     link_change_password_email,
                     link_change_date,
@@ -372,6 +378,7 @@ class CountListJson(BaseDatatableView):
                     item.email_password,
                     item.country.country,
                     rest_days,
+                    item.link,
                     link_change_password,
                     link_change_password_email,
                     link_change_date,
@@ -556,6 +563,7 @@ class AddSaleView(View):
 
     def post(self, request, *args, **kwargs):
 
+
         profiles = []
         profiles_json = {}
         form = self.form_class (request.POST)
@@ -585,6 +593,7 @@ class AddSaleView(View):
                                         "phone":str(customer.phone),
                                         "date_limit":str(date_limit.strftime('%d/%m/%Y')),
                                         "profile":profile.profile,
+                                        "link":profile.count.link,
                                         "pin":profile.pin}
                         profiles_json[i] = profile_json
                         profile.save()
@@ -648,7 +657,6 @@ class GetProfilesAvailableView(ListView):
         if 'plan' in self.kwargs:
             profiles, num_profiles  = self.model.search_profiles_no_saled_by_plan(self.kwargs['plan'])
             context['num_profiles'] = num_profiles
-
         context['profiles'] = profiles
 
         return context

@@ -87,9 +87,11 @@ class PlanForm(forms.ModelForm):
         super(PlanForm, self).__init__(*args, **kwargs)
         self.fields['num_profiles'] = forms.IntegerField(label="Perfiles a vender", widget=forms.NumberInput(
             attrs={'min': 1, 'max': platform.num_profiles,  'placeholder': 'Digite el numero de perfiles a vender en este plan'}))
+        self.fields['have_link'].initial = False
+
     class Meta:
         model = Plan
-        fields = [ 'name', 'num_profiles', 'active', 'description']
+        fields = [ 'name', 'num_profiles', 'have_link', 'active', 'description']
 
 
 class ChangeCountDataForm(forms.Form):

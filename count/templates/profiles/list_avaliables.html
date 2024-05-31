@@ -19,6 +19,9 @@ Seleccione los perfiles a vender, puede cambiar los perfiles y pines a solicitud
               <th> Plan </th>
               <th> Cuenta </th>
               <th> Contraseña </th>
+              {% if num_profiles %}
+               <th> Link </th>
+              {% endif %}
               <th> Perfil </th>
               <th> Pin </th>
               <th> Seleccionar </th>
@@ -35,6 +38,9 @@ Seleccione los perfiles a vender, puede cambiar los perfiles y pines a solicitud
               {% endif %}
               <td>{{ profile.count.email }}</td>
               <td>{{ profile.count.password }}</td>
+              {% if num_profiles %}
+                <td>{{ profile.count.link }}</td>
+              {% endif %}
               <td><input type="text" name="profile_{{ profile.id }}" value="{{ profile.profile }}" class="form-control" required="true" ></td>
               <td><input type="number" name="pin_{{ profile.id }}" value="{{ profile.pin }}" class="form-control" required="true" ></td>
               <td>

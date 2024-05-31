@@ -18,6 +18,7 @@ Listado de planes de {{ object_list.0.platform.name }}
               <th> Plataforma </th>
               <th> Plan </th>
               <th> Perfiles a vender </th>
+              <th> Link </th>
               <th> Descripción </th>
               <th>  </th>
             </tr>
@@ -29,10 +30,11 @@ Listado de planes de {{ object_list.0.platform.name }}
               <td>{{ plan.platform.name }}</td>
               <td>{{ plan.name }}</td>
               <td>{{ plan.num_profiles }}</td>
+              <td>{{ plan.have_link|yesno:"Si,No"  }}</td>
               <td>{{ plan.description }}</td>
               <td>
                  {% if 'change_plan' in permissions %}
-                    <a type="button" href="/count/plan/update/{{ plan.platform.name }}" class="btn btn-primary btn-icon-text change-date-limit">
+                    <a type="button" href="/count/plan/update/{{ plan.id }}" class="btn btn-primary btn-icon-text change-date-limit">
                      <i class="mdi mdi-grease-pencil"></i> Editar </a>
                  {% endif %}
                </td>

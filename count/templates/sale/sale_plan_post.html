@@ -13,8 +13,9 @@
 		</div>
 		{% for profile in profiles %}
 		<div class="form-group">
-			<strong>Perfil:</strong>    {{ profile.profile }}
-			<strong>Pin:</strong>    {{ profile.pin }}
+			<strong>Perfil:</strong>    {{ profile.profile }} <br>
+			<strong>Pin:</strong>    {{ profile.pin }} <br>
+			<strong>Link:</strong>    {{ profile.count.link }} <br>
 		</div>
 		{% endfor %}
 	</div>

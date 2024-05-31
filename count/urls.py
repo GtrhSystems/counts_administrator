@@ -38,7 +38,7 @@ urlpatterns = [
         path('update/<int:id>', views.UpdateCount.as_view(), name='update-count'),
         path('create-pins-profiles/<str:type>/<int:id>', views.CreatePinsProfiles.as_view(), name='create-pins-profiles'),
         path('list', views.CountsListView.as_view(), name='count-list'),
-        path('list-ajax', views.CountListJson.as_view(), name='count-list-ajax'),
+        path('list-ajax', views.CountListAjax.as_view(), name='count-list-ajax'),
         path('cut-profile/<int:sale_id>/<int:id>', views.CutProfileView.as_view(), name='cut-profile'),
         path('owner-profile/<int:sale_id>/<int:id>', views.OwnerProfileView.as_view(), name='owner-profile'),
 

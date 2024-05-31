@@ -367,7 +367,7 @@ function send_message(url, data ){
             data: JSON.stringify(data),
             contentType: "application/json",
             success: function (response) {
-            console.log(response)
+
                 alert(response)
                 window.location.href = "/user/list-customer";
             }

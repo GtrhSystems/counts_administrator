@@ -28,21 +28,38 @@ def message_plan_sale(data):
 
     profiles = ""
     for key, profil in data.items():
-        profiles += f" Perfil {profil['profile']} Pin {profil['pin']} \n"
-    message =  f"Hola, tu plan {data['0']['plan']} de s{data['0']['platform']} está activo, \n" \
-                f"👤USUARIO:  {data['0']['email']}   \n" \
-                f"🔐CONTRASEÑA: {data['0']['password']} \n" \
-                f"📺: Datos: {profiles}  \n" \
-                f"📅 Fecha de corte: {data['0']['date_limit']} \n" \
-                f"Condiciones del servicio:  \n" \
-                f"1.-No modifique ninguna información de la cuenta \n" \
-                f"2.-No puede estar en 2 o más dispositivos simultáneamente  \n" \
-                f"3.-No agregue ni elimine ningún perfil \n" \
-                f"4.-Este es un producto digital. Después de la compra, no se puede  \n" \
-                f"hacer ningún reembolso. Solo garantía de reemplazo. \n" \
-                f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
-                f"Muchas gracias 😊 "
+        profiles += f" Pin {profil['pin']} \n"
 
+    if data['0']['link'] != "":
+        message = f"Hola, tu plan {data['0']['plan']} de {data['0']['platform']} está activo, \n" \
+                  f"👤LINK:  {data['0']['link']}   \n" \
+                  f"📺:{profiles}  \n" \
+                  f"📅 Fecha de corte: {data['0']['date_limit']} \n" \
+                  f"Condiciones del servicio:  \n" \
+                  f"1.-No modifique ninguna información de la cuenta \n" \
+                  f"2.-No puede estar en 2 o más dispositivos simultáneamente  \n" \
+                  f"3.-No agregue ni elimine ningún perfil \n" \
+                  f"4.-Este es un producto digital. Después de la compra, no se puede  \n" \
+                  f"hacer ningún reembolso. Solo garantía de reemplazo. \n" \
+                  f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
+                  f"Muchas gracias 😊 "
+    else:
+        for key, profil in data.items():
+            profiles += f" Perfil {profil['profile']} Pin {profil['pin']} \n"
+        message =  f"Hola, tu plan {data['0']['plan']} de {data['0']['platform']} está activo, \n" \
+                    f"👤USUARIO:  {data['0']['email']}   \n" \
+                    f"🔐CONTRASEÑA: {data['0']['password']} \n" \
+                    f"📺: Datos: {profiles}  \n" \
+                    f"📅 Fecha de corte: {data['0']['date_limit']} \n" \
+                    f"Condiciones del servicio:  \n" \
+                    f"1.-No modifique ninguna información de la cuenta \n" \
+                    f"2.-No puede estar en 2 o más dispositivos simultáneamente  \n" \
+                    f"3.-No agregue ni elimine ningún perfil \n" \
+                    f"4.-Este es un producto digital. Después de la compra, no se puede  \n" \
+                    f"hacer ningún reembolso. Solo garantía de reemplazo. \n" \
+                    f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
+                    f"Muchas gracias 😊 "
+    print(message)
     send_message(data['0']['phone'], message)
 
 

@@ -140,7 +140,7 @@ class CreateCount(View):
                                          plan_id = plan_id,
                                          email = request.POST['email'],
                                          country_id=request.POST['country'],
-                                         link=request.POST['link'],
+                                         link=request.POST['link'] if 'link' in request.POST else "",
                                          password = request.POST['password'],
                                          email_password=request.POST['email_password'],
                                          date_limit = request.POST['date_limit']

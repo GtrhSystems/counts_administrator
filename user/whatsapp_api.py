@@ -28,12 +28,11 @@ def message_plan_sale(data):
 
     profiles = ""
     for key, profil in data.items():
-        profiles += f" Pin {profil['pin']} \n"
-
+        profiles += f" Perfil {profil['profile']} Pin {profil['pin']} \n"
     if data['0']['link'] != "":
         message = f"Hola, tu plan {data['0']['plan']} de {data['0']['platform']} está activo, \n" \
                   f"👤LINK:  {data['0']['link']}   \n" \
-                  f"📺:{profiles}  \n" \
+                  f"📺: Datos: {profiles}  \n" \
                   f"📅 Fecha de corte: {data['0']['date_limit']} \n" \
                   f"Condiciones del servicio:  \n" \
                   f"1.-No modifique ninguna información de la cuenta \n" \
@@ -44,8 +43,6 @@ def message_plan_sale(data):
                   f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
                   f"Muchas gracias 😊 "
     else:
-        for key, profil in data.items():
-            profiles += f" Perfil {profil['profile']} Pin {profil['pin']} \n"
         message =  f"Hola, tu plan {data['0']['plan']} de {data['0']['platform']} está activo, \n" \
                     f"👤USUARIO:  {data['0']['email']}   \n" \
                     f"🔐CONTRASEÑA: {data['0']['password']} \n" \
@@ -59,7 +56,7 @@ def message_plan_sale(data):
                     f"hacer ningún reembolso. Solo garantía de reemplazo. \n" \
                     f"Nota: Si viola algunas de estas condiciones la garantía será suspendida \n" \
                     f"Muchas gracias 😊 "
-    print(message)
+
     send_message(data['0']['phone'], message)
 
 

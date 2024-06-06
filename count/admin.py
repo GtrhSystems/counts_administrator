@@ -30,7 +30,7 @@ class ActionAdmin(admin.ModelAdmin):
 
 
 @admin.register(Country)
-class ActionAdmin(admin.ModelAdmin):
+class CountryAdmin(admin.ModelAdmin):
    list_display = ( 'country','iso' )
    fields  = [  'country','iso' ]
    list_filter = ('country','iso')

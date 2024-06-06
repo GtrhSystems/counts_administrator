@@ -62,9 +62,19 @@ class CountForm(forms.Form):
 
 
 class CountUpdateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CountUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['platform'].widget.attrs['disabled'] = 'disabled'
+        self.fields['plan'].widget.attrs['disabled'] = 'disabled'
+        self.fields['date_limit'].widget = forms.DateTimeInput(
+            format='%Y-%m-%d %H:%M:%S',
+            attrs={'type': 'datetime-local'}
+        )
+
     class Meta:
         model = Count
-        fields = ['platform', 'country', 'email', 'date_limit']
+        fields = ['platform', 'plan',  'country', 'email', 'date_limit']
 
 
 class CountPlanForm(forms.Form):

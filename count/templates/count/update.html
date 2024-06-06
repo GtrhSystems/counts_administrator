@@ -16,6 +16,10 @@ Crear cuentas
             {{ form.platform|add_class:'form-control' }}
           </div>
           <div class="form-group">
+            <label for="plan">Plan</label>
+             {{ form.plan|add_class:'form-control' }}
+          </div>
+          <div class="form-group">
             <label for="country">{{ form.country.label }}</label>
             {{ form.country|add_class:'form-control' }}
           </div>
@@ -41,6 +45,5 @@ Crear cuentas
       </div>
     </div>
 </div>
-
 
 {% endblock %}

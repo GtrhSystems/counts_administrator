@@ -165,13 +165,17 @@ class UpdateCount(UpdateView):
         count= Count.objects.filter(id=id).first()
         profiles= Profile.objects.filter(count=count)
         form = self.form_class(instance=count)
-        return render(request, self.template_name, {'form': form, 'profiles':profiles })
+        return render(request, self.template_name, {'form': form, 'profiles':profiles, 'platform': count.plan.platform })
 
     def post(self, request, id, *args, **kwargs):
 
+
         count = Count.objects.filter(id=id).first()
-        form = self.form_class(request.POST)
-        form.save()
+        country = Country.objects.filter(id=request.POST['country']).first()
+        count.email = request.POST['email']
+        count.country = country
+        count.date_limit = request.POST['date_limit']
+        count.save()
         for item in request.POST:
             if item.isnumeric():
                 profile = Profile.objects.filter(count=count, profile = item).first()
@@ -323,7 +327,6 @@ class CountListAjax(BaseDatatableView):
         json_data = []
         rest_days = "indeterminado"
         permissions = my_permissions(self.request.user)
-
         for item in qs:
             now = datetime.datetime.now(timezone.utc)
             profiles = Profile.objects.filter(count=item)
@@ -345,9 +348,9 @@ class CountListAjax(BaseDatatableView):
                 link_change_password_email = ''
                 link_change_date = ''
             if 'delete_count' in permissions:
-                link_detele= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>'
+                link_delete= f'<button type="button" id_count="{ item.id }" class="btn btn-danger delete-count">Eliminar</button>'
             else:
-                link_detele = ''
+                link_delete = ''
 
             if item.plan:
                 json_data.append([
@@ -365,7 +368,7 @@ class CountListAjax(BaseDatatableView):
                     link_change_password_email,
                     link_change_date,
                     link_update,
-                    link_detele
+                    link_delete
                 ])
             else:
                 json_data.append([
@@ -383,7 +386,7 @@ class CountListAjax(BaseDatatableView):
                     link_change_password_email,
                     link_change_date,
                     link_update,
-                    link_detele
+                    link_delete
                 ])
         return json_data
 

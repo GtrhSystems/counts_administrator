@@ -165,7 +165,7 @@ class UpdateCount(UpdateView):
         count= Count.objects.filter(id=id).first()
         profiles= Profile.objects.filter(count=count)
         form = self.form_class(instance=count)
-        return render(request, self.template_name, {'form': form, 'profiles':profiles, 'platform': count.plan.platform })
+        return render(request, self.template_name, {'form': form, 'profiles':profiles, 'platform': count.plan.platform if count.plan else count.platform})
 
     def post(self, request, id, *args, **kwargs):
 

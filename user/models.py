@@ -34,13 +34,16 @@ class Customer(models.Model):
         end_date_ago = date_ago + datetime.timedelta(days=1)
         payload = {}
 
-        sales_today = Sale.objects.filter(date_limit__gte=today, date_limit__lt=tomorrow, renovated=False)
-        sales_yesterday = Sale.objects.filter(date_limit__gte=yestarday, date_limit__lt=today, renovated=False)
-        sales_3_days = Sale.objects.filter(date_limit__gte=date_ago, date_limit__lt=end_date_ago, renovated=False)
+        sales_today = Sale.objects.filter(profile__saled=True, renovated=False, cutted=False,
+                                                     date_limit__range=[today, tomorrow])
+        sales_yesterday = Sale.objects.filter(profile__saled=True, renovated=False, cutted=False,
+                                          date_limit__range=[yestarday, today])
+        sales_3_days = Sale.objects.filter(profile__saled=True, renovated=False, cutted=False,
+                                              date_limit__range=[date_ago, end_date_ago])
         sales = sales_yesterday | sales_today | sales_3_days
-
+        i=0
         for sale in sales:
-
+            
             remaining_days = getDifference(sale.date_limit, now, "days")
             if remaining_days == 1:
                 day = "vencio ayer"
@@ -49,13 +52,15 @@ class Customer(models.Model):
             elif remaining_days == -2:
                 day = "vence en dos dias"
 
-            payload[sale.profile.count.email + sale.bill.customer.name] = { "name": sale.bill.customer.name,
-                             "email": sale.profile.count.email,
-                             "password": sale.profile.count.password,
-                             "phone":sale.bill.customer.phone.as_e164,
-                             "platform":  sale.profile.count.platform,
-                             "days" :  day
-                             }
+            payload[i] = { "name": sale.bill.customer.name,
+                  "email": sale.profile.count.email,
+                  "password": sale.profile.count.password,
+                  "phone":sale.bill.customer.phone.as_e164,
+                  "platform":  sale.profile.count.platform.name,
+                  "days" :  day
+                }
+            i+=1
+        print(payload)
         return payload
 
 

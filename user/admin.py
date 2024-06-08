@@ -28,7 +28,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'is_active', 'first_name', 'last_name', 'email')
     #fields = ['first_name', 'last_name', 'email',  'is_active']
     fieldsets = (
-        ('Información personal', {'fields': ('first_name', 'last_name', 'email')}),
+        ('Información personal', {'fields': ('username','first_name', 'last_name', 'email')}),
         ('Permisos de usuario', {'fields': ( 'last_login', 'user_permissions')}),
     )
     #readonly_fields = ['first_name', 'last_name', 'email']

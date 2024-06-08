@@ -354,7 +354,6 @@ class ProfileExpiredView(ListView):
 class SendMessagesWhatsappApi(View) :
 
     def get(self, request, *args, **kwargs):
-
         counts = []
         payload = Customer.get_phones_for_messages( Sale)
         for  data in payload:
@@ -365,7 +364,6 @@ class SendMessagesWhatsappApi(View) :
                       f" Avísame si lo vas a renovar. Muchas gracias 🙂"
             counts.append([payload[data]['name'], payload[data]['email']])
             send_message(payload[data]['phone'], message)
-
-        return HttpResponse(counts)
+        return JsonResponse(payload)
 
 

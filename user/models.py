@@ -41,9 +41,9 @@ class Customer(models.Model):
         sales_3_days = Sale.objects.filter(profile__saled=True, renovated=False, cutted=False,
                                               date_limit__range=[date_ago, end_date_ago])
         sales = sales_yesterday | sales_today | sales_3_days
+
         i=0
         for sale in sales:
-            
             remaining_days = getDifference(sale.date_limit, now, "days")
             if remaining_days == 1:
                 day = "vencio ayer"
@@ -51,6 +51,8 @@ class Customer(models.Model):
                 day = "vence hoy"
             elif remaining_days == -2:
                 day = "vence en dos dias"
+            else:
+                continue
 
             payload[i] = { "name": sale.bill.customer.name,
                   "email": sale.profile.count.email,

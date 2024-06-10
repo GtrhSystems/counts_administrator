@@ -41,6 +41,10 @@ class CustomerForm(forms.ModelForm):
 class CustomUserChangeForm(UserChangeForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
+    user_permissions = forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.filter(codename__in=PERMISSIONS_ACTIVES),
+        widget=forms.SelectMultiple,
+        required=False)
 
     class Meta:
         model = User

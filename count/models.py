@@ -213,17 +213,25 @@ class Profile(models.Model):
         for profile in profiles:
             sale = Sale.search_customer_by_profile(profile, now)
             if sale:
-                message = f"Hola " + sale.bill.customer.name + ", Por motivos de seguridad la contraseña de tu cuenta ha sido cambiada: \n" \
-                f"Plataforma :" + count.platform.name + "\n" \
-                f"Correo : " + count.email + "\n" \
-                f"Nueva Contraseña " + count.password + "\n" \
-                f"Pin " + profile.pin + "\n" \
-                "Lamentamos el inconveniente, sigue disfrutando de tu servicio. \n" \
-                "Atte: El gamer Mx"
+                if not profile.count.plan.have_link:
+                    message = f"Hola " + sale.bill.customer.name + ", Por motivos de seguridad la contraseña de tu cuenta ha sido cambiada: \n" \
+                        f"Plataforma :" + count.platform.name + "\n" \
+                        f"Correo : " + count.email + "\n" \
+                        f"Nueva Contraseña " + count.password + "\n" \
+                        f"Pin " + profile.pin + "\n" \
+                        "Lamentamos el inconveniente, sigue disfrutando de tu servicio. \n" \
+                        "Atte: El gamer Mx"
+
+                else:
+                    message = f"Hola " + sale.bill.customer.name + ", Por motivos de seguridad la contraseña de tu cuenta ha sido cambiada: \n" \
+                              f"Plataforma :" + count.platform.name + "\n" \
+                              f"link : " + count.link + "\n" \
+                              f"Perfil " + profile.profile + "\n" \
+                              "Lamentamos el inconveniente, sigue disfrutando de tu servicio. \n" \
+                              "Atte: El gamer Mx"
+                print(message)
                 customer_number = str(sale.bill.customer.phone)
-                send_message(customer_number, message)
-
-
+                # send_message(customer_number, message)
 class Price(models.Model):
 
     platform = models.ForeignKey(Platform, verbose_name="Plataforma", on_delete=models.CASCADE)
